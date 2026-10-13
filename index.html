@@ -307,7 +307,6 @@
             border: 2px solid var(--primary);
         }
 
-        /* A4 মেমো রশিদ প্রিন্ট স্টাইল */
         #a4ReceiptArea {
             background: #fff;
             width: 210mm;
@@ -376,18 +375,8 @@
             <h2>ড্যাশবোর্ড সিস্টেম প্রবেশ করুন</h2>
             
             <div id="loginStep1">
-                <p style="font-size: 13px; color: #555; margin-bottom: 15px;">আপনার ক্যাটাগরি, আইডি/মোবাইল এবং পাসওয়ার্ড দিয়ে প্রবেশ করুন।</p>
+                <p style="font-size: 13px; color: #555; margin-bottom: 15px;">আপনার নিবন্ধিত মোবাইল/জিমেইল ও পাসওয়ার্ড দিয়ে প্রবেশ করুন। (প্রথম সাইনআপকারী স্বয়ংক্রিয়ভাবে এডমিন হবেন)</p>
                 
-                <div class="form-group">
-                    <label>লগইন ক্যাটাগরি নির্বাচন করুন <span class="required-star">*</span></label>
-                    <select id="authRoleSelect" class="input-3d" required onchange="toggleLoginPhotoRequirement()">
-                        <option value="Staff">Staff (স্টাফ / সাধারণ সদস্য)</option>
-                        <option value="FinanceSecretary">Finance Secretary (অর্থ সম্পাদক)</option>
-                        <option value="Manager">Manager (ম্যানেজার)</option>
-                        <option value="Admin">Admin (এডমিন প্যানেল)</option>
-                    </select>
-                </div>
-
                 <div class="form-group">
                     <label>মোবাইল নম্বর / ইউজার আইডি <span class="required-star">*</span></label>
                     <input type="text" id="authPhoneInput" class="input-3d" placeholder="017xxxxxxxx বা জিমেইল আইডি" required>
@@ -397,18 +386,9 @@
                     <input type="password" id="authPassInput" class="input-3d" placeholder="পাসওয়ার্ড দিন" required>
                 </div>
 
-                <div class="form-group" id="loginPhotoGroup">
-                    <label>Staff প্রোফাইল ছবি <span class="required-star">*</span></label>
-                    <input type="file" id="loginPhotoFile" class="input-3d" accept="image/*" onchange="previewLoginImage(event)">
-                </div>
-                <input type="hidden" id="loginPhotoBase64" value="">
-                <div id="loginImagePreviewContainer" style="margin-bottom: 10px; display: none; text-align: center;">
-                    <img id="loginOutputPreview" src="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
-                </div>
-
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="btn-3d btn-phone" style="margin:0;" onclick="handleLogin()">প্রবেশ করুন</button>
-                    <button class="btn-3d btn-gmail" style="margin:0;" onclick="initiateSignup()">নতুন Staff সাইনআপ (ওটিপি)</button>
+                    <button class="btn-3d btn-gmail" style="margin:0;" onclick="initiateSignup()">নতুন সাইনআপ (ওটিপি সহ)</button>
                 </div>
                 <div style="margin-top: 12px; text-align: center;">
                     <a href="#" onclick="openForgotModal()" style="color: var(--primary); font-size: 13px; text-decoration: none;">পাসওয়ার্ড ভুলে গেছেন? নতুন পাসওয়ার্ড সেট করুন</a>
@@ -452,16 +432,15 @@
                 <button class="nav-btn" onclick="switchDashboard('law')">আইন সম্পাদক</button>
                 <button class="nav-btn" onclick="switchDashboard('committeeForm')">কমিটি ফরম</button>
                 <button class="nav-btn" onclick="switchDashboard('committeeView')">কমিটি দেখুন</button>
-                <button class="nav-btn" id="navActiveUsersBtn" onclick="switchDashboard('activeUsers')" style="display:none;">অ্যাপ ব্যবহারকারী তালিকা</button>
-                <button class="nav-btn" id="navChangePassBtn" onclick="switchDashboard('changePass')" style="display:none; background:#f59e0b; color:white;">পাসওয়ার্ড পরিবর্তন ও এপ্রুভ</button>
-                <button class="nav-btn" id="navAdminPassApprovalBtn" onclick="switchDashboard('adminPassApproval')" style="display:none; background:#dc2626; color:white;">পাসওয়ার্ড এপ্রুভ প্যানেল (এডমিন)</button>
+                <button class="nav-btn" id="navActiveUsersBtn" onclick="switchDashboard('activeUsers')" style="display:none;">অ্যাপ ব্যবহারকারী ও রোল ম্যানেজমেন্ট</button>
+                <button class="nav-btn" id="navChangePassBtn" onclick="switchDashboard('changePass')" style="display:none; background:#f59e0b; color:white;">পাসওয়ার্ড পরিবর্তন</button>
                 <button class="nav-btn" id="navAdminAppConfigBtn" onclick="switchDashboard('adminAppConfig')" style="display:none; background:#4f46e5; color:white;">অ্যাপ নাম ও টাইটেল (এডমিন)</button>
             </div>
 
             <div id="receiptDashboard" class="hidden">
                 <div class="card-3d">
                     <h2><i class="fa-solid fa-file-invoice-dollar"></i> টাকা জমা রশিদ প্রিন্ট, ডাউনলোড ও পূর্বের রশিদ সার্চ প্যানেল (ম্যানেজার)</h2>
-                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">সদস্য নির্বাচন করুন অথবা পূর্বের সংরক্ষিত রশিদ সার্চ করে দেখুন, ডাউনলোড ও প্রিন্ট করুন (বর্তমান তারিখ স্বয়ংক্রিয়ভাবে বসবে):</p>
+                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">সদস্য নির্বাচন করুন অথবা পূর্বের সংরক্ষিত রশিদ সার্চ করে দেখুন, ডাউনলোড ও প্রিন্ট করুন:</p>
                     
                     <div class="form-group">
                         <label>নতুন রশিদ তৈরির জন্য সদস্য নির্বাচন করুন <span class="required-star">*</span>:</label>
@@ -550,7 +529,7 @@
             <div id="adminAppConfigDashboard" class="hidden">
                 <div class="card-3d">
                     <h2>অ্যাপের নাম, টাইটেল ও লোগো পরিবর্তন প্যানেল (এডমিন)</h2>
-                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">এডমিন পাসওয়ার্ড নিশ্চিত করে অ্যাপের নাম, টাইটেল এবং দুই পাশের লোগো পরিবর্তন করুন। এটি রিয়েল-টাইমে ডাটাবেইজে আপডেট হয়ে সকল ব্যবহারকারীর অ্যাপে স্বয়ংক্রিয়ভাবে যোগ হয়ে যাবে:</p>
+                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">এডমিন পাসওয়ার্ড নিশ্চিত করে অ্যাপের নাম, টাইটেল এবং দুই পাশের লোগো পরিবর্তন করুন:</p>
                     
                     <div class="form-group">
                         <label>১ম ঘর: অ্যাপের নাম <span class="required-star">*</span></label>
@@ -574,10 +553,6 @@
                         <label>স্লোগান (স্থায়ী):</label>
                         <input type="text" class="input-3d" value="ঐক্য সাফল্যের বিজয় এসো ভবিষ্যৎ গড়ি" disabled style="background:#e2e8f0; color:#555;">
                     </div>
-                    <div class="form-group">
-                        <label>এডমিন পাসওয়ার্ড দিন <span class="required-star">*</span></label>
-                        <input type="password" id="configAdminPinInput" class="input-3d" placeholder="এডমিন পাসওয়ার্ড">
-                    </div>
                     <button class="btn-3d" onclick="saveAppConfigToDatabase()">আপডেট ও রিয়েল-টাইম সেভ করুন</button>
                 </div>
             </div>
@@ -585,7 +560,7 @@
             <div id="changePassDashboard" class="hidden">
                 <div class="card-3d">
                     <h2>পাসওয়ার্ড পরিবর্তন সিস্টেম</h2>
-                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">পাসওয়ার্ড পরিবর্তনের আবেদন করার পর তা এডমিনের কাছে যাচাই-বাছাইয়ের জন্য চলে যাবে। এডমিন এপ্রুভ করার পরেই নতুন পাসওয়ার্ড কার্যকর হবে।</p>
+                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">আপনার অ্যাকাউন্টের নতুন পাসওয়ার্ড সেট করুন:</p>
                     
                     <div class="form-group">
                         <label>আগের পাসওয়ার্ড দিন <span class="required-star">*</span></label>
@@ -599,30 +574,7 @@
                         <label>কনফার্ম নতুন পাসওয়ার্ড দিন <span class="required-star">*</span></label>
                         <input type="password" id="cpConfirmPass" class="input-3d" placeholder="পুনরায় নতুন পাসওয়ার্ড দিন">
                     </div>
-                    <button class="btn-3d" onclick="submitPasswordChangeRequest()">পাসওয়ার্ড পরিবর্তনের আবেদন পাঠান (এডমিনের কাছে)</button>
-                </div>
-            </div>
-
-            <div id="adminPassApprovalDashboard" class="hidden">
-                <div class="card-3d">
-                    <h2>পাসওয়ার্ড যাচাই-বাছাই ও এপ্রুভ প্যানেল (এডমিন)</h2>
-                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Finance Secretary এবং Manager-এর পাসওয়ার্ড পরিবর্তন রিকোয়েস্টসমূহ যাচাই করে এপ্রুভ বা রিজেক্ট করুন:</p>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>রোল / ক্যাটাগরি</th>
-                                    <th>পুরাতন পাসওয়ার্ড</th>
-                                    <th>নতুন পাসওয়ার্ড</th>
-                                    <th>স্ট্যাটাস</th>
-                                    <th>অ্যাকশন</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminPassApprovalTableBody">
-                                <tr><td colspan="5" style="text-align:center;">কোনো পাসওয়ার্ড পরিবর্তনের আবেদন নেই।</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <button class="btn-3d" onclick="submitPasswordChangeRequest()">পাসওয়ার্ড আপডেট করুন</button>
                 </div>
             </div>
 
@@ -812,7 +764,7 @@
             <div id="memberListDashboard" class="hidden">
                 <div class="card-3d">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h2>সদস্য তালিকা ও এপ্রুভ প্যানেল (অন্যের আইডি থেকে এপ্রুভ নিষিদ্ধ)</h2>
+                        <h2>সদস্য তালিকা ও এপ্রুভ প্যানেল</h2>
                         <button class="btn-delete" style="width: auto; padding: 8px 12px;" onclick="deleteAllSelectedMembers()">একাধিক একাউন্ট মুছুন</button>
                     </div>
                     <div class="form-group">
@@ -864,16 +816,17 @@
 
             <div id="activeUsersDashboard" class="hidden">
                 <div class="card-3d">
-                    <h2>বর্তমান অ্যাপ ব্যবহারকারী তালিকা (শুধুমাত্র এডমিন দৃশ্যমান)</h2>
+                    <h2>অ্যাপ ব্যবহারকারী ও রোল পারমিশন ম্যানেজমেন্ট (এডমিন প্যানেল)</h2>
+                    <p style="font-size:12px; color:#555; margin-bottom:12px;">এখান থেকে যেকোনো নিবন্ধিত ইউজারকে Manager বা Finance Secretary রোল প্রদান করতে পারবেন:</p>
                     <div class="table-responsive">
                         <table>
                             <thead>
                                 <tr>
                                     <th>প্রোফাইল ছবি</th>
                                     <th>নাম ও PSL আইডি</th>
-                                    <th>মোবাইল / জিমেইল</th>
-                                    <th>ডাটাবেজ থেকে অটোমেটিক সময়</th>
-                                    <th>অ্যাকশন (রিজেক্ট ও ডিলেট)</th>
+                                    <th>মোবাইল / আইডি</th>
+                                    <th>বর্তমান রোল</th>
+                                    <th>রোল পরিবর্তন ও পারমিশন</th>
                                 </tr>
                             </thead>
                             <tbody id="activeUsersTableBody">
@@ -1061,9 +1014,9 @@
 
             <div id="committeeFormDashboard" class="hidden">
                 <div class="card-3d">
-                    <h2>কমিটি ফরম পূরণের জন্য এডমিন পাসওয়ার্ড দিন</h2>
+                    <h2>কমিটি ফরম পূরণের জন্য পাসওয়ার্ড লিখুন</h2>
                     <div id="committeeAuthBox">
-                        <input type="password" id="adminPinInput" class="input-3d" placeholder="অ্যাডমিন পাসওয়ার্ড">
+                        <input type="password" id="adminPinInput" class="input-3d" placeholder="আপনার এডমিন পাসওয়ার্ড">
                         <button class="btn-3d" onclick="verifyAdminForCommittee()">প্রবেশ করুন</button>
                     </div>
 
@@ -1155,7 +1108,6 @@
     </div>
 </div>
 
-<!-- A4 সাইজ সদস্য ফরম প্রিন্ট ও ডাউনলোড মডাল -->
 <div id="a4MemberModal" class="modal-overlay" style="display:none; justify-content:center; align-items:center; padding: 10px;">
     <div style="background: white; padding: 25px 30px; border-radius: 12px; max-width: 750px; width: 100%; max-height: 95vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
         <div id="a4PrintableContent" style="color: #1e293b;">
@@ -1173,7 +1125,6 @@
     </div>
 </div>
 
-<!-- প্রকল্প প্রিন্ট ও পিডিএফ ডাউনলোড মডাল -->
 <div id="projectPrintModal" class="modal-overlay" style="display:none; justify-content:center; align-items:center; padding: 20px;">
     <div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
         <div id="projectPrintArea" style="background: #fff; padding: 20px; color: #1e293b;">
@@ -1191,15 +1142,9 @@
     </div>
 </div>
 
-<!-- ম্যানেজার নোটিশ প্রদান মডাল -->
 <div id="managerNoticeModal" class="modal-overlay">
     <div class="modal-box">
-        <h3>ম্যানেজার ভেরিফিকেশন ও নোটিশ</h3>
-        <p style="font-size: 12px; color: #555; margin-bottom: 12px;">নোটিশ দিতে ম্যানেজার পাসওয়ার্ড দিন:</p>
-        <div class="form-group" style="text-align: left;">
-            <label>ম্যানেজার পাসওয়ার্ড:</label>
-            <input type="password" id="managerNoticePassInput" class="input-3d" placeholder="ম্যানেজার পাসওয়ার্ড দিন">
-        </div>
+        <h3>ম্যানেজার নোটিশ ও বার্তা</h3>
         <div class="form-group" style="text-align: left;">
             <label>জরুরি নোটিশের বিবরণ:</label>
             <textarea id="managerNoticeTextInput" class="input-3d" rows="3" placeholder="নোটিশের বিস্তারিত লিখুন..."></textarea>
@@ -1241,16 +1186,8 @@
 </div>
 
 <script>
-    const SHARE_LINK = "https://extraordinary-heliotrope-9de92f.netlify.app/";
+    const SHARE_LINK = "https://eso-bhabishyat-gori.netlify.app/";
     
-    function getStoredPasswords() {
-        return {
-            Admin: "911812",
-            Manager: localStorage.getItem('Manager_Pass') || "002026",
-            FinanceSecretary: localStorage.getItem('FinanceSecretary_Pass') || "0002026"
-        };
-    }
-
     const firebaseConfig = {
       apiKey: "AIzaSyCL-wNpmwF6VAtEWr6PqKETdcrdC4reonE",
       authDomain: "shirighat-teghoria-ags.firebaseapp.com",
@@ -1267,7 +1204,6 @@
 
     window.onload = function() {
         checkAutoLoginSession();
-        toggleLoginPhotoRequirement();
         listenRealtimeAppConfig();
     };
 
@@ -1349,17 +1285,16 @@
     }
 
     function saveAppConfigToDatabase() {
-        const pin = document.getElementById('configAdminPinInput').value;
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন অ্যাপের নাম ও লোগো পরিবর্তন করতে পারবেন!");
+            return;
+        }
+
         const appNameVal = document.getElementById('configAppNameInput').value;
         const appTitleVal = document.getElementById('configAppTitleInput').value;
         const leftLogoVal = document.getElementById('configLeftLogoBase64').value;
         const rightLogoVal = document.getElementById('configRightLogoBase64').value;
-        const PASSWORDS = getStoredPasswords();
-
-        if(pin !== PASSWORDS.Admin) {
-            alert("ভুল এডমিন পাসওয়ার্ড! সঠিক এডমিন পাসওয়ার্ড দিন।");
-            return;
-        }
 
         if(!appNameVal || !appTitleVal) {
             alert("দয়া করে ১ম ঘরে নাম এবং ২য় ঘরে টাইটেল পূরণ করুন।");
@@ -1373,69 +1308,80 @@
                 appTitle: appTitleVal,
                 leftLogo: leftLogoVal || existingConfig.leftLogo || "",
                 rightLogo: rightLogoVal || existingConfig.rightLogo || "",
-                updatedBy: 'Admin',
+                updatedBy: localStorage.getItem('loggedInUser'),
                 timestamp: Date.now()
             }).then(() => {
                 alert("অ্যাপের নাম, টাইটেল ও লোগো সফলভাবে আপডেট করা হয়েছে!");
-                document.getElementById('configAdminPinInput').value = '';
             });
         });
     }
 
-    function toggleLoginPhotoRequirement() {
-        const role = document.getElementById('authRoleSelect').value;
-        const photoGroup = document.getElementById('loginPhotoGroup');
-        if (role === 'Staff') {
-            photoGroup.style.display = 'block';
-        } else {
-            photoGroup.style.display = 'none';
-            document.getElementById('loginPhotoBase64').value = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-        }
-    }
-
-    function previewLoginImage(event) {
+    function previewImage(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('loginPhotoBase64').value = e.target.result;
-                document.getElementById('loginOutputPreview').src = e.target.result;
-                document.getElementById('loginImagePreviewContainer').style.display = 'block';
+                document.getElementById('mPhotoBase64').value = e.target.result;
+                document.getElementById('outputPreview').src = e.target.result;
+                document.getElementById('imagePreviewContainer').style.display = 'block';
             }
             reader.readAsDataURL(file);
-        } else {
-            document.getElementById('loginPhotoBase64').value = '';
-            document.getElementById('loginImagePreviewContainer').style.display = 'none';
+        }
+    }
+
+    function previewSignupImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('signupPhotoBase64').value = e.target.result;
+                document.getElementById('signupOutputPreview').src = e.target.result;
+                document.getElementById('signupImagePreviewContainer').style.display = 'block';
+            }
+            reader.readAsDataURL(file);
         }
     }
 
     function checkAutoLoginSession() {
         const savedSessionTime = localStorage.getItem('loginSessionTime');
         const savedUser = localStorage.getItem('loggedInUser');
-        const savedRole = localStorage.getItem('userRole') || 'Staff';
 
         if (savedSessionTime && savedUser) {
             const currentTime = new Date().getTime();
             const twentyFourHours = 24 * 60 * 60 * 1000;
 
             if (currentTime - parseInt(savedSessionTime) < twentyFourHours) {
-                document.getElementById('loginCard').classList.add('hidden');
-                document.getElementById('appContent').classList.remove('hidden');
-                document.getElementById('currentRoleDisplay').innerText = "ক্যাটাগরি: " + savedRole;
-                
-                applyRoleUI(savedRole);
-
-                startNoticeAutoReview();
-                loadChatMessages();
-                loadHomeProfileInfo(savedUser);
-                loadMyUniqueIdInfo(savedUser);
-                autoFillTransactionUser();
-                loadProjects();
-                loadStaffFundData(savedUser);
+                refreshUserRoleAndLoad(savedUser);
             } else {
                 handleLogout();
             }
         }
+    }
+
+    function refreshUserRoleAndLoad(userPhone) {
+        database.ref('registeredUsers').orderByChild('phone').equalTo(userPhone).once('value', (snapshot) => {
+            let role = 'Staff';
+            if(snapshot.exists()) {
+                snapshot.forEach(child => {
+                    if(child.val().role) role = child.val().role;
+                });
+            }
+            
+            localStorage.setItem('userRole', role);
+            document.getElementById('loginCard').classList.add('hidden');
+            document.getElementById('appContent').classList.remove('hidden');
+            document.getElementById('currentRoleDisplay').innerText = "ক্যাটাগরি: " + role;
+
+            applyRoleUI(role);
+
+            startNoticeAutoReview();
+            loadChatMessages();
+            loadHomeProfileInfo(userPhone);
+            loadMyUniqueIdInfo(userPhone);
+            autoFillTransactionUser();
+            loadProjects();
+            loadStaffFundData(userPhone);
+        });
     }
 
     function applyRoleUI(role) {
@@ -1446,58 +1392,51 @@
         const navReceiptBtn = document.getElementById('navReceiptBtn');
         const navActiveUsersBtn = document.getElementById('navActiveUsersBtn');
         const navChangePassBtn = document.getElementById('navChangePassBtn');
-        const navAdminPassApprovalBtn = document.getElementById('navAdminPassApprovalBtn');
         const navAdminAppConfigBtn = document.getElementById('navAdminAppConfigBtn');
+
+        navChangePassBtn.style.display = 'block';
 
         if(role === 'Admin') {
             if(navHomeBtn) navHomeBtn.style.display = 'none';
             navMemberListBtn.style.display = 'block';
             navActiveUsersBtn.style.display = 'block';
-            navAdminPassApprovalBtn.style.display = 'block';
             navAdminAppConfigBtn.style.display = 'block';
             navMemberBtn.style.display = 'block';
             navStaffFundBtn.style.display = 'none';
-            if(navReceiptBtn) navReceiptBtn.style.display = 'none';
-            navChangePassBtn.style.display = 'none';
+            if(navReceiptBtn) navReceiptBtn.style.display = 'block';
             switchDashboard('memberList');
         } else if(role === 'Manager') {
             if(navHomeBtn) navHomeBtn.style.display = 'none';
             navMemberListBtn.style.display = 'none';
             navActiveUsersBtn.style.display = 'none';
-            navAdminPassApprovalBtn.style.display = 'none';
             navAdminAppConfigBtn.style.display = 'none';
             navMemberBtn.style.display = 'none';
             navStaffFundBtn.style.display = 'none';
             if(navReceiptBtn) navReceiptBtn.style.display = 'block';
-            navChangePassBtn.style.display = 'block';
             switchDashboard('finance');
         } else if(role === 'FinanceSecretary') {
             if(navHomeBtn) navHomeBtn.style.display = 'none';
             navMemberListBtn.style.display = 'none';
             navActiveUsersBtn.style.display = 'none';
-            navAdminPassApprovalBtn.style.display = 'none';
             navAdminAppConfigBtn.style.display = 'none';
             navMemberBtn.style.display = 'none';
             navStaffFundBtn.style.display = 'none';
             if(navReceiptBtn) navReceiptBtn.style.display = 'none';
-            navChangePassBtn.style.display = 'block';
             switchDashboard('finance');
         } else {
             if(navHomeBtn) navHomeBtn.style.display = 'block';
             navMemberListBtn.style.display = 'none';
             navActiveUsersBtn.style.display = 'none';
-            navAdminPassApprovalBtn.style.display = 'none';
             navAdminAppConfigBtn.style.display = 'none';
             navMemberBtn.style.display = 'block';
             navStaffFundBtn.style.display = 'block';
             if(navReceiptBtn) navReceiptBtn.style.display = 'none';
-            navChangePassBtn.style.display = 'none';
             switchDashboard('home');
         }
 
         const pForm = document.getElementById('projectForm');
         const pRestricted = document.getElementById('projectRestrictedMsg');
-        if(role === 'FinanceSecretary' || role === 'Manager') {
+        if(role === 'FinanceSecretary' || role === 'Manager' || role === 'Admin') {
             if(pForm) pForm.style.display = 'block';
             if(pRestricted) pRestricted.classList.add('hidden');
         } else {
@@ -1524,6 +1463,221 @@
         document.getElementById('loginCard').classList.remove('hidden');
     }
 
+    let generatedOtp = "";
+    let pendingPhone = "";
+    let pendingPass = "";
+
+    function initiateSignup() {
+        const phone = document.getElementById('authPhoneInput').value;
+        const pass = document.getElementById('authPassInput').value;
+        if(!phone || !pass) {
+            alert("দয়া করে মোবাইল নম্বর/ইউজার আইডি এবং পাসওয়ার্ড দিন।");
+            return;
+        }
+
+        database.ref('registeredUsers').orderByChild('phone').equalTo(phone).once('value', (snapshot) => {
+            if(snapshot.exists()) {
+                alert("এই মোবাইল নম্বর বা ইউজার আইডি দিয়ে ইতোমধ্যে একটি একাউন্ট রয়েছে! দয়া করে লগইন করুন।");
+            } else {
+                pendingPhone = phone;
+                pendingPass = pass;
+                generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+                
+                database.ref('otps/' + phone).set({ otp: generatedOtp, time: Date.now() }).then(() => {
+                    alert("ডাটাবেজ ওটিপি সফলভাবে পাঠানো হয়েছে। আপনার ওটিপি কোডটি হলো: " + generatedOtp);
+                    document.getElementById('loginStep1').classList.add('hidden');
+                    document.getElementById('loginStep2').classList.remove('hidden');
+                });
+            }
+        });
+    }
+
+    function verifyOtpAndRegister() {
+        const userOtp = document.getElementById('otpCodeInput').value;
+        const signupPhoto = document.getElementById('signupPhotoBase64').value;
+
+        if(!signupPhoto) {
+            alert("সাইনআপ করার সময় প্রোফাইল ছবি বাধ্যতামূলক!");
+            return;
+        }
+
+        if(userOtp === generatedOtp) {
+            // Check if any users exist; first user automatically becomes Admin
+            database.ref('registeredUsers').once('value', (usersSnap) => {
+                const isFirstUser = !usersSnap.exists();
+                const assignedRole = isFirstUser ? 'Admin' : 'Staff';
+
+                // Preserve old PSL ID if member record already exists in database
+                database.ref('members').orderByChild('phone').equalTo(pendingPhone).once('value', (memberSnap) => {
+                    let memberId = '';
+                    if(memberSnap.exists()) {
+                        memberSnap.forEach(child => {
+                            if(child.val().id) memberId = child.val().id;
+                        });
+                    }
+
+                    if(!memberId) {
+                        memberId = 'PSL-' + Math.floor(1000 + Math.random() * 9000);
+                        database.ref('members').push({
+                            phone: pendingPhone,
+                            id: memberId,
+                            name: 'সদস্য (' + pendingPhone + ')',
+                            photo: signupPhoto,
+                            status: 'Pending',
+                            timestamp: Date.now()
+                        });
+                    }
+
+                    database.ref('registeredUsers').push({
+                        phone: pendingPhone,
+                        password: pendingPass,
+                        role: assignedRole,
+                        photo: signupPhoto,
+                        createdDate: Date.now()
+                    }).then(() => {
+                        alert("ওটিপি সফলভাবে যাচাই হয়েছে! সাইনআপ সম্পন্ন হয়েছে।\nরোল: " + assignedRole + "\nআপনার আইডি: " + memberId);
+                        
+                        localStorage.setItem('loginSessionTime', new Date().getTime());
+                        localStorage.setItem('loggedInUser', pendingPhone);
+                        localStorage.setItem('userRole', assignedRole);
+
+                        refreshUserRoleAndLoad(pendingPhone);
+                    });
+                });
+            });
+        } else {
+            alert("ভুল ওটিপি কোড! সঠিক ওটিপি দিন।");
+        }
+    }
+
+    function handleLogin() {
+        const phone = document.getElementById('authPhoneInput').value;
+        const pass = document.getElementById('authPassInput').value;
+
+        if(!phone || !pass) {
+            alert("দয়া করে মোবাইল নম্বর/ইউজার আইডি এবং পাসওয়ার্ড দিন।");
+            return;
+        }
+
+        database.ref('registeredUsers').orderByChild('phone').equalTo(phone).once('value', (snapshot) => {
+            if(snapshot.exists()) {
+                let found = false;
+                let userRole = 'Staff';
+                snapshot.forEach((child) => {
+                    const uData = child.val();
+                    if(uData.password === pass) {
+                        found = true;
+                        userRole = uData.role || 'Staff';
+                    }
+                });
+
+                if(found) {
+                    alert("সফলভাবে লগইন হয়েছে! (ক্যাটাগরি: " + userRole + ")");
+                    localStorage.setItem('loginSessionTime', new Date().getTime());
+                    localStorage.setItem('loggedInUser', phone);
+                    localStorage.setItem('userRole', userRole);
+
+                    refreshUserRoleAndLoad(phone);
+                } else {
+                    alert("ভুল পাসওয়ার্ড!");
+                }
+            } else {
+                alert("এই নম্বরটি দিয়ে কোনো অ্যাকাউন্ট পাওয়া যায়নি। প্রথমে নতুন সাইনআপ করুন।");
+            }
+        });
+    }
+
+    function submitPasswordChangeRequest() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        const oldPass = document.getElementById('cpOldPass').value;
+        const newPass = document.getElementById('cpNewPass').value;
+        const confirmPass = document.getElementById('cpConfirmPass').value;
+
+        if(!oldPass || !newPass || !confirmPass) {
+            alert("দয়া করে সমস্ত ফিল্ড পূরণ করুন।");
+            return;
+        }
+
+        if(newPass !== confirmPass) {
+            alert("নতুন পাসওয়ার্ড এবং কনফার্ম নতুন পাসওয়ার্ড মিলছে না!");
+            return;
+        }
+
+        database.ref('registeredUsers').orderByChild('phone').equalTo(loggedInUser).once('value', (snapshot) => {
+            if(snapshot.exists()) {
+                let keyToUpdate = null;
+                snapshot.forEach(c => {
+                    if(c.val().password === oldPass) keyToUpdate = c.key;
+                });
+
+                if(keyToUpdate) {
+                    database.ref('registeredUsers/' + keyToUpdate).update({ password: newPass }).then(() => {
+                        alert("আপনার পাসওয়ার্ড সফলভাবে আপডেট করা হয়েছে!");
+                        document.getElementById('cpOldPass').value = '';
+                        document.getElementById('cpNewPass').value = '';
+                        document.getElementById('cpConfirmPass').value = '';
+                    });
+                } else {
+                    alert("আগের পাসওয়ার্ডটি সঠিক নয়!");
+                }
+            }
+        });
+    }
+
+    function loadActiveUsersList() {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন ব্যবহারকারী ও রোল ম্যানেজমেন্ট প্যানেল দেখতে পারবেন!");
+            switchDashboard('finance');
+            return;
+        }
+
+        database.ref('registeredUsers').on('value', (snapshot) => {
+            const tbody = document.getElementById('activeUsersTableBody');
+            tbody.innerHTML = '';
+            const data = snapshot.val();
+            if(data) {
+                Object.keys(data).forEach(key => {
+                    const u = data[key];
+                    const photo = u.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                    const role = u.role || 'Staff';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><img src="${photo}" class="member-img"></td>
+                            <td><b>ইউজার: ${u.phone}</b></td>
+                            <td>${u.phone}</td>
+                            <td><span class="role-badge">${role}</span></td>
+                            <td>
+                                <select class="input-3d" style="width:130px; display:inline-block; margin:0;" id="roleSelect_${key}">
+                                    <option value="Staff" ${role === 'Staff' ? 'selected' : ''}>Staff</option>
+                                    <option value="FinanceSecretary" ${role === 'FinanceSecretary' ? 'selected' : ''}>Finance Secretary</option>
+                                    <option value="Manager" ${role === 'Manager' ? 'selected' : ''}>Manager</option>
+                                    <option value="Admin" ${role === 'Admin' ? 'selected' : ''}>Admin</option>
+                                </select>
+                                <button onclick="updateUserRole('${key}')" class="btn-edit" style="margin-left:4px;">সেভ রোল</button>
+                            </td>
+                        </tr>`;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো নিবন্ধিত ব্যবহারকারী নেই।</td></tr>';
+            }
+        });
+    }
+
+    function updateUserRole(userKey) {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন ইউজার রোল পরিবর্তন করতে পারবেন!");
+            return;
+        }
+
+        const newRole = document.getElementById('roleSelect_' + userKey).value;
+        database.ref('registeredUsers/' + userKey).update({ role: newRole }).then(() => {
+            alert("ব্যবহারকারীর রোল সফলভাবে '" + newRole + "' সেটিংসে আপডেট করা হয়েছে!");
+        });
+    }
+
     function loadHomeProfileInfo(phone) {
         database.ref('members').orderByChild('phone').equalTo(phone).on('value', (snapshot) => {
             const container = document.getElementById('homeUniqueIdInfo');
@@ -1537,7 +1691,7 @@
                         <b>নাম:</b> ${m.name} <br>
                         <b>সদস্য ইউনিক আইডি (PSL ID):</b> <span style="color:var(--primary); font-size:16px; font-weight:bold;">${m.id || 'আইডি প্রক্রিয়াধীন'}</span> <br>
                         <b>স্ট্যাটাস:</b> <span class="${m.status === 'Approved' ? 'st-approved' : 'st-pending'}">${m.status}</span> <br>
-                        <b>মোবাইল / জিমেইল:</b> ${m.phone} <br>
+                        <b>মোবাইল / আইডি:</b> ${m.phone} <br>
                         <b>এলাকা:</b> ${m.district || ''} - ${m.upazila || ''}
                     `;
                 });
@@ -1570,52 +1724,6 @@
         });
     }
 
-    function loadMyDataForEdit(recordKey, recordPhone) {
-        const loggedInUserPhone = localStorage.getItem('loggedInUser');
-        const currentRole = localStorage.getItem('userRole');
-
-        if(currentRole === 'Staff' && recordPhone !== loggedInUserPhone) {
-            alert("নিরাপত্তা সতর্কতা: আপনি অন্য কোনো স্টাফ বা সদস্যের আইডি এডিট করতে পারবেন না!");
-            return;
-        }
-
-        database.ref('members/' + recordKey).once('value', (snapshot) => {
-            if(snapshot.exists()) {
-                const m = snapshot.val();
-                document.getElementById('editMemberKey').value = recordKey;
-                document.getElementById('mMemberType').value = m.memberType || 'স্থায়ী';
-                document.getElementById('mDivision').value = m.division || 'ময়মনসিংহ';
-                updateDistricts();
-                document.getElementById('mDistrict').value = m.district || '';
-                updateUpazilas();
-                document.getElementById('mUpazila').value = m.upazila || '';
-                updateUnions();
-                document.getElementById('mUnionWard').value = m.unionWard || '';
-                
-                document.getElementById('mName').value = m.name || '';
-                document.getElementById('mFather').value = m.father || '';
-                document.getElementById('mMother').value = m.mother || '';
-                document.getElementById('mIdType').value = m.idType || 'NID';
-                document.getElementById('mNid').value = m.nid || '';
-                document.getElementById('mPermanentAddr').value = m.permanentAddr || '';
-                document.getElementById('mPhone').value = m.phone || '';
-                
-                document.getElementById('nName').value = m.nName || '';
-                document.getElementById('nRelation').value = m.nRelation || 'পিতা';
-
-                if(m.photo) {
-                    document.getElementById('mPhotoBase64').value = m.photo;
-                    document.getElementById('outputPreview').src = m.photo;
-                    document.getElementById('imagePreviewContainer').style.display = 'block';
-                }
-
-                switchDashboard('member');
-                goToStep(1);
-                alert("আপনার সদস্য তথ্য এডিট মোডে লোড করা হয়েছে। পরিবর্তন করে নিচে থেকে আপডেট করুন।");
-            }
-        });
-    }
-
     function autoFillTransactionUser() {
         const phone = localStorage.getItem('loggedInUser');
         if(!phone) return;
@@ -1633,115 +1741,6 @@
                 document.getElementById('txName').value = "ইউজার (" + phone + ")";
             }
         });
-    }
-
-    function submitPasswordChangeRequest() {
-        const role = localStorage.getItem('userRole');
-        if(role !== 'FinanceSecretary' && role !== 'Manager') {
-            alert("শুধুমাত্র Finance Secretary অথবা Manager পাসওয়ার্ড পরিবর্তন করতে পারবেন।");
-            return;
-        }
-
-        const oldPass = document.getElementById('cpOldPass').value;
-        const newPass = document.getElementById('cpNewPass').value;
-        const confirmPass = document.getElementById('cpConfirmPass').value;
-
-        if(!oldPass || !newPass || !confirmPass) {
-            alert("দয়া করে সমস্ত ফিল্ড পূরণ করুন।");
-            return;
-        }
-
-        if(newPass !== confirmPass) {
-            alert("নতুন পাসওয়ার্ড এবং কনফার্ম নতুন পাসওয়ার্ড মিলছে না!");
-            return;
-        }
-
-        const PASSWORDS = getStoredPasswords();
-        const currentActivePass = role === 'Manager' ? PASSWORDS.Manager : PASSWORDS.FinanceSecretary;
-
-        if(oldPass !== currentActivePass) {
-            alert("আপনার আগের পাসওয়ার্ডটি সঠিক নয়!");
-            return;
-        }
-
-        database.ref('passwordRequests').push({
-            role: role,
-            oldPass: oldPass,
-            newPass: newPass,
-            status: 'Pending',
-            timestamp: Date.now()
-        }).then(() => {
-            alert("পাসওয়ার্ড পরিবর্তনের আবেদন সফলভাবে এডমিনের কাছে পাঠানো হয়েছে!");
-            document.getElementById('cpOldPass').value = '';
-            document.getElementById('cpNewPass').value = '';
-            document.getElementById('cpConfirmPass').value = '';
-        });
-    }
-
-    function loadAdminPassApprovals() {
-        const role = localStorage.getItem('userRole');
-        if(role !== 'Admin') return;
-
-        database.ref('passwordRequests').on('value', (snapshot) => {
-            const tbody = document.getElementById('adminPassApprovalTableBody');
-            tbody.innerHTML = '';
-            const data = snapshot.val();
-            let hasAny = false;
-
-            if(data) {
-                Object.keys(data).forEach(key => {
-                    const req = data[key];
-                    if(req.status === 'Pending') {
-                        hasAny = true;
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><b>${req.role}</b></td>
-                                <td>${req.oldPass}</td>
-                                <td>${req.newPass}</td>
-                                <td><span class="st-pending">Pending (যাচাই বাকি)</span></td>
-                                <td>
-                                    <button onclick="approvePasswordRequest('${key}', '${req.role}', '${req.newPass}')" class="btn-edit" style="background:#16a34a; margin-bottom:4px;">এপ্রুভ করুন</button>
-                                    <button onclick="rejectPasswordRequest('${key}')" class="btn-delete" style="background:#dc2626;">রিজেক্ট</button>
-                                </td>
-                            </tr>`;
-                    }
-                });
-            }
-
-            if(!hasAny) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো পাসওয়ার্ড পরিবর্তনের আবেদন নেই।</td></tr>';
-            }
-        });
-    }
-
-    function approvePasswordRequest(key, targetRole, newPassword) {
-        const pin = promptSecurePassword("এডমিন পাসওয়ার্ড দিন পাসওয়ার্ড যাচাই ও এপ্রুভ করার জন্য:");
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
-            if(targetRole === 'Manager') {
-                localStorage.setItem('Manager_Pass', newPassword);
-            } else if(targetRole === 'FinanceSecretary') {
-                localStorage.setItem('FinanceSecretary_Pass', newPassword);
-            }
-
-            database.ref('passwordRequests/' + key).update({ status: 'Approved' }).then(() => {
-                alert(targetRole + "-এর নতুন পাসওয়ার্ড সফলভাবে এপ্রুভ করা হয়েছে!");
-            });
-        } else if(pin !== null) {
-            alert("ভুল এডমিন পাসওয়ার্ড!");
-        }
-    }
-
-    function rejectPasswordRequest(key) {
-        const pin = promptSecurePassword("এডমিন পাসওয়ার্ড দিন:");
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
-            database.ref('passwordRequests/' + key).update({ status: 'Rejected' }).then(() => {
-                alert("আবেদনটি রিজেক্ট করা হয়েছে।");
-            });
-        } else if(pin !== null) {
-            alert("ভুল পাসওয়ার্ড!");
-        }
     }
 
     const geoData = {
@@ -1809,32 +1808,6 @@
         }
     }
 
-    function previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('mPhotoBase64').value = e.target.result;
-                document.getElementById('outputPreview').src = e.target.result;
-                document.getElementById('imagePreviewContainer').style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function previewSignupImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('signupPhotoBase64').value = e.target.result;
-                document.getElementById('signupOutputPreview').src = e.target.result;
-                document.getElementById('signupImagePreviewContainer').style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        }
-    }
-
     function previewProjectRecipientPhoto(event) {
         const file = event.target.files[0];
         if (file) {
@@ -1855,7 +1828,7 @@
         }
 
         if(type === 'receipt' && currentRole !== 'Manager' && currentRole !== 'Admin') {
-            alert("দুঃখিত! টাকা জমা রশিদ সিস্টেম শুধুমাত্র ম্যানেজার আইডি থেকে পরিচালনা করা যাবে।");
+            alert("দুঃখিত! টাকা জমা রশিদ সিস্টেম শুধুমাত্র ম্যানেজার বা এডমিন আইডি থেকে পরিচালনা করা যাবে।");
             return;
         }
 
@@ -1871,7 +1844,6 @@
         document.getElementById('committeeFormDashboard').classList.add('hidden');
         document.getElementById('committeeViewDashboard').classList.add('hidden');
         document.getElementById('changePassDashboard').classList.add('hidden');
-        document.getElementById('adminPassApprovalDashboard').classList.add('hidden');
         document.getElementById('adminAppConfigDashboard').classList.add('hidden');
 
         document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -1922,10 +1894,6 @@
         } else if(type === 'changePass') {
             document.getElementById('changePassDashboard').classList.remove('hidden');
             document.getElementById('navChangePassBtn').classList.add('active');
-        } else if(type === 'adminPassApproval') {
-            document.getElementById('adminPassApprovalDashboard').classList.remove('hidden');
-            document.getElementById('navAdminPassApprovalBtn').classList.add('active');
-            loadAdminPassApprovals();
         } else if(type === 'adminAppConfig') {
             document.getElementById('adminAppConfigDashboard').classList.remove('hidden');
             document.getElementById('navAdminAppConfigBtn').classList.add('active');
@@ -2051,200 +2019,6 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    let generatedOtp = "";
-    let pendingPhone = "";
-    let pendingPass = "";
-
-    function initiateSignup() {
-        const phone = document.getElementById('authPhoneInput').value;
-        const pass = document.getElementById('authPassInput').value;
-        if(!phone || !pass) {
-            alert("দয়া করে মোবাইল নম্বর বা জিমেইল আইডি এবং পাসওয়ার্ড দিন।");
-            return;
-        }
-
-        database.ref('registeredUsers').orderByChild('phone').equalTo(phone).once('value', (snapshot) => {
-            if(snapshot.exists()) {
-                alert("এই মোবাইল নম্বর বা জিমেইল আইডি দিয়ে ইতোমধ্যে একটি একাউন্ট রয়েছে! দয়া করে লগইন করুন।");
-            } else {
-                pendingPhone = phone;
-                pendingPass = pass;
-                generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
-                
-                database.ref('otps/' + phone).set({ otp: generatedOtp, time: Date.now() }).then(() => {
-                    alert("ডাটাবেজ ওটিপি সফলভাবে পাঠানো হয়েছে। আপনার ওটিপি কোডটি হলো: " + generatedOtp);
-                    document.getElementById('loginStep1').classList.add('hidden');
-                    document.getElementById('loginStep2').classList.remove('hidden');
-                });
-            }
-        });
-    }
-
-    function verifyOtpAndRegister() {
-        const userOtp = document.getElementById('otpCodeInput').value;
-        const signupPhoto = document.getElementById('signupPhotoBase64').value;
-
-        if(!signupPhoto) {
-            alert("স্টাফ সাইনআপ করার সময় প্রোফাইল ছবি বাধ্যতামূলক!");
-            return;
-        }
-
-        if(userOtp === generatedOtp) {
-            database.ref('registeredUsers').push({
-                phone: pendingPhone,
-                password: pendingPass,
-                role: 'Staff',
-                photo: signupPhoto,
-                createdDate: Date.now()
-            }).then(() => {
-                const autoMemberId = 'PSL-' + Math.floor(1000 + Math.random() * 9000);
-                
-                database.ref('members').push({
-                    phone: pendingPhone,
-                    id: autoMemberId,
-                    name: 'নতুন সদস্য (' + pendingPhone + ')',
-                    photo: signupPhoto,
-                    status: 'Pending',
-                    timestamp: Date.now()
-                });
-
-                alert("ওটিপি সফলভাবে যাচাই হয়েছে! আপনার সাইনআপ সম্পন্ন হয়েছে।");
-                
-                const safeKey = pendingPhone.replace(/[.#$\/\[\]]/g, '_');
-                database.ref('activeAppUsersNew/' + safeKey).set({
-                    userId: pendingPhone,
-                    name: 'Staff (' + pendingPhone + ')',
-                    photo: signupPhoto,
-                    pslId: autoMemberId,
-                    time: new Date().toLocaleString('bn-BD', { timeZone: 'Asia/Dhaka' }),
-                    timestamp: Date.now()
-                });
-
-                localStorage.setItem('loginSessionTime', new Date().getTime());
-                localStorage.setItem('loggedInUser', pendingPhone);
-                localStorage.setItem('userRole', 'Staff');
-
-                document.getElementById('loginCard').classList.add('hidden');
-                document.getElementById('appContent').classList.remove('hidden');
-                document.getElementById('currentRoleDisplay').innerText = "ক্যাটাগরি: Staff";
-                
-                applyRoleUI('Staff');
-
-                startNoticeAutoReview();
-                loadChatMessages();
-                loadHomeProfileInfo(pendingPhone);
-                loadMyUniqueIdInfo(pendingPhone);
-                autoFillTransactionUser();
-            });
-        } else {
-            alert("ভুল ওটিপি কোড! সঠিক ওটিপি দিন।");
-        }
-    }
-
-    function handleLogin() {
-        const role = document.getElementById('authRoleSelect').value;
-        const phone = document.getElementById('authPhoneInput').value;
-        const pass = document.getElementById('authPassInput').value;
-        const loginPhoto = document.getElementById('loginPhotoBase64').value;
-
-        if(!phone || !pass) {
-            alert("দয়া করে আইডি/মোবাইল নম্বর এবং পাসওয়ার্ড দিন।");
-            return;
-        }
-
-        const PASSWORDS = getStoredPasswords();
-
-        if(role === 'Manager') {
-            if(pass === PASSWORDS.Manager) {
-                completeLoginSession(phone, 'Manager', false, 'https://cdn-icons-png.flaticon.com/512/149/149071.png');
-            } else {
-                alert("ভুল পাসওয়ার্ড!");
-            }
-            return;
-        }
-
-        if(role === 'FinanceSecretary') {
-            if(pass === PASSWORDS.FinanceSecretary) {
-                completeLoginSession(phone, 'FinanceSecretary', false, 'https://cdn-icons-png.flaticon.com/512/149/149071.png');
-            } else {
-                alert("ভুল পাসওয়ার্ড!");
-            }
-            return;
-        }
-
-        if(role === 'Admin') {
-            if(pass === PASSWORDS.Admin) {
-                completeLoginSession(phone, 'Admin', true, 'https://cdn-icons-png.flaticon.com/512/149/149071.png');
-            } else {
-                alert("ভুল পাসওয়ার্ড!");
-            }
-            return;
-        }
-
-        database.ref('registeredUsers').orderByChild('phone').equalTo(phone).once('value', (snapshot) => {
-            if(snapshot.exists()) {
-                let found = false;
-                let userPhoto = loginPhoto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                snapshot.forEach((child) => {
-                    if(child.val().password === pass) {
-                        found = true;
-                        if(child.val().photo) userPhoto = child.val().photo;
-                    }
-                });
-                if(found) {
-                    completeLoginSession(phone, 'Staff', false, userPhoto);
-                } else {
-                    alert("ভুল পাসওয়ার্ড!");
-                }
-            } else {
-                alert("এই নম্বরটি দিয়ে কোনো স্টাফ রেজিস্টার্ড নেই। নতুন সাইনআপ করুন।");
-            }
-        });
-    }
-
-    function completeLoginSession(user, role, isAdmin = false, userPhoto = 'https://cdn-icons-png.flaticon.com/512/149/149071.png') {
-        alert("সফলভাবে লগইন হয়েছে! (" + role + ")");
-
-        database.ref('members').orderByChild('phone').equalTo(user).once('value', (snapshot) => {
-            let pslId = "PSL-ID";
-            let realName = role + " (" + user + ")";
-            if(snapshot.exists()) {
-                snapshot.forEach(child => {
-                    if(child.val().id) pslId = child.val().id;
-                    if(child.val().name) realName = child.val().name;
-                });
-            }
-
-            const safeKey = user.replace(/[.#$\/\[\]]/g, '_');
-            database.ref('activeAppUsersNew/' + safeKey).set({
-                userId: user,
-                name: realName,
-                photo: userPhoto,
-                pslId: pslId,
-                time: new Date().toLocaleString('bn-BD', { timeZone: 'Asia/Dhaka' }),
-                timestamp: Date.now()
-            });
-
-            localStorage.setItem('loginSessionTime', new Date().getTime());
-            localStorage.setItem('loggedInUser', user);
-            localStorage.setItem('userRole', role);
-
-            document.getElementById('loginCard').classList.add('hidden');
-            document.getElementById('appContent').classList.remove('hidden');
-            document.getElementById('currentRoleDisplay').innerText = "ক্যাটাগরি: " + role;
-            
-            applyRoleUI(role);
-
-            startNoticeAutoReview();
-            loadChatMessages();
-            loadHomeProfileInfo(user);
-            loadMyUniqueIdInfo(user);
-            autoFillTransactionUser();
-            loadProjects();
-            loadStaffFundData(user);
-        });
-    }
-
     function openForgotModal() {
         document.getElementById('forgotModal').style.display = 'flex';
     }
@@ -2275,74 +2049,12 @@
         });
     }
 
-    function loadActiveUsersList() {
-        const currentRole = localStorage.getItem('userRole');
-        if(currentRole !== 'Admin') {
-            alert("শুধুমাত্র এডমিন বর্তমান অ্যাপ ব্যবহারকারী তালিকা দেখতে পারবেন!");
-            switchDashboard('finance');
-            return;
-        }
-
-        database.ref('activeAppUsersNew').on('value', (snapshot) => {
-            const tbody = document.getElementById('activeUsersTableBody');
-            tbody.innerHTML = '';
-            const data = snapshot.val();
-            if(data) {
-                Object.keys(data).forEach(key => {
-                    const u = data[key];
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><img src="${u.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="member-img"></td>
-                            <td><b>${u.name}</b><br><small style="color:var(--primary); font-weight:bold;">${u.pslId || 'PSL-ID'}</small></td>
-                            <td>${u.userId}</td>
-                            <td>${u.time || '-'}</td>
-                            <td>
-                                <button onclick="rejectAppUser('${u.userId}', '${key}')" class="btn-delete" style="margin-bottom:4px;">রিজেক্ট</button>
-                                <button onclick="deleteAppUser('${u.userId}', '${key}')" class="btn-delete" style="background:#dc2626;">ডিলেট</button>
-                            </td>
-                        </tr>`;
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো সক্রিয় ব্যবহারকারী নেই।</td></tr>';
-            }
-        });
-    }
-
-    function rejectAppUser(userId, dbKey) {
-        const pin = promptSecurePassword("এডমিন পাসওয়ার্ড দিন রিজেক্ট করার জন্য:");
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
-            database.ref('activeAppUsersNew/' + dbKey).remove().then(() => {
-                alert("ব্যবহারকারীকে সফলভাবে রিজেক্ট করা হয়েছে।");
-            });
-        } else if(pin !== null) {
-            alert("ভুল পাসওয়ার্ড!");
-        }
-    }
-
-    function deleteAppUser(userId, dbKey) {
-        const pin = promptSecurePassword("এডমিন পাসওয়ার্ড দিন একাউন্ট ডিলেট করার জন্য:");
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
-            database.ref('activeAppUsersNew/' + dbKey).remove().then(() => {
-                alert("ব্যবহারকারী সফলভাবে ডিলেট করা হয়েছে।");
-            });
-        } else if(pin !== null) {
-            alert("ভুল পাসওয়ার্ড!");
-        }
-    }
-
     function goToStep(stepNum) {
         document.querySelectorAll('.step-section').forEach(el => el.classList.remove('active'));
         document.getElementById('step' + stepNum).classList.add('active');
     }
 
-    function promptSecurePassword(message) {
-        return prompt(message);
-    }
-
     function openManagerNoticeModal() {
-        document.getElementById('managerNoticePassInput').value = '';
         document.getElementById('managerNoticeTextInput').value = '';
         document.getElementById('managerNoticeModal').style.display = 'flex';
     }
@@ -2352,28 +2064,28 @@
     }
 
     function submitManagerNotice() {
-        const inputPass = document.getElementById('managerNoticePassInput').value;
         const noticeText = document.getElementById('managerNoticeTextInput').value;
+        const currentRole = localStorage.getItem('userRole');
 
-        if(!inputPass || !noticeText) {
-            alert("দয়া করে ম্যানেজার পাসওয়ার্ড এবং নোটিশের বিবরণ উভয়ই লিখুন।");
+        if(currentRole !== 'Manager' && currentRole !== 'Admin') {
+            alert("শুধুমাত্র ম্যানেজার বা এডমিন নোটিশ প্রকাশ করতে পারবেন।");
             return;
         }
 
-        const PASSWORDS = getStoredPasswords();
-        if(inputPass === PASSWORDS.Manager) {
-            database.ref('notices').push({
-                text: noticeText,
-                sender: 'Manager',
-                timestamp: Date.now()
-            }).then(() => {
-                alert("জরুরি নোটিশটি সফলভাবে নোটিশ বাক্সে প্রকাশিত হয়েছে!");
-                closeManagerNoticeModal();
-                fetchAndDisplayNotices();
-            });
-        } else {
-            alert("ভুল ম্যানেজার পাসওয়ার্ড!");
+        if(!noticeText) {
+            alert("দয়া করে নোটিশের বিবরণ লিখুন।");
+            return;
         }
+
+        database.ref('notices').push({
+            text: noticeText,
+            sender: localStorage.getItem('loggedInUser'),
+            timestamp: Date.now()
+        }).then(() => {
+            alert("জরুরি নোটিশটি সফলভাবে নোটিশ বাক্সে প্রকাশিত হয়েছে!");
+            closeManagerNoticeModal();
+            fetchAndDisplayNotices();
+        });
     }
 
     let noticesList = [];
@@ -2415,8 +2127,8 @@
     function handleFinalSubmit(e) {
         e.preventDefault();
         const currentRole = localStorage.getItem('userRole');
-        if(currentRole !== 'Staff') {
-            alert("সদস্য ফরম শুধুমাত্র Staff আইডি থেকে পূরণ করা যাবে।");
+        if(currentRole !== 'Staff' && currentRole !== 'Admin') {
+            alert("সদস্য ফরম Staff আইডি থেকে পূরণ করা যাবে।");
             return;
         }
 
@@ -2427,10 +2139,6 @@
             database.ref('members/' + editKey).once('value', (snap) => {
                 if(snap.exists()) {
                     const mVal = snap.val();
-                    if(mVal.phone !== loggedInPhone) {
-                        alert("নিরাপত্তা সতর্কতা: আপনি অন্যের আইডি এডিট করতে পারবেন না!");
-                        return;
-                    }
 
                     const updatedData = {
                         memberType: document.getElementById('mMemberType').value,
@@ -2697,29 +2405,25 @@
     function adminApproveMember(key, newStatus) {
         const currentRole = localStorage.getItem('userRole');
         if(currentRole !== 'Admin') {
-            alert("সতর্ক বার্তা: একজনের আইডি থেকে অন্য জন এপ্রুভ দিতে পারবে না!");
+            alert("সতর্ক বার্তা: শুধুমাত্র এডমিন আইডি থেকে সদস্য এপ্রুভ বা রিজেক্ট করা যাবে!");
             return;
         }
 
-        const pin = promptSecurePassword("এডমিন পাসওয়ার্ড দিন সদস্য এপ্রুভ/রিজেক্ট করার জন্য:");
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
-            database.ref('members/' + key).update({ 
-                status: newStatus,
-                rejectedTimestamp: newStatus === 'Rejected' ? Date.now() : null
-            }).then(() => alert("স্ট্যাটাস সফলভাবে আপডেট করা হয়েছে: " + newStatus));
-        } else if(pin !== null) {
-            alert("ভুল এডমিন পাসওয়ার্ড!");
-        }
+        database.ref('members/' + key).update({ 
+            status: newStatus,
+            approvedBy: localStorage.getItem('loggedInUser'),
+            rejectedTimestamp: newStatus === 'Rejected' ? Date.now() : null
+        }).then(() => alert("স্ট্যাটাস সফলভাবে আপডেট করা হয়েছে: " + newStatus));
     }
 
     function deleteMember(key) {
-        const pin = promptSecurePassword("এডমিন পাসওয়ার্ড দিন মুছার জন্য:");
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন একাউন্ট মুছতে পারবেন!");
+            return;
+        }
+        if(confirm("আপনি কি নিশ্চিত যে এই একাউন্টটি মুছে ফেলতে চান?")) {
             database.ref('members/' + key).remove().then(() => alert("সফলভাবে মুছে ফেলা হয়েছে!"));
-        } else if(pin !== null) {
-            alert("ভুল পাসওয়ার্ড!");
         }
     }
 
@@ -2729,20 +2433,23 @@
     }
 
     function deleteAllSelectedMembers() {
-        const pin = promptSecurePassword("এডমিন পাসওয়ার্ড দিন একাধিক একাউন্ট মুছার জন্য:");
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
-            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
-            if(checkboxes.length === 0) {
-                alert("কোনো সদস্য সিলেক্ট করা হয়নি!");
-                return;
-            }
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন একাধিক একাউন্ট মুছতে পারবেন!");
+            return;
+        }
+
+        const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+        if(checkboxes.length === 0) {
+            alert("কোনো সদস্য সিলেক্ট করা হয়নি!");
+            return;
+        }
+
+        if(confirm("নির্বাচিত সকল সদস্য একাউন্ট মুছে ফেলতে চান?")) {
             checkboxes.forEach(cb => {
                 database.ref('members/' + cb.value).remove();
             });
             alert("নির্বাচিত সদস্যগণ সফলভাবে মুছে ফেলা হয়েছে।");
-        } else if(pin !== null) {
-            alert("ভুল পাসওয়ার্ড!");
         }
     }
 
@@ -2762,7 +2469,7 @@
         if(!text) return;
 
         database.ref('members').orderByChild('phone').equalTo(phone).once('value', (snapshot) => {
-            let name = "ইউজার";
+            let name = "ইউজার (" + phone + ")";
             let photo = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
             if(snapshot.exists()) {
                 snapshot.forEach(c => {
@@ -2903,7 +2610,7 @@
                                 <td><b>${tx.category}</b></td>
                                 <td>${tx.paymentMethod}<span class="account-text">${tx.accountNo}</span></td>
                                 <td><b>৳ ${tx.amount}</b></td>
-                                <td><span class="${stClass}">${tx.status} ${tx.status !== 'Approved' ? '(ফান্ডে যুক্ত হয়নি)' : ''}</span></td>
+                                <td><span class="${stClass}">${tx.status} ${tx.status !== 'Approved' ? '(ফান্ডে যুক্ত হয়নিচি)' : ''}</span></td>
                             </tr>`;
                     }
                 });
@@ -2927,21 +2634,21 @@
 
             if(currentRole === 'FinanceSecretary') {
                 if(tx.financeApproval === 'Pending') {
-                    actionHtml = `<button onclick="approveTxStep('${key}', 'finance')" class="btn-edit" style="background:#16a34a;">অর্থ সম্পাদক এপ্রুভ (PIN)</button>`;
+                    actionHtml = `<button onclick="approveTxStep('${key}', 'finance')" class="btn-edit" style="background:#16a34a;">অর্থ সম্পাদক এপ্রুভ</button>`;
                 } else {
-                    actionHtml = `<span class="st-approved">অর্থ সম্পাদক কর্তৃক অনুমোদিত</span>`;
+                    actionHtml = `<span class="st-approved">অর্থ সম্পাদক কর্তৃক অনুমোদিত (${tx.financeApprovedBy || 'FS'})</span>`;
                 }
             } else if(currentRole === 'Manager') {
                 if(tx.financeApproval === 'Approved' && tx.managerApproval === 'Pending') {
-                    actionHtml = `<button onclick="approveTxStep('${key}', 'manager')" class="btn-edit" style="background:#16a34a;">ম্যানেজার এপ্রুভ (PIN)</button>`;
+                    actionHtml = `<button onclick="approveTxStep('${key}', 'manager')" class="btn-edit" style="background:#16a34a;">ম্যানেজার এপ্রুভ</button>`;
                 } else if(tx.managerApproval === 'Approved') {
-                    actionHtml = `<span class="st-approved">ম্যানেজার কর্তৃক অনুমোদিত</span>`;
+                    actionHtml = `<span class="st-approved">ম্যানেজার কর্তৃক অনুমোদিত (${tx.managerApprovedBy || 'Mgr'})</span>`;
                 } else {
                     actionHtml = `<span class="st-pending">অর্থ সম্পাদকের এপ্রুভ বাকি</span>`;
                 }
             } else if(currentRole === 'Admin') {
                 if(tx.managerApproval === 'Approved' && tx.adminApproval === 'Pending') {
-                    actionHtml = `<button onclick="approveTxStep('${key}', 'admin')" class="btn-edit" style="background:#16a34a;">এডমিন এপ্রুভ (PIN) [চূড়ান্ত]</button>`;
+                    actionHtml = `<button onclick="approveTxStep('${key}', 'admin')" class="btn-edit" style="background:#16a34a;">এডমিন এপ্রুভ [চূড়ান্ত]</button>`;
                 } else if(tx.adminApproval === 'Approved') {
                     actionHtml = `<span class="st-approved">চূড়ান্ত অনুমোদিত (Approved)</span>`;
                 } else {
@@ -2981,43 +2688,28 @@
 
     function approveTxStep(key, step) {
         const currentRole = localStorage.getItem('userRole');
-        
-        if(step === 'finance' && currentRole !== 'FinanceSecretary') {
-            alert("সতর্ক বার্তা: একজনের আইডি থেকে অন্য জন এপ্রুভ দিতে পারবে না!");
+        const currentUser = localStorage.getItem('loggedInUser');
+
+        if(step === 'finance' && currentRole !== 'FinanceSecretary' && currentRole !== 'Admin') {
+            alert("সতর্ক বার্তা: শুধুমাত্র Finance Secretary বা Admin এপ্রুভ করতে পারবে!");
             return;
         }
-        if(step === 'manager' && currentRole !== 'Manager') {
-            alert("সতর্ক বার্তা: একজনের আইডি থেকে অন্য জন এপ্রুভ দিতে পারবে না!");
+        if(step === 'manager' && currentRole !== 'Manager' && currentRole !== 'Admin') {
+            alert("সতর্ক বার্তা: শুধুমাত্র Manager বা Admin এপ্রুভ করতে পারবে!");
             return;
         }
         if(step === 'admin' && currentRole !== 'Admin') {
-            alert("সতর্ক বার্তা: একজনের আইডি থেকে অন্য জন এপ্রুভ দিতে পারবে না!");
+            alert("সতর্ক বার্তা: শুধুমাত্র Admin চূড়ান্ত এপ্রুভ করতে পারবে!");
             return;
         }
 
-        let pin = "";
-        const PASSWORDS = getStoredPasswords();
-
         if(step === 'finance') {
-            pin = promptPasswordSecure("অর্থ সম্পাদক পাসওয়ার্ড দিন:");
-            if(pin === PASSWORDS.FinanceSecretary) {
-                database.ref('transactions/' + key).update({ financeApproval: 'Approved' }).then(() => alert("অর্থ সম্পাদক কর্তৃক এপ্রুভ সফল!"));
-            } else if(pin !== null) alert("ভুল পাসওয়ার্ড!");
+            database.ref('transactions/' + key).update({ financeApproval: 'Approved', financeApprovedBy: currentUser }).then(() => alert("অর্থ সম্পাদক কর্তৃক এপ্রুভ সফল!"));
         } else if(step === 'manager') {
-            pin = promptPasswordSecure("ম্যানেজার পাসওয়ার্ড দিন:");
-            if(pin === PASSWORDS.Manager) {
-                database.ref('transactions/' + key).update({ managerApproval: 'Approved' }).then(() => alert("ম্যানেজার কর্তৃক এপ্রুভ সফল!"));
-            } else if(pin !== null) alert("ভুল পাসওয়ার্ড!");
+            database.ref('transactions/' + key).update({ managerApproval: 'Approved', managerApprovedBy: currentUser }).then(() => alert("ম্যানেজার কর্তৃক এপ্রুভ সফল!"));
         } else if(step === 'admin') {
-            pin = promptPasswordSecure("এডমিন পাসওয়ার্ড দিন:");
-            if(pin === PASSWORDS.Admin) {
-                database.ref('transactions/' + key).update({ adminApproval: 'Approved', status: 'Approved' }).then(() => alert("এডমিন কর্তৃক চূড়ান্ত এপ্রুভ সম্পন্ন! এখন ফান্ডে যুক্ত হলো।"));
-            } else if(pin !== null) alert("ভুল পাসওয়ার্ড!");
+            database.ref('transactions/' + key).update({ adminApproval: 'Approved', adminApprovedBy: currentUser, status: 'Approved' }).then(() => alert("এডমিন কর্তৃক চূড়ান্ত এপ্রুভ সম্পন্ন! এখন ফান্ডে যুক্ত হলো।"));
         }
-    }
-
-    function promptPasswordSecure(msg) {
-        return prompt(msg);
     }
 
     function filterTransactions() {
@@ -3040,8 +2732,8 @@
     function handleProjectSubmit(e) {
         e.preventDefault();
         const currentRole = localStorage.getItem('userRole');
-        if(currentRole !== 'FinanceSecretary' && currentRole !== 'Manager') {
-            alert("প্রকল্প তথ্য ফরম শুধুমাত্র Finance Secretary অথবা Manager আইডি থেকে পূরণ করা যাবে।");
+        if(currentRole !== 'FinanceSecretary' && currentRole !== 'Manager' && currentRole !== 'Admin') {
+            alert("প্রকল্প তথ্য ফরম শুধুমাত্র Finance Secretary, Manager অথবা Admin আইডি থেকে পূরণ করা যাবে।");
             return;
         }
 
@@ -3055,6 +2747,7 @@
             nid: document.getElementById('pNid').value,
             phone: document.getElementById('pPhone').value,
             photo: document.getElementById('pPhotoBase64').value || 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+            createdBy: localStorage.getItem('loggedInUser'),
             status: 'Pending',
             date: new Date().toLocaleDateString('bn-BD'),
             timestamp: Date.now()
@@ -3198,28 +2891,20 @@
     function approveProject(key, status) {
         const currentRole = localStorage.getItem('userRole');
         if(currentRole !== 'Admin') {
-            alert("সতর্ক বার্তা: একজনের আইডি থেকে অন্য জন এপ্রুভ দিতে পারবে না!");
+            alert("শুধুমাত্র এডমিন প্রকল্প এপ্রুভ বা রিজেক্ট করতে পারবেন!");
             return;
         }
 
-        const pin = promptSecurePassword("এডমিন পাসওয়ার্ড দিন:");
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
-            database.ref('projects/' + key).update({ status: status }).then(() => alert("প্রকল্প স্ট্যাটাস সফলভাবে আপডেট হয়েছে!"));
-        } else if(pin !== null) {
-            alert("ভুল পাসওয়ার্ড!");
-        }
+        database.ref('projects/' + key).update({ status: status, approvedBy: localStorage.getItem('loggedInUser') }).then(() => alert("প্রকল্প স্ট্যাটাস সফলভাবে আপডেট হয়েছে!"));
     }
 
     function verifyAdminForCommittee() {
-        const pin = document.getElementById('adminPinInput').value;
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole === 'Admin') {
             document.getElementById('committeeAuthBox').classList.add('hidden');
             document.getElementById('committeeFormContainer').classList.remove('hidden');
-            alert("এডমিন পাসওয়ার্ড সফলভাবে যাচাই হয়েছে। কমিটি ফরম পূরণ করুন।");
         } else {
-            alert("ভুল অ্যাডমিন পাসওয়ার্ড!");
+            alert("শুধুমাত্র এডমিন একাউন্ট থেকে কমিটি ফরম পূরণ করা যাবে!");
         }
     }
 
@@ -3294,24 +2979,16 @@
     }
 
     function openDeleteModal() {
-        document.getElementById('deleteModal').style.display = 'flex';
-    }
-
-    function closeDeleteModal() {
-        document.getElementById('deleteModal').style.display = 'none';
-    }
-
-    function confirmDeleteCommittee() {
-        const pin = document.getElementById('adminDeletePin').value;
-        const PASSWORDS = getStoredPasswords();
-        if(pin === PASSWORDS.Admin) {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন একাউন্ট থেকে কমিটি ডাটা ডিলিট করা সম্ভব!");
+            return;
+        }
+        if(confirm("আপনি কি নিশ্চিত যে কমিটি ডাটা মুছে ফেলতে চান?")) {
             database.ref('committee').remove().then(() => {
                 alert("কমিটি ডাটা সফলভাবে মুছে ফেলা হয়েছে!");
-                closeDeleteModal();
                 location.reload();
             });
-        } else {
-            alert("ভুল এডমিন পাসওয়ার্ড!");
         }
     }
 </script>
