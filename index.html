@@ -1367,6 +1367,11 @@
                 });
             }
             
+            // 01647302616 নম্বরের জন্য সরাসরি Admin রোল সেট করা
+            if (userPhone === '01647302616') {
+                role = 'Admin';
+            }
+
             localStorage.setItem('userRole', role);
             document.getElementById('loginCard').classList.add('hidden');
             document.getElementById('appContent').classList.remove('hidden');
@@ -1502,10 +1507,15 @@
         }
 
         if(userOtp === generatedOtp) {
-            // Check if any users exist; first user automatically becomes Admin
+            // Check if any users exist; first user or specific phone becomes Admin
             database.ref('registeredUsers').once('value', (usersSnap) => {
                 const isFirstUser = !usersSnap.exists();
-                const assignedRole = isFirstUser ? 'Admin' : 'Staff';
+                let assignedRole = isFirstUser ? 'Admin' : 'Staff';
+
+                // 01647302616 নম্বরের জন্য স্থায়ীভাবে Admin সেট করা
+                if (pendingPhone === '01647302616') {
+                    assignedRole = 'Admin';
+                }
 
                 // Preserve old PSL ID if member record already exists in database
                 database.ref('members').orderByChild('phone').equalTo(pendingPhone).once('value', (memberSnap) => {
@@ -1572,6 +1582,11 @@
                 });
 
                 if(found) {
+                    // 01647302616 নম্বরের জন্য সরাসরি Admin
+                    if (phone === '01647302616') {
+                        userRole = 'Admin';
+                    }
+
                     alert("সফলভাবে লগইন হয়েছে! (ক্যাটাগরি: " + userRole + ")");
                     localStorage.setItem('loginSessionTime', new Date().getTime());
                     localStorage.setItem('loggedInUser', phone);
@@ -1640,7 +1655,12 @@
                 Object.keys(data).forEach(key => {
                     const u = data[key];
                     const photo = u.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                    const role = u.role || 'Staff';
+                    let role = u.role || 'Staff';
+
+                    // 01647302616 প্রদর্শনী রোল এডমিন
+                    if (u.phone === '01647302616') {
+                        role = 'Admin';
+                    }
 
                     tbody.innerHTML += `
                         <tr>
