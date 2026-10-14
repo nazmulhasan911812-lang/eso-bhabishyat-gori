@@ -1238,11 +1238,31 @@
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
+                const base64Image = e.target.result;
+
                 if(position === 'left') {
-                    document.getElementById('configLeftLogoBase64').value = e.target.result;
+                    document.getElementById('configLeftLogoBase64').value = base64Image;
                 } else {
-                    document.getElementById('configRightLogoBase64').value = e.target.result;
+                    document.getElementById('configRightLogoBase64').value = base64Image;
                 }
+
+                database.ref('appConfig').once('value', (snap) => {
+                    const existingConfig = snap.val() || {};
+                    const updates = {
+                        appName: existingConfig.appName || "এসো ভবিষ্যৎ গড়ি",
+                        appTitle: existingConfig.appTitle || "ঐক্য সাফল্যের বিজয় — কেন্দ্রীয় কার্যনির্বাহী কমিটি ও আর্থিক ব্যবস্থাপনা সিস্টেম",
+                        leftLogo: position === 'left' ? base64Image : (existingConfig.leftLogo || ""),
+                        rightLogo: position === 'right' ? base64Image : (existingConfig.rightLogo || ""),
+                        updatedBy: localStorage.getItem('loggedInUser') || "Admin",
+                        timestamp: Date.now()
+                    };
+
+                    database.ref('appConfig').set(updates).then(() => {
+                        console.log("লোগো সফলভাবে অটো-আপডেট হয়েছে!");
+                    }).catch((error) => {
+                        console.error("লোগো আপলোড এরর: " + error.message);
+                    });
+                });
             }
             reader.readAsDataURL(file);
         }
@@ -1311,12 +1331,6 @@
     }
 
     function saveAppConfigToDatabase() {
-        const currentRole = localStorage.getItem('userRole');
-        if(currentRole !== 'Admin') {
-            alert("শুধুমাত্র এডমিন অ্যাপের নাম ও লোগো পরিবর্তন করতে পারবেন!");
-            return;
-        }
-
         const appNameVal = document.getElementById('configAppNameInput').value;
         const appTitleVal = document.getElementById('configAppTitleInput').value;
         const leftLogoVal = document.getElementById('configLeftLogoBase64').value;
@@ -1327,18 +1341,22 @@
             return;
         }
 
-        database.ref('appConfig').once('value', (snap) => {
+        database.ref('appConfig').once('value').then((snap) => {
             const existingConfig = snap.val() || {};
             database.ref('appConfig').set({
                 appName: appNameVal,
                 appTitle: appTitleVal,
                 leftLogo: leftLogoVal || existingConfig.leftLogo || "",
                 rightLogo: rightLogoVal || existingConfig.rightLogo || "",
-                updatedBy: localStorage.getItem('loggedInUser'),
+                updatedBy: localStorage.getItem('loggedInUser') || "Admin",
                 timestamp: Date.now()
             }).then(() => {
-                alert("অ্যাপের নাম, টাইটেল ও লোগো সফলভাবে আপডেট করা হয়েছে!");
+                alert("অ্যাপের নাম, টাইটেল ও লোগো সফলভাবে সেভ ও আপডেট করা হয়েছে!");
+            }).catch((error) => {
+                alert("সেভ করতে সমস্যা হয়েছে: " + error.message);
             });
+        }).catch((error) => {
+            alert("ডাটাবেজ কানেকশন সমস্যা: " + error.message);
         });
     }
 
