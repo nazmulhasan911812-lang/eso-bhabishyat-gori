@@ -41,36 +41,41 @@
             background: linear-gradient(145deg, #6259ff, #4339e6);
             color: white;
             text-align: center;
-            padding: 30px 15px;
+            padding: 20px 15px;
             border-bottom-left-radius: 30px;
             border-bottom-right-radius: 30px;
             box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        header > div.header-center {
+            flex: 1;
+            text-align: center;
         }
 
         header .header-logo {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
             border-radius: 50%;
             background: white;
-            padding: 4px;
+            padding: 3px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             display: none;
+            flex-shrink: 0;
         }
 
         header h1 {
-            font-size: 24px;
+            font-size: 20px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         header p {
-            font-size: 15px;
+            font-size: 13px;
             opacity: 0.9;
         }
 
@@ -359,7 +364,7 @@
 
 <header>
     <img id="headerLeftLogo" class="header-logo" src="" alt="Left Logo">
-    <div>
+    <div class="header-center">
         <h1 id="headerAppName">এসো ভবিষ্যৎ গড়ি</h1>
         <p id="headerAppTitle">ঐক্য সাফল্যের বিজয় — কেন্দ্রীয় কার্যনির্বাহী কমিটি ও আর্থিক ব্যবস্থাপনা সিস্টেম</p>
         <p id="headerAppSlogan" style="font-size: 13px; margin-top: 4px; opacity: 0.85;">ঐক্য সাফল্যের বিজয় এসো ভবিষ্যৎ গড়ি</p>
@@ -387,9 +392,6 @@
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="btn-3d btn-phone" style="margin:0;" onclick="handleLogin()">প্রবেশ করুন</button>
                     <button class="btn-3d btn-gmail" style="margin:0;" onclick="initiateSignup()">নতুন সাইনআপ (ওটিপি সহ)</button>
-                </div>
-                <div style="margin-top: 12px; text-align: center;">
-                    <a href="#" onclick="openForgotModal()" style="color: var(--primary); font-size: 13px; text-decoration: none;">পাসওয়ার্ড ভুলে গেছেন? নতুন পাসওয়ার্ড সেট করুন</a>
                 </div>
             </div>
 
@@ -425,11 +427,15 @@
                 <button class="nav-btn" id="navMemberBtn" onclick="switchDashboard('member')">সদস্য ফরম ও প্যানেল</button>
                 <button class="nav-btn" onclick="switchDashboard('finance')">হিসাব দেখুন</button>
                 <button class="nav-btn" id="navStaffFundBtn" onclick="switchDashboard('staffFund')" style="display:none;">সদস্য জমা কৃত ফান্ড</button>
+                
+                <!-- হোয়াটসঅ্যাপ শেয়ার বাটন শুধুমাত্র Staff আইডি থেকে দৃশ্যমান হবে -->
+                <button class="nav-btn hidden" id="navWhatsappShareBtn" onclick="shareViaWhatsapp()" style="background:#25d366; color:white;"><i class="fa-brands fa-whatsapp"></i> হোয়াটসঅ্যাপে শেয়ার</button>
+
                 <button class="nav-btn" id="navReceiptBtn" onclick="switchDashboard('receipt')" style="display:none; background:#10b981; color:white;">টাকা জমা রশিদ (PDF/A4)</button>
-                <button class="nav-btn" id="navProjectBtn" onclick="switchDashboard('project')">প্রকল্প তথ্য</button>
+                <button class="nav-btn" onclick="switchDashboard('project')">প্রকল্প তথ্য ও পরিকল্পনা (প্র. সম্পাদক প্যানেল)</button>
                 <button class="nav-btn" onclick="switchDashboard('law')">আইন সম্পাদক</button>
                 <button class="nav-btn" onclick="switchDashboard('committeeForm')">কমিটি ফরম</button>
-                <button class="nav-btn" onclick="switchDashboard('committeeView')">কমিটি দেখুন</button>
+                <button class="nav-btn" id="navCommitteeViewBtn" onclick="switchDashboard('committeeView')">কমিটি দেখুন</button>
                 <button class="nav-btn" id="navActiveUsersBtn" onclick="switchDashboard('activeUsers')" style="display:none;">অ্যাপ ব্যবহারকারী ও রোল ম্যানেজমেন্ট</button>
                 <button class="nav-btn" id="navChangePassBtn" onclick="switchDashboard('changePass')" style="display:none; background:#f59e0b; color:white;">পাসওয়ার্ড পরিবর্তন</button>
                 <button class="nav-btn" id="navAdminAppConfigBtn" onclick="switchDashboard('adminAppConfig')" style="display:none; background:#4f46e5; color:white;">অ্যাপ নাম ও টাইটেল (এডমিন)</button>
@@ -557,8 +563,8 @@
 
             <div id="changePassDashboard" class="hidden">
                 <div class="card-3d">
-                    <h2>পাসওয়ার্ড পরিবর্তন সিস্টেম</h2>
-                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">আপনার অ্যাকাউন্টের নতুন পাসওয়ার্ড সেট করুন:</p>
+                    <h2>পাসওয়ার্ড পরিবর্তন সিস্টেম (এডমিন এপ্রুভাল প্রয়োজন)</h2>
+                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">নতুন পাসওয়ার্ডের অনুরোধ পাঠান। এডমিন এপ্রুভ করলে তবেই নতুন পাসওয়ার্ড কার্যকর হবে:</p>
                     
                     <div class="form-group">
                         <label>আগের পাসওয়ার্ড দিন <span class="required-star">*</span></label>
@@ -572,7 +578,7 @@
                         <label>কনফার্ম নতুন পাসওয়ার্ড দিন <span class="required-star">*</span></label>
                         <input type="password" id="cpConfirmPass" class="input-3d" placeholder="পুনরায় নতুন পাসওয়ার্ড দিন">
                     </div>
-                    <button class="btn-3d" onclick="submitPasswordChangeRequest()">পাসওয়ার্ড আপডেট করুন</button>
+                    <button class="btn-3d" onclick="submitPasswordChangeRequest()">পাসওয়ার্ড পরিবর্তনের অনুরোধ পাঠান</button>
                 </div>
             </div>
 
@@ -592,7 +598,7 @@
                 </div>
             </div>
 
-            <div id="memberDashboard">
+            <div id="memberDashboard" class="hidden">
                 <div class="card-3d" style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <div class="counter-3d" style="flex: 1;">
                         <span style="font-size: 14px; font-weight: 600; color: #555;">মোট নিবন্ধিত সদস্য</span>
@@ -623,7 +629,7 @@
                 </div>
 
                 <div class="card-3d">
-                    <h2>সদস্য নিবন্ধন ফরম ও অঙ্গীকারনামা</h2>
+                    <h2>সদস্য নিবন্ধন ফরম ও অঙ্গীকারনামা (ভিন্ন ফরম্যাট)</h2>
 
                     <form id="memberForm" onsubmit="handleFinalSubmit(event)">
                         <input type="hidden" id="editMemberKey" value="">
@@ -684,6 +690,12 @@
                             <div class="form-group"><label>পিতার নাম <span class="required-star">*</span>:</label><input type="text" id="mFather" class="input-3d" required placeholder="পিতার নাম"></div>
                             <div class="form-group"><label>মাতার নাম <span class="required-star">*</span>:</label><input type="text" id="mMother" class="input-3d" required placeholder="মাতার নাম"></div>
                             
+                            <!-- Admin/Manager/FinanceSecretary আইডির জন্য ভিন্ন ও বিশেষ ফিল্ড -->
+                            <div class="form-group">
+                                <label>সংগঠনের পদবি (Admin/Manager/FS বিশেষ পরিচিতি) <span class="required-star">*</span>:</label>
+                                <input type="text" id="mDesignation" class="input-3d" value="সাধারণ সদস্য" placeholder="যেমন: এডমিন / ম্যানেজার / অর্থ সম্পাদক / সদস্য">
+                            </div>
+
                             <div class="form-group">
                                 <label>সনদ নির্বাচন <span class="required-star">*</span>:</label>
                                 <select id="mIdType" class="input-3d" required>
@@ -771,7 +783,7 @@
                                     <th>ছবি</th>
                                     <th>আইডি / ধরণ</th>
                                     <th>নাম ও মোবাইল</th>
-                                    <th>এলাকা</th>
+                                    <th>এলাকা ও পদবি</th>
                                     <th>স্ট্যাটাস</th>
                                     <th>অ্যাকশন</th>
                                 </tr>
@@ -810,7 +822,7 @@
             <div id="activeUsersDashboard" class="hidden">
                 <div class="card-3d">
                     <h2>অ্যাপ ব্যবহারকারী ও রোল পারমিশন ম্যানেজমেন্ট (এডমিন প্যানেল)</h2>
-                    <p style="font-size:12px; color:#555; margin-bottom:12px;">এখান থেকে যেকোনো নিবন্ধিত ইউজারকে নতুন করে সেভ, রোল পরিবর্তন এবং ডিলিট করতে পারবেন:</p>
+                    <p style="font-size:12px; color:#555; margin-bottom:12px;">এখান থেকে যেকোনো নিবন্ধিত ইউজারকে নতুন করে সেভ, রোল পরিবর্তন, পাসওয়ার্ড এপ্রুভ এবং ডিলিট করতে পারবেন:</p>
                     
                     <div class="form-card" style="background: #f1f5f9; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
                         <h3 style="font-size:14px; color:var(--primary); margin-bottom:10px;">নতুন ব্যবহারকারী ও রোল যুক্ত করুন (সেভ)</h3>
@@ -832,10 +844,10 @@
                             <thead>
                                 <tr>
                                     <th>প্রোফাইল ছবি</th>
-                                    <th>নাম ও PSL আইডি</th>
-                                    <th>মোবাইল / আইডি</th>
+                                    <th>ইউজার ও মোবাইল</th>
                                     <th>বর্তমান রোল</th>
-                                    <th>রোল পরিবর্তন ও ডিলিট</th>
+                                    <th>পাসওয়ার্ড স্ট্যাটাস</th>
+                                    <th>অ্যাকশন ও রোল পরিবর্তন</th>
                                 </tr>
                             </thead>
                             <tbody id="activeUsersTableBody">
@@ -845,7 +857,7 @@
                     </div>
 
                     <div style="margin-top: 25px;">
-                        <h3 style="color: #dc2626; font-size: 15px; margin-bottom: 10px;">ডিলিটকৃত ও সুরক্ষিত ব্যবহারকারী তালিকা (শেষ কার্যক্রম তারিখসহ)</h3>
+                        <h3 style="color: #dc2626; font-size: 15px; margin-bottom: 10px;">ডিলিটকৃত ও সুরক্ষিত ব্যবহারকারী তালিকা</h3>
                         <div class="table-responsive">
                             <table>
                                 <thead>
@@ -975,7 +987,23 @@
             </div>
 
             <div id="projectDashboard" class="hidden">
-                <div class="card-3d">
+                <!-- এডমিন আইডি থেকে নতুন পরিকল্পনা ও প্রকল্প সিস্টেম (যেমন: প্রচার সম্পাদক প্যানেল) -->
+                <div class="card-3d" style="border: 2px dashed var(--primary); background: #f8fafc;">
+                    <h2><i class="fa-solid fa-bullhorn"></i> নতুন পরিকল্পনা ও প্রকল্প সিস্টেম যুক্ত করুন (যেমন: প্রচার সম্পাদক প্যানেল)</h2>
+                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">এডমিন আইডি থেকে নতুন প্রকল্প, বিভাগ বা পরিকল্পনা সিস্টেম (যেমন: প্রচার সম্পাদক প্যানেল) রিয়েল-টাইম যোগ করুন:</p>
+                    
+                    <div class="form-group">
+                        <label>পরিকল্পনা বা প্যানেলের নাম <span class="required-star">*</span></label>
+                        <input type="text" id="newPlanNameInput" class="input-3d" placeholder="যেমন: প্রচার সম্পাদক প্যানেল ও প্রচার কার্যক্রম">
+                    </div>
+                    <div class="form-group">
+                        <label>বিস্তারিত বিবরণ ও কর্মপরিকল্পনা <span class="required-star">*</span></label>
+                        <textarea id="newPlanDetailsInput" class="input-3d" rows="3" placeholder="কার্যক্রম ও কর্মপরিকল্পনার বিবরণ লিখুন..."></textarea>
+                    </div>
+                    <button class="btn-3d" style="background:#16a34a;" onclick="addNewPlanOrProjectSystem()">নতুন পরিকল্পনা সিস্টেম ডাটাবেজে যুক্ত করুন</button>
+                </div>
+
+                <div class="card-3d" style="margin-top: 20px;">
                     <h2 id="projectFormTitle">প্রকল্প তথ্য সংগ্রহ ফরম</h2>
                     <form id="projectForm" onsubmit="handleProjectSubmit(event)">
                         <h3 style="font-size:14px; color:var(--primary); margin-bottom:10px;">প্রকল্পের নাম, বিবরণ ও বাজেট</h3>
@@ -1003,7 +1031,9 @@
                 </div>
 
                 <div class="card-3d">
-                    <h2>প্রকল্প তথ্য সার্চ, এপ্রুভাল, ডাউনলোড ও প্রিন্ট প্যানেল</h2>
+                    <h2>প্রকল্প তথ্য ও নতুন পরিকল্পনা প্যানেল</h2>
+                    <div id="dynamicPlansContainer" style="margin-bottom: 20px;"></div>
+
                     <div class="form-group" style="margin-bottom: 15px;">
                         <input type="text" id="projectSearchInput" class="input-3d" placeholder="প্রকল্পের নাম, প্রাপ্ত ব্যক্তির নাম, ফোন বা NID দিয়ে রিয়েল-টাইম খুঁজুন..." oninput="filterProjects()">
                     </div>
@@ -1035,7 +1065,7 @@
                         <p><b>ধারা ১ (সদস্যপদ):</b> সংগঠনের সকল সদস্যকে নিয়মিত আইন ও শৃঙ্খলা মেনে চলতে হবে। কোনো শৃঙ্খলাভঙ্গ সংগঠন বাতিল বলে গণ্য করবে।</p>
                         <p><b>ধারা ২ (আর্থিক স্বচ্ছতা):</b> সংগঠনের সকল হিসাব ও ফান্ড তিন স্তরের এপ্রুভালের পর ডাটাবেইজে চূড়ান্ত জমা হিসেবে গণ্য হবে।</p>
                         <p><b>ধারা ৩ (প্রকল্প আইন):</b> যেকোনো প্রকল্পের ক্ষেত্রে প্রকল্প প্রাপ্ত ব্যক্তির ছবি, এনআইডি এবং সচল ফোন নম্বর দেওয়া বাধ্যতামূলক। এপ্রুভ ব্যতীত কোনো অনুদান বা ফান্ড ছাড় করা হবে না।</p>
-                        <p><b>ধারা ৪ (প্রশাসনিক অধিকার):</b> কেন্দ্রীয় এডমিন বা ম্যানেজার যেকোনো ভূয়া তথ্য বা আইন লঙ্ঘনকারী সদস্যের অ্যাকাউন্ট সাময়িক বা স্থায়ীভাবে ডিলিট করতে পারবেন।</p>
+                        <p><b>ধারা ৪ (প্রশাসনিক অধিকার):</b> কেন্দ্রীয় এডমিন বা ম্যানেজার যেকোনো ভূয়া তথ্য বা আইন লঙ্ঘনকারী অ্যাকাউন্ট সাময়িক বা স্থায়ীভাবে ডিলিট করতে পারবেন।</p>
                     </div>
                 </div>
             </div>
@@ -1142,7 +1172,7 @@
             <div style="text-align: center; border-bottom: 2px solid #334155; padding-bottom: 8px; margin-bottom: 10px;">
                 <h3 id="a4AppTitleHeader" style="color: #0284c7; margin: 0 0 2px 0;">ঐক্য সাফল্যের বিজয়</h3>
                 <h1 id="a4AppNameHeader" style="color: #4f46e5; margin: 0 0 3px 0; font-size: 18px;">এসো ভবিষ্যৎ গড়ি</h1>
-                <p style="margin: 0; font-weight: bold; color: #334155; font-size: 12px;">সদস্য নিবন্ধন ও পরিচিতি ফরম</p>
+                <p style="margin: 0; font-weight: bold; color: #334155; font-size: 12px;">সদস্য নিবন্ধন ও পরিচিতি ফরম (বিশেষ ফরম্যাট)</p>
             </div>
             <div id="a4MemberBodyDetails" style="font-size: 12px; line-height: 1.4;"></div>
         </div>
@@ -1184,24 +1214,6 @@
     </div>
 </div>
 
-<div id="forgotModal" class="modal-overlay">
-    <div class="modal-box">
-        <h3>নতুন পাসওয়ার্ড সেট করুন</h3>
-        <div class="form-group" style="text-align: left; margin-top: 10px;">
-            <label>আপনার নিবন্ধিত মোবাইল নম্বর:</label>
-            <input type="text" id="forgotPhone" class="input-3d" placeholder="017xxxxxxxx">
-        </div>
-        <div class="form-group" style="text-align: left;">
-            <label>নতুন পাসওয়ার্ড:</label>
-            <input type="password" id="newPassInput" class="input-3d" placeholder="নতুন পাসওয়ার্ড">
-        </div>
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="btn-3d" style="background:#16a34a; margin:0;" onclick="resetPasswordConfirm()">পাসওয়ার্ড পরিবর্তন</button>
-            <button class="btn-3d" style="background:#64748b; margin:0;" onclick="closeForgotModal()">বাতিল</button>
-        </div>
-    </div>
-</div>
-
 <div id="deleteModal" class="modal-overlay">
     <div class="modal-box">
         <h3>এডমিন পাসওয়ার্ড দিন</h3>
@@ -1231,7 +1243,20 @@
     window.onload = function() {
         checkAutoLoginSession();
         listenRealtimeAppConfig();
+        listenDynamicPlans();
     };
+
+    // হোয়াটসঅ্যাপে শেয়ার করার ফাংশন (শুধুমাত্র Staff আইডির জন্য)
+    function shareViaWhatsapp() {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Staff') {
+            alert("এই শেয়ার লিংকটি শুধুমাত্র Staff আইডি থেকে হোয়াটসঅ্যাপে শেয়ার করা যাবে!");
+            return;
+        }
+        const appLink = "https://eso-bhabishyat-gori.netlify.app";
+        const message = encodeURIComponent("এসো ভবিষ্যৎ গড়ি — ঐক্য সাফল্যের বিজয়। আমাদের অফিসিয়াল অ্যাপ লিংকে প্রবেশ করুন: " + appLink);
+        window.open("https://api.whatsapp.com/send?text=" + message, "_blank");
+    }
 
     function previewConfigLogo(event, position) {
         const file = event.target.files[0];
@@ -1438,48 +1463,62 @@
         const navMemberBtn = document.getElementById('navMemberBtn');
         const navStaffFundBtn = document.getElementById('navStaffFundBtn');
         const navReceiptBtn = document.getElementById('navReceiptBtn');
+        const navCommitteeViewBtn = document.getElementById('navCommitteeViewBtn');
         const navActiveUsersBtn = document.getElementById('navActiveUsersBtn');
         const navChangePassBtn = document.getElementById('navChangePassBtn');
         const navAdminAppConfigBtn = document.getElementById('navAdminAppConfigBtn');
+        const navWhatsappShareBtn = document.getElementById('navWhatsappShareBtn');
 
-        navChangePassBtn.style.display = 'block';
+        // হোয়াটসঅ্যাপ শেয়ার বাটন শুধুমাত্র Staff আইডির জন্য দৃশ্যমান হবে এবং অন্য আইডি থেকে দেখাও যাবেনা
+        if(role === 'Staff') {
+            if(navWhatsappShareBtn) navWhatsappShareBtn.classList.remove('hidden');
+        } else {
+            if(navWhatsappShareBtn) navWhatsappShareBtn.classList.add('hidden');
+        }
 
         if(role === 'Admin') {
             if(navHomeBtn) navHomeBtn.style.display = 'none';
-            navMemberListBtn.style.display = 'block';
-            navActiveUsersBtn.style.display = 'block';
-            navAdminAppConfigBtn.style.display = 'block';
-            navMemberBtn.style.display = 'block';
-            navStaffFundBtn.style.display = 'none';
+            if(navMemberListBtn) navMemberListBtn.style.display = 'block';
+            if(navActiveUsersBtn) navActiveUsersBtn.style.display = 'block';
+            if(navAdminAppConfigBtn) navAdminAppConfigBtn.style.display = 'block';
+            
+            if(navMemberBtn) navMemberBtn.style.display = 'none';
+            if(navCommitteeViewBtn) navCommitteeViewBtn.style.display = 'none';
+
+            if(navStaffFundBtn) navStaffFundBtn.style.display = 'none';
+            if(navChangePassBtn) navChangePassBtn.style.display = 'none';
             if(navReceiptBtn) navReceiptBtn.style.display = 'block';
             switchDashboard('memberList');
-        } else if(role === 'Manager') {
-            if(navHomeBtn) navHomeBtn.style.display = 'none';
-            navMemberListBtn.style.display = 'none';
-            navActiveUsersBtn.style.display = 'none';
-            navAdminAppConfigBtn.style.display = 'none';
-            navMemberBtn.style.display = 'none';
-            navStaffFundBtn.style.display = 'none';
-            if(navReceiptBtn) navReceiptBtn.style.display = 'block';
-            switchDashboard('finance');
-        } else if(role === 'FinanceSecretary') {
-            if(navHomeBtn) navHomeBtn.style.display = 'none';
-            navMemberListBtn.style.display = 'none';
-            navActiveUsersBtn.style.display = 'none';
-            navAdminAppConfigBtn.style.display = 'none';
-            navMemberBtn.style.display = 'none';
-            navStaffFundBtn.style.display = 'none';
-            if(navReceiptBtn) navReceiptBtn.style.display = 'none';
-            switchDashboard('finance');
         } else {
-            if(navHomeBtn) navHomeBtn.style.display = 'block';
-            navMemberListBtn.style.display = 'none';
-            navActiveUsersBtn.style.display = 'none';
-            navAdminAppConfigBtn.style.display = 'none';
-            navMemberBtn.style.display = 'block';
-            navStaffFundBtn.style.display = 'block';
-            if(navReceiptBtn) navReceiptBtn.style.display = 'none';
-            switchDashboard('home');
+            if(navMemberBtn) navMemberBtn.style.display = 'block';
+            if(navCommitteeViewBtn) navCommitteeViewBtn.style.display = 'block';
+            if(navChangePassBtn) navChangePassBtn.style.display = 'block';
+            
+            if(role === 'Manager') {
+                if(navHomeBtn) navHomeBtn.style.display = 'none';
+                if(navMemberListBtn) navMemberListBtn.style.display = 'none';
+                if(navActiveUsersBtn) navActiveUsersBtn.style.display = 'none';
+                if(navAdminAppConfigBtn) navAdminAppConfigBtn.style.display = 'none';
+                if(navStaffFundBtn) navStaffFundBtn.style.display = 'none';
+                if(navReceiptBtn) navReceiptBtn.style.display = 'block';
+                switchDashboard('finance');
+            } else if(role === 'FinanceSecretary') {
+                if(navHomeBtn) navHomeBtn.style.display = 'none';
+                if(navMemberListBtn) navMemberListBtn.style.display = 'none';
+                if(navActiveUsersBtn) navActiveUsersBtn.style.display = 'none';
+                if(navAdminAppConfigBtn) navAdminAppConfigBtn.style.display = 'none';
+                if(navStaffFundBtn) navStaffFundBtn.style.display = 'none';
+                if(navReceiptBtn) navReceiptBtn.style.display = 'none';
+                switchDashboard('finance');
+            } else {
+                if(navHomeBtn) navHomeBtn.style.display = 'block';
+                if(navMemberListBtn) navMemberListBtn.style.display = 'none';
+                if(navActiveUsersBtn) navActiveUsersBtn.style.display = 'none';
+                if(navAdminAppConfigBtn) navAdminAppConfigBtn.style.display = 'none';
+                if(navStaffFundBtn) navStaffFundBtn.style.display = 'block';
+                if(navReceiptBtn) navReceiptBtn.style.display = 'none';
+                switchDashboard('home');
+            }
         }
 
         const pForm = document.getElementById('projectForm');
@@ -1574,6 +1613,7 @@
                             name: 'সদস্য (' + pendingPhone + ')',
                             photo: signupPhoto,
                             status: 'Pending',
+                            designation: assignedRole === 'Admin' ? 'এডমিন' : (assignedRole === 'Manager' ? 'ম্যানেজার' : (assignedRole === 'FinanceSecretary' ? 'অর্থ সম্পাদক' : 'সাধারণ সদস্য')),
                             timestamp: Date.now()
                         });
                     }
@@ -1644,6 +1684,13 @@
 
     function submitPasswordChangeRequest() {
         const loggedInUser = localStorage.getItem('loggedInUser');
+        const userRole = localStorage.getItem('userRole');
+
+        if(userRole === 'Admin') {
+            alert("এডমিন আইডির পাসওয়ার্ড এখানে পরিবর্তনযোগ্য নয়!");
+            return;
+        }
+
         const oldPass = document.getElementById('cpOldPass').value;
         const newPass = document.getElementById('cpNewPass').value;
         const confirmPass = document.getElementById('cpConfirmPass').value;
@@ -1666,14 +1713,43 @@
                 });
 
                 if(keyToUpdate) {
-                    database.ref('registeredUsers/' + keyToUpdate).update({ password: newPass, lastActiveDate: new Date().toLocaleString('bn-BD') }).then(() => {
-                        alert("আপনার পাসওয়ার্ড সফলভাবে আপডেট করা হয়েছে!");
+                    database.ref('registeredUsers/' + keyToUpdate).update({ 
+                        pendingPassword: newPass,
+                        passChangeStatus: 'Pending',
+                        lastActiveDate: new Date().toLocaleString('bn-BD') 
+                    }).then(() => {
+                        alert("পাসওয়ার্ড পরিবর্তনের অনুরোধ সফলভাবে এডমিনের নিকট পাঠানো হয়েছে। এডমিন এপ্রুভ করার পর নতুন পাসওয়ার্ড কার্যকর হবে।");
                         document.getElementById('cpOldPass').value = '';
                         document.getElementById('cpNewPass').value = '';
                         document.getElementById('cpConfirmPass').value = '';
                     });
                 } else {
                     alert("আগের পাসওয়ার্ডটি সঠিক নয়!");
+                }
+            }
+        });
+    }
+
+    function approvePasswordChange(userKey) {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন পাসওয়ার্ড পরিবর্তনের অনুরোধ এপ্রুভ করতে পারবেন!");
+            return;
+        }
+
+        database.ref('registeredUsers/' + userKey).once('value', (snap) => {
+            if(snap.exists()) {
+                const u = snap.val();
+                if(u.pendingPassword) {
+                    database.ref('registeredUsers/' + userKey).update({
+                        password: u.pendingPassword,
+                        pendingPassword: null,
+                        passChangeStatus: 'Approved',
+                        lastActiveDate: new Date().toLocaleString('bn-BD')
+                    }).then(() => {
+                        alert("নতুন পাসওয়ার্ডটি সফলভাবে এপ্রুভ ও সক্রিয় করা হয়েছে!");
+                        loadActiveUsersList();
+                    });
                 }
             }
         });
@@ -1762,12 +1838,20 @@
                         role = 'Admin';
                     }
 
+                    let passStatusHtml = '<span class="st-approved">সক্রিয়</span>';
+                    let approvePassBtn = '';
+
+                    if(u.passChangeStatus === 'Pending') {
+                        passStatusHtml = '<span class="st-pending">পাসওয়ার্ড এপ্রুভ বাকি</span>';
+                        approvePassBtn = `<button onclick="approvePasswordChange('${key}')" class="btn-edit" style="background:#16a34a; margin-left:4px;">পাসওয়ার্ড এপ্রুভ করুন</button>`;
+                    }
+
                     tbody.innerHTML += `
                         <tr>
                             <td><img src="${photo}" class="member-img"></td>
                             <td><b>ইউজার: ${u.phone}</b></td>
-                            <td>${u.phone}</td>
                             <td><span class="role-badge">${role}</span></td>
+                            <td>${passStatusHtml}</td>
                             <td>
                                 <select class="input-3d" style="width:130px; display:inline-block; margin:0;" id="roleSelect_${key}">
                                     <option value="Staff" ${role === 'Staff' ? 'selected' : ''}>Staff</option>
@@ -1776,7 +1860,8 @@
                                     <option value="Admin" ${role === 'Admin' ? 'selected' : ''}>Admin</option>
                                 </select>
                                 <button onclick="updateUserRole('${key}')" class="btn-edit" style="margin-left:4px;">সেভ রোল</button>
-                                <button onclick="deleteActiveUser('${key}')" class="btn-delete" style="margin-left:4px;">ডিলিট</button>
+                                ${approvePassBtn}
+                                ${role !== 'Admin' ? `<button onclick="deleteActiveUser('${key}')" class="btn-delete" style="margin-left:4px;">ডিলিট</button>` : ''}
                             </td>
                         </tr>`;
                 });
@@ -1831,6 +1916,7 @@
                     container.innerHTML = `
                         <b>নাম:</b> ${m.name} <br>
                         <b>সদস্য ইউনিক আইডি (PSL ID):</b> <span style="color:var(--primary); font-size:16px; font-weight:bold;">${m.id || 'আইডি প্রক্রিয়াধীন'}</span> <br>
+                        <b>পদবি:</b> <span class="role-badge">${m.designation || 'সদস্য'}</span> <br>
                         <b>স্ট্যাটাস:</b> <span class="${m.status === 'Approved' ? 'st-approved' : 'st-pending'}">${m.status}</span> <br>
                         <b>মোবাইল / আইডি:</b> ${m.phone} <br>
                         <b>এলাকা:</b> ${m.district || ''} - ${m.upazila || ''}
@@ -1854,6 +1940,7 @@
                     container.innerHTML = `
                         <b>নাম:</b> ${m.name} <br>
                         <b>সদস্য ইউনিক আইডি (PSL ID):</b> <span style="color:var(--primary); font-size:16px; font-weight:bold;">${m.id || 'আইডি প্রক্রিয়াধীন'}</span> <br>
+                        <b>পদবি:</b> <span class="role-badge">${m.designation || 'সদস্য'}</span> <br>
                         <b>স্ট্যাটাস:</b> <span class="${m.status === 'Approved' ? 'st-approved' : 'st-pending'}">${m.status}</span> <br>
                         <b>মোবাইল / জিমেইল:</b> ${m.phone} <br><br>
                         <button onclick="loadMyDataForEdit('${child.key}', '${m.phone}')" class="btn-edit" style="width:auto; padding:6px 12px; margin-top:5px;">নিজস্ব ফরম এডিট করুন</button>
@@ -1973,6 +2060,11 @@
             return;
         }
 
+        if(currentRole === 'Admin' && (type === 'member' || type === 'committeeView')) {
+            alert("এডমিন আইডি তে এই অপশনটি নিষিদ্ধ করা হয়েছে।");
+            return;
+        }
+
         document.getElementById('homeDashboard').classList.add('hidden');
         document.getElementById('memberDashboard').classList.add('hidden');
         document.getElementById('memberListDashboard').classList.add('hidden');
@@ -2023,7 +2115,6 @@
             loadSavedReceiptsDropdown();
         } else if(type === 'project') {
             document.getElementById('projectDashboard').classList.remove('hidden');
-            document.getElementById('navProjectBtn').classList.add('active');
             loadProjects();
         } else if(type === 'law') {
             document.getElementById('lawDashboard').classList.remove('hidden');
@@ -2033,6 +2124,10 @@
             document.getElementById('committeeViewDashboard').classList.remove('hidden');
             loadCommitteeView();
         } else if(type === 'changePass') {
+            if(currentRole === 'Admin') {
+                alert("এডমিন আইডি তে পাসওয়ার্ড পরিবর্তন অপশন প্রযোজ্য নয়!");
+                return;
+            }
             document.getElementById('changePassDashboard').classList.remove('hidden');
             document.getElementById('navChangePassBtn').classList.add('active');
         } else if(type === 'adminAppConfig') {
@@ -2160,36 +2255,6 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    function openForgotModal() {
-        document.getElementById('forgotModal').style.display = 'flex';
-    }
-
-    function closeForgotModal() {
-        document.getElementById('forgotModal').style.display = 'none';
-    }
-
-    function resetPasswordConfirm() {
-        const phone = document.getElementById('forgotPhone').value;
-        const newPass = document.getElementById('newPassInput').value;
-        if(!phone || !newPass) {
-            alert("নম্বর এবং নতুন পাসওয়ার্ড দিন।");
-            return;
-        }
-
-        database.ref('registeredUsers').orderByChild('phone').equalTo(phone).once('value', (snapshot) => {
-            if(snapshot.exists()) {
-                snapshot.forEach((child) => {
-                    database.ref('registeredUsers/' + child.key).update({ password: newPass, lastActiveDate: new Date().toLocaleString('bn-BD') }).then(() => {
-                        alert("পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে! এখন লগইন করুন।");
-                        closeForgotModal();
-                    });
-                });
-            } else {
-                alert("এই নম্বরটি ডাটাবেজে পাওয়া যায়নি।");
-            }
-        });
-    }
-
     function goToStep(stepNum) {
         document.querySelectorAll('.step-section').forEach(el => el.classList.remove('active'));
         document.getElementById('step' + stepNum).classList.add('active');
@@ -2268,11 +2333,6 @@
     function handleFinalSubmit(e) {
         e.preventDefault();
         const currentRole = localStorage.getItem('userRole');
-        if(currentRole !== 'Staff' && currentRole !== 'Admin') {
-            alert("সদস্য ফরম Staff আইডি থেকে পূরণ করা যাবে।");
-            return;
-        }
-
         const loggedInPhone = localStorage.getItem('loggedInUser');
         const editKey = document.getElementById('editMemberKey').value;
 
@@ -2290,6 +2350,7 @@
                         name: document.getElementById('mName').value,
                         father: document.getElementById('mFather').value,
                         mother: document.getElementById('mMother').value,
+                        designation: document.getElementById('mDesignation').value,
                         idType: document.getElementById('mIdType').value,
                         nid: document.getElementById('mNid').value,
                         permanentAddr: document.getElementById('mPermanentAddr').value,
@@ -2328,6 +2389,7 @@
             name: document.getElementById('mName').value,
             father: document.getElementById('mFather').value,
             mother: document.getElementById('mMother').value,
+            designation: document.getElementById('mDesignation').value,
             idType: document.getElementById('mIdType').value,
             nid: document.getElementById('mNid').value,
             permanentAddr: document.getElementById('mPermanentAddr').value,
@@ -2405,7 +2467,7 @@
                         <td><img src="${memberPic}" class="member-img"></td>
                         <td><b>${m.id || 'N/A'}</b><br><small>${m.memberType || 'স্থায়ী'}</small></td>
                         <td>${m.name || 'অজানা'}<br><small>${m.phone || ''}</small></td>
-                        <td>${m.district || ''} - ${m.upazila || ''}</td>
+                        <td>${m.district || ''} - ${m.upazila || ''}<br><span class="role-badge">${m.designation || 'সদস্য'}</span></td>
                         <td><span class="${stClass}">${m.status || 'Pending'}</span></td>
                         <td>${actionButtons}</td>
                     </tr>`;
@@ -2418,12 +2480,6 @@
     }
 
     function openA4MemberForm(memberKey) {
-        const currentRole = localStorage.getItem('userRole');
-        if(currentRole !== 'Admin') {
-            alert("সতর্ক বার্তা: শুধুমাত্র এডমিন আইডি থেকে A4 ফরম প্রিন্ট করা যাবে!");
-            return;
-        }
-
         database.ref('members/' + memberKey).once('value', (snap) => {
             if(snap.exists()) {
                 const m = snap.val();
@@ -2434,11 +2490,11 @@
                         <div>
                             <h3 style="margin: 0; color: var(--primary); font-size: 15px;">${m.name || 'নাম পাওয়া যায়নি'}</h3>
                             <p style="margin: 2px 0 0 0; font-weight: bold; color: #334155;">ইউনিক আইডি (PSL ID): <span style="color:var(--accent);">${m.id || 'N/A'}</span></p>
-                            <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">সদস্যের ধরণ: ${m.memberType || 'স্থায়ী'} | স্ট্যাটাস: ${m.status || 'Pending'}</p>
+                            <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">পদবি: ${m.designation || 'সদস্য'} | ধরণ: ${m.memberType || 'স্থায়ী'}</p>
                         </div>
                     </div>
 
-                    <h4 style="color: var(--primary); font-size: 13px; margin: 8px 0 4px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px;">ব্যক্তিগত ও ঠিকানা তথ্য</h4>
+                    <h4 style="color: var(--primary); font-size: 13px; margin: 8px 0 4px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px;">পারিবারিক ও ব্যক্তিগত তথ্য</h4>
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 11px;">
                         <tr><td style="padding: 4px 6px; border: 1px solid #cbd5e1; width: 35%;"><b>পিতার নাম:</b></td><td style="padding: 4px 6px; border: 1px solid #cbd5e1;">${m.father || 'তথ্য নেই'}</td></tr>
                         <tr><td style="padding: 4px 6px; border: 1px solid #cbd5e1;"><b>মাতার নাম:</b></td><td style="padding: 4px 6px; border: 1px solid #cbd5e1;">${m.mother || 'তথ্য নেই'}</td></tr>
@@ -2741,7 +2797,7 @@
                                 <td><b>${tx.category}</b></td>
                                 <td>${tx.paymentMethod}<span class="account-text">${tx.accountNo}</span></td>
                                 <td><b>৳ ${tx.amount}</b></td>
-                                <td><span class="${stClass}">${tx.status} ${tx.status !== 'Approved' ? '(ফান্ডে যুক্ত হয়নিচি)' : ''}</span></td>
+                                <td><span class="${stClass}">${tx.status} ${tx.status !== 'Approved' ? '(ফান্ডে যুক্ত হয়নি)' : ''}</span></td>
                             </tr>`;
                     }
                 });
@@ -2858,6 +2914,56 @@
             }
         });
         renderTransactions(filtered);
+    }
+
+    // এডমিন আইডি থেকে নতুন পরিকল্পনা বা প্রকল্প সিস্টেম (যেমন: প্রচার সম্পাদক প্যানেল) যুক্ত করার ফাংশন
+    function addNewPlanOrProjectSystem() {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন আইডি থেকে নতুন পরিকল্পনা ও প্রকল্প সিস্টেম যোগ করা যাবে!");
+            return;
+        }
+
+        const planName = document.getElementById('newPlanNameInput').value;
+        const planDetails = document.getElementById('newPlanDetailsInput').value;
+
+        if(!planName || !planDetails) {
+            alert("দয়া করে পরিকল্পনা বা প্যানেলের নাম এবং বিবরণ পূরণ করুন।");
+            return;
+        }
+
+        database.ref('dynamicPlans').push({
+            planName: planName,
+            planDetails: planDetails,
+            createdBy: localStorage.getItem('loggedInUser'),
+            date: new Date().toLocaleDateString('bn-BD'),
+            timestamp: Date.now()
+        }).then(() => {
+            alert("নতুন পরিকল্পনা ও প্রকল্প সিস্টেম (যেমন: প্রচার সম্পাদক প্যানেল) সফলভাবে ডাটাবেইজে যুক্ত করা হয়েছে!");
+            document.getElementById('newPlanNameInput').value = '';
+            document.getElementById('newPlanDetailsInput').value = '';
+            listenDynamicPlans();
+        });
+    }
+
+    function listenDynamicPlans() {
+        database.ref('dynamicPlans').on('value', (snapshot) => {
+            const container = document.getElementById('dynamicPlansContainer');
+            container.innerHTML = '';
+            const plans = snapshot.val();
+            if(plans) {
+                container.innerHTML = `<h3 style="color:var(--primary); font-size:15px; margin-bottom:10px;">সংযুক্ত নতুন পরিকল্পনা ও প্যানেলসমূহ:</h3>`;
+                Object.keys(plans).forEach(k => {
+                    const p = plans[k];
+                    container.innerHTML += `
+                        <div style="background:#fff; padding:12px 15px; border-radius:10px; margin-bottom:8px; border-left:4px solid var(--secondary); box-shadow: 2px 2px 6px rgba(0,0,0,0.05);">
+                            <h4 style="color:var(--primary); margin:0 0 4px 0; font-size:14px;"><i class="fa-solid fa-star"></i> ${p.planName}</h4>
+                            <p style="margin:0; font-size:13px; color:#334155;">${p.planDetails}</p>
+                            <small style="color:#64748b;">তারিখ: ${p.date}</small>
+                        </div>`;
+                });
+            }
+        });
     }
 
     function handleProjectSubmit(e) {
@@ -3096,7 +3202,7 @@
                 document.getElementById('viewLawSecretary').innerText = c.lawSecretary || '-';
                 document.getElementById('viewHealthSecretary').innerText = c.healthSecretary || '-';
                 document.getElementById('viewEnvSecretary').innerText = c.envSecretary || '-';
-                document.getElementById('viewRelSecretary').innerText = c.relSecretary || '-';
+                document.getElementById('viewRelSecretary').innerText = c.relSecretary || `-`;
                 document.getElementById('viewExecMembers').innerText = c.execMembers || '-';
                 document.getElementById('viewTerm').innerText = c.term || '-';
                 document.getElementById('viewDate').innerText = c.date || '-';
