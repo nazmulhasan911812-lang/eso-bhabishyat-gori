@@ -175,8 +175,6 @@
 
         .btn-gmail { background: linear-gradient(145deg, #ff5252, #e11d48); }
         .btn-phone { background: linear-gradient(145deg, #3b82f6, #1d4ed8); }
-        .btn-whatsapp { background: linear-gradient(145deg, #25D366, #128C7E); color: white; padding: 8px 12px; font-size: 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; border:none; cursor:pointer;}
-        .btn-messenger { background: linear-gradient(145deg, #00B2FF, #006AFF); color: white; padding: 8px 12px; font-size: 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; border:none; cursor:pointer;}
         .btn-edit { background: linear-gradient(145deg, #f59e0b, #d97706); padding: 6px 10px; font-size: 12px; color: white; border-radius: 6px; border:none; cursor:pointer; }
         .btn-delete { background: linear-gradient(145deg, #ef4444, #dc2626); padding: 6px 10px; font-size: 12px; color: white; border-radius: 6px; border:none; cursor:pointer; }
         .btn-bt { background: linear-gradient(145deg, #0ea5e9, #0284c7); padding: 6px 10px; font-size: 12px; color: white; border-radius: 6px; border:none; cursor:pointer; }
@@ -626,11 +624,6 @@
 
                 <div class="card-3d">
                     <h2>সদস্য নিবন্ধন ফরম ও অঙ্গীকারনামা</h2>
-                    
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <button class="btn-whatsapp" onclick="shareOnWhatsApp()">ওয়াটসঅ্যাপে শেয়ার</button>
-                        <button class="btn-messenger" onclick="shareOnMessenger()">মেসেঞ্জারে শেয়ার</button>
-                    </div>
 
                     <form id="memberForm" onsubmit="handleFinalSubmit(event)">
                         <input type="hidden" id="editMemberKey" value="">
@@ -817,7 +810,23 @@
             <div id="activeUsersDashboard" class="hidden">
                 <div class="card-3d">
                     <h2>অ্যাপ ব্যবহারকারী ও রোল পারমিশন ম্যানেজমেন্ট (এডমিন প্যানেল)</h2>
-                    <p style="font-size:12px; color:#555; margin-bottom:12px;">এখান থেকে যেকোনো নিবন্ধিত ইউজারকে Manager বা Finance Secretary রোল প্রদান করতে পারবেন:</p>
+                    <p style="font-size:12px; color:#555; margin-bottom:12px;">এখান থেকে যেকোনো নিবন্ধিত ইউজারকে নতুন করে সেভ, রোল পরিবর্তন এবং ডিলিট করতে পারবেন:</p>
+                    
+                    <div class="form-card" style="background: #f1f5f9; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
+                        <h3 style="font-size:14px; color:var(--primary); margin-bottom:10px;">নতুন ব্যবহারকারী ও রোল যুক্ত করুন (সেভ)</h3>
+                        <div style="display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+                            <input type="text" id="adminNewUserPhone" class="input-3d" placeholder="মোবাইল নম্বর / আইডি" style="margin-top:0; flex:1;" required>
+                            <input type="password" id="adminNewUserPass" class="input-3d" placeholder="পাসওয়ার্ড" style="margin-top:0; flex:1;" required>
+                            <select id="adminNewUserRole" class="input-3d" style="margin-top:0; width:150px;">
+                                <option value="Staff">Staff</option>
+                                <option value="FinanceSecretary">Finance Secretary</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                            <button onclick="addNewUserByAdmin()" class="btn-3d" style="margin-top:0; width:120px; background:#16a34a;">সেভ করুন</button>
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -826,13 +835,32 @@
                                     <th>নাম ও PSL আইডি</th>
                                     <th>মোবাইল / আইডি</th>
                                     <th>বর্তমান রোল</th>
-                                    <th>রোল পরিবর্তন ও পারমিশন</th>
+                                    <th>রোল পরিবর্তন ও ডিলিট</th>
                                 </tr>
                             </thead>
                             <tbody id="activeUsersTableBody">
                                 <tr><td colspan="5" style="text-align:center;">কোনো ব্যবহারকারী নেই।</td></tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div style="margin-top: 25px;">
+                        <h3 style="color: #dc2626; font-size: 15px; margin-bottom: 10px;">ডিলিটকৃত ও সুরক্ষিত ব্যবহারকারী তালিকা (শেষ কার্যক্রম তারিখসহ)</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>মোবাইল / আইডি</th>
+                                        <th>রোল</th>
+                                        <th>শেষ কার্যক্রম / ডিলিট তারিখ</th>
+                                        <th>স্ট্যাটাস</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deletedUsersTableBody">
+                                    <tr><td colspan="4" style="text-align:center;">কোনো সুরক্ষিত ডিলিটকৃত ইউজার নেই।</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1186,8 +1214,6 @@
 </div>
 
 <script>
-    const SHARE_LINK = "https://eso-bhabishyat-gori.netlify.app/";
-    
     const firebaseConfig = {
       apiKey: "AIzaSyCL-wNpmwF6VAtEWr6PqKETdcrdC4reonE",
       authDomain: "shirighat-teghoria-ags.firebaseapp.com",
@@ -1367,7 +1393,6 @@
                 });
             }
             
-            // 01647302616 নম্বরের জন্য সরাসরি Admin রোল সেট করা
             if (userPhone === '01647302616') {
                 role = 'Admin';
             }
@@ -1507,17 +1532,14 @@
         }
 
         if(userOtp === generatedOtp) {
-            // Check if any users exist; first user or specific phone becomes Admin
             database.ref('registeredUsers').once('value', (usersSnap) => {
                 const isFirstUser = !usersSnap.exists();
                 let assignedRole = isFirstUser ? 'Admin' : 'Staff';
 
-                // 01647302616 নম্বরের জন্য স্থায়ীভাবে Admin সেট করা
                 if (pendingPhone === '01647302616') {
                     assignedRole = 'Admin';
                 }
 
-                // Preserve old PSL ID if member record already exists in database
                 database.ref('members').orderByChild('phone').equalTo(pendingPhone).once('value', (memberSnap) => {
                     let memberId = '';
                     if(memberSnap.exists()) {
@@ -1543,7 +1565,8 @@
                         password: pendingPass,
                         role: assignedRole,
                         photo: signupPhoto,
-                        createdDate: Date.now()
+                        createdDate: Date.now(),
+                        lastActiveDate: new Date().toLocaleString('bn-BD')
                     }).then(() => {
                         alert("ওটিপি সফলভাবে যাচাই হয়েছে! সাইনআপ সম্পন্ন হয়েছে।\nরোল: " + assignedRole + "\nআপনার আইডি: " + memberId);
                         
@@ -1582,7 +1605,6 @@
                 });
 
                 if(found) {
-                    // 01647302616 নম্বরের জন্য সরাসরি Admin
                     if (phone === '01647302616') {
                         userRole = 'Admin';
                     }
@@ -1626,7 +1648,7 @@
                 });
 
                 if(keyToUpdate) {
-                    database.ref('registeredUsers/' + keyToUpdate).update({ password: newPass }).then(() => {
+                    database.ref('registeredUsers/' + keyToUpdate).update({ password: newPass, lastActiveDate: new Date().toLocaleString('bn-BD') }).then(() => {
                         alert("আপনার পাসওয়ার্ড সফলভাবে আপডেট করা হয়েছে!");
                         document.getElementById('cpOldPass').value = '';
                         document.getElementById('cpNewPass').value = '';
@@ -1637,6 +1659,67 @@
                 }
             }
         });
+    }
+
+    function addNewUserByAdmin() {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন নতুন ব্যবহারকারী যুক্ত করতে পারবেন!");
+            return;
+        }
+        const phone = document.getElementById('adminNewUserPhone').value;
+        const pass = document.getElementById('adminNewUserPass').value;
+        const role = document.getElementById('adminNewUserRole').value;
+
+        if(!phone || !pass) {
+            alert("দয়া করে মোবাইল নম্বর এবং পাসওয়ার্ড দিন।");
+            return;
+        }
+
+        database.ref('registeredUsers').orderByChild('phone').equalTo(phone).once('value', (snap) => {
+            if(snap.exists()) {
+                alert("এই নম্বর দিয়ে ইতোমধ্যে ব্যবহারকারী রয়েছে!");
+            } else {
+                database.ref('registeredUsers').push({
+                    phone: phone,
+                    password: pass,
+                    role: role,
+                    photo: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                    createdDate: Date.now(),
+                    lastActiveDate: new Date().toLocaleString('bn-BD')
+                }).then(() => {
+                    alert("নতুন ব্যবহারকারী সফলভাবে ডাটাবেইজে সংরক্ষিত হয়েছে!");
+                    document.getElementById('adminNewUserPhone').value = '';
+                    document.getElementById('adminNewUserPass').value = '';
+                    loadActiveUsersList();
+                });
+            }
+        });
+    }
+
+    function deleteActiveUser(userKey) {
+        const currentRole = localStorage.getItem('userRole');
+        if(currentRole !== 'Admin') {
+            alert("শুধুমাত্র এডমিন ব্যবহারকারী মুছতে পারবেন!");
+            return;
+        }
+
+        if(confirm("আপনি কি এই ব্যবহারকারীকে ডিলিট করতে চান? ডিলিট করলে এটি এডমিন আইডিতে সুরক্ষিত ও আর্কাইভ থাকবে।")) {
+            database.ref('registeredUsers/' + userKey).once('value', (snap) => {
+                if(snap.exists()) {
+                    const userData = snap.val();
+                    userData.lastActiveDate = new Date().toLocaleString('bn-BD');
+                    userData.deletedTimestamp = Date.now();
+
+                    database.ref('deletedUsers').push(userData).then(() => {
+                        database.ref('registeredUsers/' + userKey).remove().then(() => {
+                            alert("ব্যবহারকারী সফলভাবে ডিলিট করা হয়েছে এবং এডমিন আইডিতে সুরক্ষিত রাখা হয়েছে।");
+                            loadActiveUsersList();
+                        });
+                    });
+                }
+            });
+        }
     }
 
     function loadActiveUsersList() {
@@ -1657,7 +1740,6 @@
                     const photo = u.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
                     let role = u.role || 'Staff';
 
-                    // 01647302616 প্রদর্শনী রোল এডমিন
                     if (u.phone === '01647302616') {
                         role = 'Admin';
                     }
@@ -1676,11 +1758,32 @@
                                     <option value="Admin" ${role === 'Admin' ? 'selected' : ''}>Admin</option>
                                 </select>
                                 <button onclick="updateUserRole('${key}')" class="btn-edit" style="margin-left:4px;">সেভ রোল</button>
+                                <button onclick="deleteActiveUser('${key}')" class="btn-delete" style="margin-left:4px;">ডিলিট</button>
                             </td>
                         </tr>`;
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো নিবন্ধিত ব্যবহারকারী নেই।</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো ব্যবহারকারী নেই।</td></tr>';
+            }
+        });
+
+        database.ref('deletedUsers').on('value', (snapshot) => {
+            const tbody = document.getElementById('deletedUsersTableBody');
+            tbody.innerHTML = '';
+            const data = snapshot.val();
+            if(data) {
+                Object.keys(data).forEach(key => {
+                    const u = data[key];
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${u.phone}</td>
+                            <td><span class="role-badge">${u.role || 'Staff'}</span></td>
+                            <td>${u.lastActiveDate || 'N/A'}</td>
+                            <td><span class="st-rejected">সুরক্ষিত (ডিলিটকৃত)</span></td>
+                        </tr>`;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো সুরক্ষিত ডিলিটকৃত ইউজার নেই।</td></tr>';
             }
         });
     }
@@ -1693,7 +1796,7 @@
         }
 
         const newRole = document.getElementById('roleSelect_' + userKey).value;
-        database.ref('registeredUsers/' + userKey).update({ role: newRole }).then(() => {
+        database.ref('registeredUsers/' + userKey).update({ role: newRole, lastActiveDate: new Date().toLocaleString('bn-BD') }).then(() => {
             alert("ব্যবহারকারীর রোল সফলভাবে '" + newRole + "' সেটিংসে আপডেট করা হয়েছে!");
         });
     }
@@ -2058,7 +2161,7 @@
         database.ref('registeredUsers').orderByChild('phone').equalTo(phone).once('value', (snapshot) => {
             if(snapshot.exists()) {
                 snapshot.forEach((child) => {
-                    database.ref('registeredUsers/' + child.key).update({ password: newPass }).then(() => {
+                    database.ref('registeredUsers/' + child.key).update({ password: newPass, lastActiveDate: new Date().toLocaleString('bn-BD') }).then(() => {
                         alert("পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে! এখন লগইন করুন।");
                         closeForgotModal();
                     });
@@ -2471,16 +2574,6 @@
             });
             alert("নির্বাচিত সদস্যগণ সফলভাবে মুছে ফেলা হয়েছে।");
         }
-    }
-
-    function shareOnWhatsApp() {
-        const text = encodeURIComponent("এসো ভবিষ্যৎ গড়ি ও ঐক্য সাফল্যের বিজয় — কেন্দ্রীয় কার্যনির্বাহী কমিটি ও আর্থিক ব্যবস্থাপনা সিস্টেম। জয়েন করুন: " + SHARE_LINK);
-        window.open("https://api.whatsapp.com/send?text=" + text, "_blank");
-    }
-
-    function shareOnMessenger() {
-        const text = encodeURIComponent("এসো ভবিষ্যৎ গড়ি ও ঐক্য সাফল্যের বিজয় — লিংক: " + SHARE_LINK);
-        window.open("https://www.facebook.com/dialog/send?link=" + encodeURIComponent(SHARE_LINK) + "&app_id=291494419107518&redirect_uri=" + encodeURIComponent(SHARE_LINK), "_blank");
     }
 
     function sendChatMessage() {
