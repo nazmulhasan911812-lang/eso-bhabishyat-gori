@@ -112,6 +112,22 @@
             box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3);
         }
 
+        .dashboard-nav { position: sticky; top: 8px; z-index: 30; padding: 10px; border: 1px solid rgba(148,163,184,.24); border-radius: 18px; background: rgba(248,250,252,.92); backdrop-filter: blur(14px); box-shadow: 0 8px 24px rgba(15,23,42,.08); }
+        .nav-btn, .btn-3d, .btn-edit, .btn-delete, .btn-bt, .btn-req { transition: transform .18s ease, box-shadow .18s ease, filter .18s ease; }
+        .nav-btn:hover, .btn-3d:hover, .btn-edit:hover, .btn-delete:hover, .btn-bt:hover, .btn-req:hover { transform: translateY(-2px); filter: saturate(1.08); }
+        .card-3d { border: 1px solid rgba(148,163,184,.22); box-shadow: 0 10px 30px rgba(15,23,42,.08); }
+        .input-3d, input, select, textarea { max-width: 100%; }
+        .home-return-fab { position: fixed; right: max(14px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 1000; border: 0; border-radius: 999px; padding: 13px 18px; color: #fff; font-weight: 800; font-size: 13px; background: linear-gradient(135deg,#4338ca,#2563eb); box-shadow: 0 10px 28px rgba(37,99,235,.35); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .home-return-fab:active { transform: scale(.97); }
+        @media (max-width: 600px) {
+            .container { padding-left: 10px; padding-right: 10px; }
+            .dashboard-nav { gap: 7px; justify-content: stretch; }
+            .nav-btn { flex: 1 1 calc(50% - 7px); min-height: 42px; padding: 10px 9px; font-size: 12px; border-radius: 11px; }
+            .card-3d { padding: 15px; border-radius: 16px; }
+            table { min-width: 620px; }
+            .home-return-fab { right: 10px; bottom: 12px; padding: 12px 14px; font-size: 12px; }
+        }
+
         .card-3d {
             background: var(--card-bg);
             padding: 22px;
@@ -313,7 +329,6 @@
             border: 2px solid var(--primary);
         }
 
-        /* PDF Watermark Style */
         .pdf-watermark-overlay {
             position: absolute;
             top: 50%;
@@ -449,7 +464,8 @@
         </div>
 
         <div id="appContent" class="hidden">
-            <div style="display: flex; justify-content: space-between; align- items: center; margin-top: 15px;">
+            <button type="button" id="globalHomeReturnBtn" class="home-return-fab" onclick="returnToHomeDashboard()" aria-label="কাজ শেষ করে হোম পেজে ফিরুন"><i class="fa-solid fa-house"></i> কাজ শেষ — হোমে ফিরুন</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
                 <span id="currentRoleDisplay" class="role-badge">ক্যাটাগরি: Staff</span>
                 <button class="btn-delete" style="width: auto; padding: 6px 12px;" onclick="handleLogout()">লগআউট</button>
             </div>
@@ -537,7 +553,6 @@
             <div id="managerLawApprovalDashboard" class="card-3d hidden" style="border: 2px dashed #f59e0b; background: #fffbeb;">
                 <h2><i class="fa-solid fa-user-shield"></i> ম্যানেজার (Manager) যাচাই-বাছাই ও পারমিশন প্যানেল</h2>
                 
-                <!-- ম্যানেজার ব্যাকএন্ড - প্রকল্প তথ্য ও পরিকল্পনা যাচাই ও অনুমোদন সেকশন -->
                 <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #cbd5e1;">
                     <h3 style="font-size:14px; color:#d97706; margin-bottom:8px;"><i class="fa-solid fa-list-check"></i> প্রকল্প তথ্য ও পরিকল্পনা যাচাই-বাছাই প্যানেল</h3>
                     <p style="font-size:12px; color:#555; margin-bottom:10px;">প্রকল্প সম্পাদক/সদস্যদের প্রেরিত পরিকল্পনাগুলো এখান থেকে যাচাই করে অনুমোদন (Approve) দিন অথবা ডিলিট (Delete) করুন। অনুমোদন দিলে নোটিশ বাক্সে প্রদর্শিত হবে এবং পিডিএফ ডাউনলোড করা যাবে।</p>
@@ -633,7 +648,6 @@
                 </div>
 
                 <div id="companyIdCardPreviewArea" style="background:white; padding:20px; border-radius:12px; border:2px solid #3b82f6; max-width:400px; margin: 15px auto; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.1); position:relative; overflow:hidden;">
-                    <!-- Auto Watermark dynamically appended -->
                     <div class="pdf-content-wrapper">
                         <img id="idCardPhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid var(--primary); margin-bottom:10px;">
                         <h3 id="idCardName" style="color:var(--primary); margin:5px 0;">সদস্যের নাম</h3>
@@ -671,9 +685,9 @@
 
                     <div style="margin-top: 20px;" class="no-print">
                         <button class="btn-3d" id="managerReceiptReviewBtn" style="background:#2563eb;" onclick="reviewManagerReceiptPDF()">রশিদ PDF প্রিভিউ / যাচাই</button>
-                <button class="btn-3d" id="downloadManagerReceiptBtn" style="background:#10b981;" onclick="downloadA4ReceiptPDF()" disabled>যাচাইয়ের পর A4 PDF ডাউনলোড</button>
-                <button class="btn-3d" id="adminReceiptDownloadBtn" style="background:#10b981;display:none;" onclick="downloadA4ReceiptPDFAdminLegacy()"><i class="fa-solid fa-download"></i> A4 পেজে PDF ডাউনলোড করুন</button>
-                <div id="managerReceiptReviewStatus">আগে রশিদ তৈরি বা সংরক্ষিত রশিদ নির্বাচন করে প্রিভিউ যাচাই করুন।</div>
+                        <button class="btn-3d" id="downloadManagerReceiptBtn" style="background:#10b981;" onclick="downloadA4ReceiptPDF()" disabled>যাচাইয়ের পর A4 PDF ডাউনলোড</button>
+                        <button class="btn-3d" id="adminReceiptDownloadBtn" style="background:#10b981;display:none;" onclick="downloadA4ReceiptPDFAdminLegacy()"><i class="fa-solid fa-download"></i> A4 পেজে PDF ডাউনলোড করুন</button>
+                        <div id="managerReceiptReviewStatus">আগে রশিদ তৈরি বা সংরক্ষিত রশিদ নির্বাচন করে প্রিভিউ যাচাই করুন।</div>
                         <button class="btn-3d" style="background:#3b82f6;" onclick="window.print()"><i class="fa-solid fa-print"></i> সরাসরি প্রিন্ট করুন</button>
                     </div>
                 </div>
@@ -1040,6 +1054,7 @@
                 </div>
             </div>
 
+            <!-- এডমিন এর জন্য সকল ইউজার ও রোল নির্ধারণ প্যানেল -->
             <div id="activeUsersDashboard" class="hidden">
                 <div class="card-3d">
                     <h2>অ্যাপ ব্যবহারকারী ও রোল ম্যানেজমেন্ট (এডমিন প্যানেল)</h2>
@@ -1402,7 +1417,7 @@
     </div>
 </div>
 
-<!-- নোটিশ প্রিন্ট বা পিডিএফ মোডাল -->
+<!-- মোডালসমূহ -->
 <div id="noticePrintModal" class="modal-overlay">
     <div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
         <div id="noticePrintArea" style="background: #fff; padding: 20px; color: #1e293b; position:relative;">
@@ -1629,7 +1644,6 @@
                 rightLogoEl.style.display = 'none';
             }
 
-            // আপডেট জলছাপ ইমেজস
             const wImgs = ['receiptWatermarkImg', 'noticeWatermarkImg', 'memberWatermarkImg', 'projectWatermarkImg', 'committeeWatermarkImg'];
             wImgs.forEach(id => {
                 const img = document.getElementById(id);
@@ -1643,7 +1657,6 @@
                 }
             });
 
-            // জলছাপ কোম্পানির আইডি কার্ড
             const idCardPreview = document.getElementById('companyIdCardPreviewArea');
             if(idCardPreview) {
                 let existingW = idCardPreview.querySelector('.pdf-watermark-overlay');
@@ -1859,13 +1872,12 @@
                 if(navActiveUsersBtn) navActiveUsersBtn.style.display = 'none';
                 if(navAdminAppConfigBtn) navAdminAppConfigBtn.style.display = 'none';
                 if(navStaffFundBtn) navStaffFundBtn.style.display = 'none';
-                if(navReceiptBtn) navReceiptBtn.style.display = 'block';
+                if(navReceiptBtn) navReceiptBtn.style.display = 'none';
                 
                 const managerHub = document.getElementById('managerTaskDashboard');
                 if(managerHub) managerHub.classList.remove('hidden');
                 if(managerLawApprovalDashboard) managerLawApprovalDashboard.classList.add('hidden');
                 if(managerCompanyIdCardDashboard) managerCompanyIdCardDashboard.classList.add('hidden');
-                if(navReceiptBtn) navReceiptBtn.style.display = 'none';
                 loadDeleteRequestsForManager();
                 loadManagerProjectApprovalTable();
                 loadFinanceExpenseReviewForManager();
@@ -1895,13 +1907,8 @@
 
         const pForm = document.getElementById('projectForm');
         const pRestricted = document.getElementById('projectRestrictedMsg');
-        if(role === 'FinanceSecretary' || role === 'Manager' || role === 'Admin' || role === 'Information') {
-            if(pForm) pForm.style.display = 'block';
-            if(pRestricted) pRestricted.classList.add('hidden');
-        } else {
-            if(pForm) pForm.style.display = 'block'; // দেওয়া হয়েছে সকল পদ থেকেই জমা পাঠানো যাবে
-            if(pRestricted) pRestricted.classList.add('hidden');
-        }
+        if(pForm) pForm.style.display = 'block';
+        if(pRestricted) pRestricted.classList.add('hidden');
 
         const staffTxFormCard = document.getElementById('staffTxFormCard');
         const staffTxRestrictedMsg = document.getElementById('staffTxRestrictedMsg');
@@ -1920,6 +1927,7 @@
         localStorage.removeItem('loginSessionTime');
         localStorage.removeItem('loggedInUser');
         localStorage.removeItem('userRole');
+        navigationHistory = ['home'];
         document.getElementById('appContent').classList.add('hidden');
         document.getElementById('loginCard').classList.remove('hidden');
     }
@@ -1988,7 +1996,6 @@
                     else if(assignedRole === 'Information') defaultDesignation = 'তথ্য সম্পাদক';
 
                     if(!memberId) {
-                        // অটোমেটিক ডাটাবেজ ইউনিক আইডি জেনারেশন
                         memberId = 'PSL-' + Math.floor(100000 + Math.random() * 900000);
                         database.ref('members').push({
                             phone: pendingPhone,
@@ -2024,50 +2031,119 @@
         }
     }
 
+    function normalizeLoginIdentifier(value) {
+        return String(value || '').trim()
+            .replace(/[০-৯]/g, d => '0123456789'['০১২৩৪৫৬৭৮৯'.indexOf(d)])
+            .toLowerCase();
+    }
+
     function handleLogin() {
-        const phone = document.getElementById('authPhoneInput').value;
+        const loginInput = document.getElementById('authPhoneInput').value.trim();
         const pass = document.getElementById('authPassInput').value;
         const selectedCategory = document.getElementById('loginCategorySelect').value;
 
-        if(!phone || !pass) {
-            alert("দয়া করে মোবাইল নম্বর/ইউজার আইডি এবং পাসওয়ার্ড দিন।");
+        if (!loginInput || !pass) {
+            alert("দয়া করে পুরোনো সদস্য আইডি/মোবাইল নম্বর এবং পাসওয়ার্ড দিন।");
             return;
         }
 
-        database.ref('registeredUsers').orderByChild('phone').equalTo(phone).once('value', (snapshot) => {
-            if(snapshot.exists()) {
-                let found = false;
-                let userRole = selectedCategory;
-                snapshot.forEach((child) => {
-                    const uData = child.val();
-                    if(uData.password === pass) {
-                        found = true;
-                        if(uData.role) userRole = uData.role;
-                    }
+        const wanted = normalizeLoginIdentifier(loginInput);
+
+        Promise.all([
+            database.ref('registeredUsers').once('value'),
+            database.ref('members').once('value')
+        ]).then(([usersSnap, membersSnap]) => {
+            const users = [];
+            if (usersSnap.exists()) {
+                usersSnap.forEach(child => {
+                    users.push({ key: child.key, data: child.val() || {} });
                 });
-
-                if(found) {
-                    if (phone === '01647302616') {
-                        userRole = 'Admin';
-                    }
-
-                    if(userRole !== selectedCategory && phone !== '01647302616') {
-                        alert("সতর্কতা: আপনার অ্যাকাউন্টটি '" + userRole + "' ক্যাটাগরির।");
-                        return;
-                    }
-
-                    alert("সফলভাবে লগইন হয়েছে! (ক্যাটাগরি: " + userRole + ")");
-                    localStorage.setItem('loginSessionTime', new Date().getTime());
-                    localStorage.setItem('loggedInUser', phone);
-                    localStorage.setItem('userRole', userRole);
-
-                    refreshUserRoleAndLoad(phone);
-                } else {
-                    alert("ভুল পাসওয়ার্ড!");
-                }
-            } else {
-                alert("অ্যাকাউন্ট পাওয়া যায়নি। প্রথমে সাইনআপ করুন।");
             }
+
+            const members = [];
+            if (membersSnap.exists()) {
+                membersSnap.forEach(child => {
+                    members.push({ key: child.key, data: child.val() || {} });
+                });
+            }
+
+            const matchesIdentifier = (obj, fields) => fields.some(field =>
+                obj[field] !== undefined &&
+                normalizeLoginIdentifier(obj[field]) === wanted
+            );
+
+            let matchedUser = users.find(item => matchesIdentifier(item.data, [
+                'phone', 'userId', 'userID', 'id', 'memberId', 'memberID',
+                'username', 'email', 'loginId', 'loginID'
+            ]));
+
+            if (!matchedUser) {
+                const matchedMember = members.find(item => matchesIdentifier(item.data, [
+                    'id', 'memberId', 'memberID', 'userId', 'userID',
+                    'uniqueId', 'uniqueID', 'pslId', 'PSL_ID', 'username'
+                ]));
+
+                if (matchedMember) {
+                    const member = matchedMember.data;
+                    const memberPhone = normalizeLoginIdentifier(member.phone || member.mobile || member.mobileNumber);
+                    if (memberPhone) {
+                        matchedUser = users.find(item =>
+                            normalizeLoginIdentifier(item.data.phone || item.data.mobile || item.data.mobileNumber) === memberPhone
+                        );
+                    }
+
+                    if (!matchedUser && (member.password !== undefined || member.pass !== undefined)) {
+                        if (String(member.password !== undefined ? member.password : member.pass) === pass) {
+                            let memberRole = member.role || member.category || selectedCategory;
+                            if (loginInput === '01647302616' || memberPhone === '01647302616') memberRole = 'Admin';
+                            if (memberRole !== selectedCategory && memberRole !== 'Admin') {
+                                alert("সতর্কতা: আপনার অ্যাকাউন্টটি '" + memberRole + "' ক্যাটাগরির।");
+                                return;
+                            }
+                            const sessionUser = member.phone || member.mobile || member.mobileNumber || loginInput;
+                            localStorage.setItem('loginSessionTime', Date.now().toString());
+                            localStorage.setItem('loggedInUser', sessionUser);
+                            localStorage.setItem('userRole', memberRole);
+                            refreshUserRoleAndLoad(sessionUser);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            if (!matchedUser) {
+                alert("এই পুরোনো আইডি/মোবাইল নম্বরের সঙ্গে কোনো লগইন অ্যাকাউন্ট পাওয়া যায়নি।");
+                return;
+            }
+
+            const uData = matchedUser.data;
+            const savedPassword = uData.password !== undefined ? uData.password : uData.pass;
+            if (String(savedPassword === undefined ? '' : savedPassword) !== pass) {
+                alert("ভুল পাসওয়ার্ড!");
+                return;
+            }
+
+            let userRole = uData.role || uData.category || selectedCategory;
+            const userPhone = String(uData.phone || uData.mobile || uData.mobileNumber || loginInput).trim();
+
+            if (normalizeLoginIdentifier(loginInput) === '01647302616' ||
+                normalizeLoginIdentifier(userPhone) === '01647302616') {
+                userRole = 'Admin';
+            }
+
+            if (userRole !== selectedCategory && userRole !== 'Admin') {
+                alert("সতর্কতা: আপনার অ্যাকাউন্টটি '" + userRole + "' ক্যাটাগরির।");
+                return;
+            }
+
+            alert("সফলভাবে লগইন হয়েছে! (ক্যাটাগরি: " + userRole + ")");
+            localStorage.setItem('loginSessionTime', Date.now().toString());
+            localStorage.setItem('loggedInUser', userPhone);
+            localStorage.setItem('userRole', userRole);
+            refreshUserRoleAndLoad(userPhone);
+        }).catch(error => {
+            console.error('Legacy login lookup failed:', error);
+            alert("ডাটাবেইজ থেকে আইডি যাচাই করা যায়নি।");
         });
     }
 
@@ -2189,93 +2265,179 @@
     }
 
     function loadActiveUsersList() {
-        database.ref('registeredUsers').on('value', (snapshot) => {
+        Promise.all([
+            database.ref('registeredUsers').once('value'),
+            database.ref('members').once('value'),
+            database.ref('deletedUsers').once('value')
+        ]).then(([usersSnap, membersSnap, deletedSnap]) => {
             const tbody = document.getElementById('activeUsersTableBody');
+            const deletedBody = document.getElementById('deletedUsersTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
-            const data = snapshot.val();
-            if(data) {
-                Object.keys(data).forEach(key => {
-                    const u = data[key];
-                    const photo = u.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                    let role = u.role || 'Staff';
 
-                    if (u.phone === '01647302616') {
-                        role = 'Admin';
-                    }
+            const normalize = value => String(value || '').trim().toLowerCase();
+            const escapeHtml = value => String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({
+                '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+            }[ch]));
 
-                    let passStatusHtml = '<span class="st-approved">সক্রিয়</span>';
-                    let approvePassBtn = '';
+            const userFields = ['phone','mobile','mobileNumber','userId','userID','id','memberId','memberID','username','email','loginId','loginID'];
+            const memberFields = ['phone','mobile','mobileNumber','id','memberId','memberID','userId','userID','uniqueId','uniqueID','pslId','PSL_ID','username'];
+            
+            const users = usersSnap.val() || {};
+            const members = membersSnap.val() || {};
+            const knownIdentifiers = new Set();
+            
+            Object.values(users).forEach(u => userFields.forEach(field => {
+                const value = normalize((u || {})[field]);
+                if (value) knownIdentifiers.add(value);
+            }));
 
-                    if(u.passChangeStatus === 'Pending') {
-                        passStatusHtml = '<span class="st-pending">পাসওয়ার্ড এপ্রুভ বাকি</span>';
-                        approvePassBtn = `<button onclick="approvePasswordChange('${key}')" class="btn-edit" style="background:#16a34a; margin-left:4px;">পাসওয়ার্ড এপ্রুভ</button>`;
-                    }
+            const rows = [];
+            Object.keys(users).forEach(key => {
+                const u = users[key] || {};
+                const phone = u.phone || u.mobile || u.mobileNumber || '';
+                const identifier = phone || u.userId || u.userID || u.id || u.memberId || u.memberID || u.username || u.email || key;
+                const linkedMember = Object.values(members).find(m => {
+                    m = m || {};
+                    return phone && normalize(m.phone || m.mobile || m.mobileNumber) === normalize(phone);
+                });
+                let role = u.role || u.category || (linkedMember && (linkedMember.role || linkedMember.category)) || 'Staff';
+                if (normalize(phone || identifier) === normalize('01647302616')) role = 'Admin';
+                rows.push({ key, source: 'registeredUsers', user: u, phone, identifier, role, linkedMember });
+            });
 
-                    tbody.innerHTML += `
+            Object.keys(members).forEach(key => {
+                const m = members[key] || {};
+                const identifiers = memberFields.map(field => normalize(m[field])).filter(Boolean);
+                if (identifiers.some(value => knownIdentifiers.has(value))) return;
+                const phone = m.phone || m.mobile || m.mobileNumber || '';
+                const identifier = phone || m.id || m.memberId || m.memberID || m.userId || m.userID || m.uniqueId || m.uniqueID || m.pslId || m.PSL_ID || key;
+                let role = m.role || m.category || 'Staff';
+                if (normalize(phone || identifier) === normalize('01647302616')) role = 'Admin';
+                rows.push({ key: 'member::' + key, source: 'members', user: m, phone, identifier, role, linkedMember: m });
+            });
+
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো ব্যবহারকারী বা সদস্যের রেকর্ড পাওয়া যায়নি।</td></tr>';
+            } else {
+                rows.forEach(row => {
+                    const u = row.user || {};
+                    const key = row.key;
+                    const photo = escapeHtml(u.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png');
+                    const label = escapeHtml(u.name || u.fullName || row.identifier || 'আইডি নেই');
+                    const idText = escapeHtml(row.identifier || 'আইডি নেই');
+                    const role = row.role;
+                    const passStatusHtml = row.source === 'registeredUsers'
+                        ? (u.passChangeStatus === 'Pending' ? '<span class="st-pending">পাসওয়ার্ড এপ্রুভ বাকি</span>' : '<span class="st-approved">সক্রিয়</span>')
+                        : '<span class="st-pending">সদস্য রেকর্ড</span>';
+                    const approvePassBtn = row.source === 'registeredUsers' && u.passChangeStatus === 'Pending'
+                        ? `<button onclick="approvePasswordChange(${JSON.stringify(key)})" class="btn-edit" style="background:#16a34a; margin-left:4px;">পাসওয়ার্ড এপ্রুভ</button>` : '';
+                    const canDelete = row.source === 'registeredUsers' && role !== 'Admin';
+                    const roleSelectId = 'roleSelect_' + key;
+                    const targetIdentifier = row.phone || row.identifier || '';
+                    
+                    tbody.insertAdjacentHTML('beforeend', `
                         <tr>
-                            <td><img src="${photo}" class="member-img"></td>
-                            <td><b>ইউজার: ${u.phone}</b></td>
-                            <td><span class="role-badge">${role}</span></td>
+                            <td><img src="${photo}" class="member-img" alt="প্রোফাইল"></td>
+                            <td><b>${label}</b><br><small>আইডি/মোবাইল: ${idText}</small></td>
+                            <td><span class="role-badge">${escapeHtml(role)}</span></td>
                             <td>${passStatusHtml}</td>
                             <td>
-                                <select class="input-3d" style="width:130px; display:inline-block; margin:0;" id="roleSelect_${key}">
+                                <select class="input-3d" style="width:145px; display:inline-block; margin:0;" id="${escapeHtml(roleSelectId)}">
                                     <option value="Staff" ${role === 'Staff' ? 'selected' : ''}>Staff</option>
                                     <option value="Information" ${role === 'Information' ? 'selected' : ''}>Information</option>
                                     <option value="FinanceSecretary" ${role === 'FinanceSecretary' ? 'selected' : ''}>Finance Secretary</option>
                                     <option value="Manager" ${role === 'Manager' ? 'selected' : ''}>Manager</option>
                                     <option value="Admin" ${role === 'Admin' ? 'selected' : ''}>Admin</option>
                                 </select>
-                                <button onclick="updateUserRole('${key}', '${u.phone}')" class="btn-edit" style="margin-left:4px;">সেভ রোল</button>
+                                <button onclick="updateUserRole(${JSON.stringify(key)}, ${JSON.stringify(targetIdentifier)})" class="btn-edit" style="margin:4px;">সেভ রোল</button>
                                 ${approvePassBtn}
-                                ${role !== 'Admin' ? `<button onclick="deleteActiveUser('${key}')" class="btn-delete" style="margin-left:4px;">ডিলিট</button>` : ''}
+                                ${canDelete ? `<button onclick="deleteActiveUser(${JSON.stringify(key)})" class="btn-delete" style="margin-left:4px;">ডিলিট</button>` : ''}
                             </td>
-                        </tr>`;
+                        </tr>`);
                 });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো ব্যবহারকারী নেই।</td></tr>';
             }
-        });
 
-        database.ref('deletedUsers').on('value', (snapshot) => {
-            const tbody = document.getElementById('deletedUsersTableBody');
-            tbody.innerHTML = '';
-            const data = snapshot.val();
-            if(data) {
-                Object.keys(data).forEach(key => {
-                    const u = data[key];
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${u.phone}</td>
-                            <td><span class="role-badge">${u.role || 'Staff'}</span></td>
-                            <td>${u.lastActiveDate || 'N/A'}</td>
-                            <td><span class="st-rejected">সুরক্ষিত (ডিলিটকৃত)</span></td>
-                        </tr>`;
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো সুরক্ষিত ডিলিটকৃত ইউজার নেই।</td></tr>';
+            if (deletedBody) {
+                deletedBody.innerHTML = '';
+                const deleted = deletedSnap.val() || {};
+                const deletedKeys = Object.keys(deleted);
+                if (!deletedKeys.length) {
+                    deletedBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো সুরক্ষিত ডিলিটকৃত ইউজার নেই।</td></tr>';
+                } else {
+                    deletedKeys.forEach(key => {
+                        const u = deleted[key] || {};
+                        deletedBody.insertAdjacentHTML('beforeend', `<tr><td>${escapeHtml(u.phone || u.id || 'আইডি নেই')}</td><td><span class="role-badge">${escapeHtml(u.role || 'Staff')}</span></td><td>${escapeHtml(u.lastActiveDate || 'N/A')}</td><td><span class="st-rejected">সুরক্ষিত (ডিলিটকৃত)</span></td></tr>`);
+                    });
+                }
             }
+        }).catch(error => {
+            console.error('Admin user list load failed:', error);
+            const tbody = document.getElementById('activeUsersTableBody');
+            if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#b91c1c;">তালিকা লোড হয়নি। সংযোগ পরীক্ষা করুন।</td></tr>';
         });
     }
 
+    // এডমিন থেকে রিয়েল-টাইম রোল পরিবর্তনের মূল ফাংশন
     function updateUserRole(userKey, userPhone) {
-        const newRole = document.getElementById('roleSelect_' + userKey).value;
-        
-        let correspondingDesignation = 'সাধারণ সদস্য';
-        if(newRole === 'Admin') correspondingDesignation = 'এডমিন';
-        else if(newRole === 'Manager') correspondingDesignation = 'ম্যানেজার';
-        else if(newRole === 'FinanceSecretary') correspondingDesignation = 'অর্থ সম্পাদক';
-        else if(newRole === 'Information') correspondingDesignation = 'তথ্য সম্পাদক';
-        else if(newRole === 'Staff') correspondingDesignation = 'স্টাফ সদস্য';
+        if (localStorage.getItem('userRole') !== 'Admin') {
+            alert('নিরাপত্তার কারণে রোল পরিবর্তন শুধু এডমিন আইডি থেকে করা যাবে।');
+            return;
+        }
+        const roleSelect = document.getElementById('roleSelect_' + userKey);
+        if (!roleSelect) { alert('রোল নির্বাচন পাওয়া যায়নি। তালিকাটি আবার খুলুন।'); return; }
+        const newRole = roleSelect.value;
+        const allowedRoles = ['Staff', 'Information', 'FinanceSecretary', 'Manager', 'Admin'];
+        if (!allowedRoles.includes(newRole)) { alert('এই রোলটি গ্রহণযোগ্য নয়।'); return; }
 
-        database.ref('registeredUsers/' + userKey).update({ role: newRole, lastActiveDate: new Date().toLocaleString('bn-BD') }).then(() => {
-            database.ref('members').orderByChild('phone').equalTo(userPhone).once('value', (mSnap) => {
-                if(mSnap.exists()) {
-                    mSnap.forEach(mChild => {
-                        database.ref('members/' + mChild.key).update({ designation: correspondingDesignation });
-                    });
-                }
+        const normalize = value => String(value || '').trim().toLowerCase();
+
+        const designationMap = {
+            Admin: 'এডমিন', Manager: 'ম্যানেজার', FinanceSecretary: 'অর্থ সম্পাদক',
+            Information: 'তথ্য সম্পাদক', Staff: 'স্টাফ সদস্য'
+        };
+        const saveBtn = roleSelect.parentElement ? roleSelect.parentElement.querySelector('button.btn-edit') : null;
+        if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'সেভ হচ্ছে…'; }
+        
+        const isMemberOnly = String(userKey).startsWith('member::');
+        const actualKey = isMemberOnly ? String(userKey).slice('member::'.length) : userKey;
+        const target = normalize(userPhone);
+
+        let savePromise;
+        if (isMemberOnly) {
+            savePromise = database.ref('members/' + actualKey).update({
+                role: newRole, category: newRole, designation: designationMap[newRole],
+                roleUpdatedAt: Date.now(), roleUpdatedBy: localStorage.getItem('loggedInUser') || 'Admin'
             });
-            alert("রোল ও পদবি সফলভাবে আপডেট করা হয়েছে!");
+        } else {
+            savePromise = database.ref('registeredUsers/' + actualKey).update({
+                role: newRole, category: newRole,
+                lastActiveDate: new Date().toLocaleString('bn-BD'),
+                roleUpdatedAt: Date.now(), roleUpdatedBy: localStorage.getItem('loggedInUser') || 'Admin'
+            }).then(() => database.ref('members').once('value').then(snapshot => {
+                const updates = {};
+                const allMembers = snapshot.val() || {};
+                Object.keys(allMembers).forEach(memberKey => {
+                    const m = allMembers[memberKey] || {};
+                    const memberValues = [m.phone, m.mobile, m.mobileNumber, m.id, m.memberId, m.memberID, m.userId, m.userID, m.uniqueId, m.uniqueID, m.pslId, m.PSL_ID, m.username];
+                    if (target && memberValues.some(value => normalize(value) === target)) {
+                        updates['members/' + memberKey + '/designation'] = designationMap[newRole];
+                        updates['members/' + memberKey + '/role'] = newRole;
+                        updates['members/' + memberKey + '/category'] = newRole;
+                    }
+                });
+                return Object.keys(updates).length ? database.ref().update(updates) : Promise.resolve();
+            }));
+        }
+
+        savePromise.then(() => {
+            alert('সফল! রোল Firebase-এ সেভ হয়েছে: ' + newRole);
+            loadActiveUsersList();
+        }).catch(error => {
+            console.error('Role update failed:', error);
+            alert('রোল সেভ হয়নি।');
+        }).finally(() => {
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'সেভ রোল'; }
         });
     }
 
@@ -2566,14 +2728,29 @@
         else if(task === 'project') switchDashboard('project');
     }
 
-    function goBackDashboard() {
-        if (navigationHistory.length > 1) {
-            navigationHistory.pop();
-            const previousPage = navigationHistory[navigationHistory.length - 1];
-            switchDashboard(previousPage, true);
-        } else {
-            alert("এটি প্রথম পেজ!");
+    function returnToHomeDashboard() {
+        navigationHistory = ['home'];
+        document.querySelectorAll('[id$="Dashboard"]').forEach(panel => {
+            if (panel.id !== 'homeDashboard') panel.classList.add('hidden');
+        });
+        const home = document.getElementById('homeDashboard');
+        if (home) home.classList.remove('hidden');
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        const homeBtn = document.getElementById('navHomeBtn');
+        if (homeBtn) homeBtn.classList.add('active');
+        ['managerLawApprovalDashboard','financeMonthlyYearlyDashboard','managerCompanyIdCardDashboard','managerReceiptDashboard','managerTaskDashboard'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
+        if (typeof loadHomeProfileInfo === 'function') {
+            const phone = localStorage.getItem('loggedInUser');
+            if (phone) loadHomeProfileInfo(phone);
         }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goBackDashboard() {
+        returnToHomeDashboard();
     }
 
     let receiptMembersCache = {};
@@ -2610,7 +2787,7 @@
     let managerIdCardReviewed = false;
     let managerReceiptReviewed = false;
     async function renderManagerA4PDF(root, filename) {
-        if(typeof html2pdf !== 'function') throw new Error('PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন।');
+        if(typeof html2pdf !== 'function') throw new Error('PDF লাইব্রেরি লোড হয়নি।');
         if(!root) throw new Error('PDF প্রিভিউ পাওয়া যায়নি।');
         const imgs=Array.from(root.querySelectorAll('img'));
         await Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve;setTimeout(resolve,5000);})));
@@ -2635,7 +2812,6 @@
         if(!selectedKey || !idCardMembersCache[selectedKey]) return;
         const m = idCardMembersCache[selectedKey];
 
-        // ডাটাবেজ থেকে অটোমেটিক কোড বা PSL ID
         const generatedCardCode = m.id || ('ID-CODE-' + Math.floor(100000 + Math.random() * 900000));
 
         document.getElementById('idCardPhoto').src = m.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
@@ -2655,7 +2831,6 @@
         finally{btn.disabled=false;btn.textContent='যাচাইয়ের পর PDF ডাউনলোড';}
     }
 
-    // Finance Secretary-এর রিপোর্ট ডাউনলোড: আলাদা যাচাই ও role check
     let financeSecretaryReportReviewed = false;
 
     function reviewFinanceSecretaryReport() {
@@ -2906,9 +3081,6 @@
         });
     }
 
-    /* ========================================================
-       নতুন সিস্টেম লজিক: ম্যানেজার যাচাই-বাছাই ও এপ্রুভ প্যানেল
-    ======================================================== */
     function loadManagerProjectApprovalTable() {
         database.ref('projects').on('value', (snapshot) => {
             const tbody = document.getElementById('managerProjectApprovalTableBody');
@@ -2949,13 +3121,11 @@
             if(snap.exists()) {
                 const p = snap.val();
                 
-                // ১. স্ট্যাটাস Approved করা
                 database.ref('projects/' + projectKey).update({
                     status: 'Approved',
                     approvedByManager: localStorage.getItem('loggedInUser'),
                     approvedDate: new Date().toLocaleDateString('bn-BD')
                 }).then(() => {
-                    // ২. স্বয়ংক্রিয়ভাবে নোটিশ বাক্সে প্রকাশ পাওয়া
                     const noticeText = `<b>নতুন প্রকল্প অনুমোদিত:</b> "${p.projectName}" (বাজেট: ৳ ${p.projectBudget})<br>প্রাপ্ত ব্যক্তি: ${p.recipientName}। বিস্তারিত প্রকল্প প্যানেলে দেখুন।`;
                     database.ref('notices').push({
                         text: noticeText,
@@ -3133,7 +3303,6 @@
         
         const todayStr = new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
         document.getElementById('rcptDate').innerText = todayStr;
-        // স্বয়ংক্রিয় ডাটাবেজ কোড জেনারেশন
         const generatedRcptNo = 'MEMO-CODE-' + Math.floor(100000 + Math.random() * 900000);
         document.getElementById('rcptNo').innerText = generatedRcptNo;
 
@@ -3317,7 +3486,6 @@
             timestamp: Date.now()
         };
 
-        // ডাটাবেজ থেকে স্বয়ংক্রিয় কোড জেনারেশন
         memberData.id = 'PSL-CODE-' + Math.floor(100000 + Math.random() * 900000);
         database.ref('members').push(memberData).then(() => {
             alert("ফরম সফলভাবে জমা হয়েছে! অটো জেনারেটেড কোড: " + memberData.id);
@@ -3588,7 +3756,6 @@
         const role = localStorage.getItem('userRole');
         const txType = document.getElementById('txType').value;
         const projectName = (document.getElementById('txProjectName')?.value || '').trim();
-        // প্রকল্পভিত্তিক সব ব্যয় হিসাব Finance Secretary-ই জমা দিতে পারবেন।
         if (txType === 'Expense' && role !== 'FinanceSecretary') {
             alert('প্রকল্পের ব্যয় হিসাব শুধু Finance Secretary আইডি থেকে জমা দেওয়া যাবে।');
             return;
@@ -3817,9 +3984,6 @@
         renderTransactions(filtered);
     }
 
-    /* ========================================================
-       নতুন সিস্টেম লজিক: প্রকল্প ও পরিকল্পনা জমা -> ম্যানেজার পর্যালোচনার জন্য পাঠানো
-    ======================================================== */
     function addNewPlanOrProjectSystem() {
         const planName = document.getElementById('newPlanNameInput').value;
         const planDetails = document.getElementById('newPlanDetailsInput').value;
@@ -3829,7 +3993,6 @@
             return;
         }
 
-        // প্রকল্প তথ্য ও পরিকল্পনা জমা দেওয়ার আগে ম্যানেজার আইডি তে পাঠানো হবে (Pending স্ট্যাটাসে)
         database.ref('projects').push({
             projectName: planName,
             projectDetails: planDetails,
@@ -3862,7 +4025,6 @@
             if(projects) {
                 Object.keys(projects).forEach(k => {
                     const p = projects[k];
-                    // ম্যানেজার পারমিশন দিলেই শুধু নোটিশ / প্যানেলে দেখানো হবে
                     if(p.status === 'Approved' && p.recipientName === 'পরিকল্পনা প্যানেল') {
                         countApprovedPlans++;
                         if(countApprovedPlans === 1) {
@@ -3883,7 +4045,6 @@
     function handleProjectSubmit(e) {
         e.preventDefault();
 
-        // প্রকল্প তথ্য ও পরিকল্পনা (প্র. সম্পাদক প্যানেল) জমা দেওয়ার আগে ম্যানেজার আইডি তে পাঠানো হবে
         const projectData = {
             projectName: document.getElementById('pProjectName').value,
             projectDetails: document.getElementById('pProjectDetails').value,
@@ -3895,7 +4056,7 @@
             phone: document.getElementById('pPhone').value,
             photo: document.getElementById('pPhotoBase64').value || 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
             createdBy: localStorage.getItem('loggedInUser'),
-            status: 'PendingManager', // ম্যানেজার আইডি তে যাচাইয়ের জন্য যাবে
+            status: 'PendingManager',
             date: new Date().toLocaleDateString('bn-BD'),
             timestamp: Date.now()
         };
@@ -3928,7 +4089,6 @@
                 let stClass = p.status === 'Approved' ? 'st-approved' : 'st-pending';
                 let actionHtml = '';
 
-                // ম্যানেজার পারমিশন দিলেই পিডিএফ ডাউনলোড বোতাম পাবেন
                 if(p.status === 'Approved') {
                     actionHtml = `
                         <button onclick="downloadProjectPDF('${key}')" class="btn-bt" style="background:#10b981; margin-bottom:4px;"><i class="fa-solid fa-download"></i> PDF ডাউনলোড</button>
@@ -3987,7 +4147,6 @@
 
     function populateProjectPrintArea(p) {
         const detailsDiv = document.getElementById('projectPrintContentDetails');
-        // স্বয়ংক্রিয় ডাটাবেজ কোড জেনারেট
         const autoProjectCode = 'PROJ-CODE-' + Math.floor(100000 + Math.random() * 900000);
 
         detailsDiv.innerHTML = `
@@ -4126,54 +4285,6 @@
             });
         }
     }
-</script>
-
-
-
-<script>
-/* Admin Reports update: remove role assignment UI and replace it with reports for admin. */
-(function(){
- const STAFF_ROLES=['Manager','FinanceSecretary','Information'];
- const ROLE_BN={Admin:'এডমিন (Admin)',Manager:'ম্যানেজার (Manager)',FinanceSecretary:'অর্থ সম্পাদক (Finance Secretary)',Information:'তথ্য সম্পাদক (Information Secretary)',Member:'সদস্য / Staff',Staff:'সদস্য / Staff'};
- const SOURCES=[
-  ['registeredUsers','ব্যবহারকারী ও দায়িত্ব (Users & Roles)'],['members','সদস্য (Members)'],
-  ['transactions','আয়-ব্যয়/লেনদেন (Transactions)'],['receipts','রশিদ (Receipts)'],
-  ['projects','প্রকল্প (Projects)'],['notices','নোটিশ (Notices)'],
-  ['downloadReviews','ডাউনলোড রিভিউ (Download Reviews)'],['chatMessages','বার্তা (Messages)'],
-  ['committee','কমিটি (Committee)'],['dynamicPlans','পরিকল্পনা (Plans)'],['deletedUsers','মুছে ফেলা ব্যবহারকারী (Deleted Users)']
- ];
- const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const role=()=>String(localStorage.getItem('userRole')||'').trim();
- const db=()=>window.database&&typeof window.database.ref==='function'?window.database:null;
- const org=()=>String(localStorage.getItem('projonmerOrgId')||'default-org').trim();
- let records=[], activeSource='all';
- function ensure(){
-  // Remove/disable the old role-assignment controls from the admin dashboard.
-  ['roleReviewOrgTools','downloadReviewSearchPanel'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-  document.querySelectorAll('h2,h3,h4,button,a').forEach(el=>{const t=(el.innerText||'').toLowerCase();if(/assign roles|role management|রোল নির্ধারণ|রোল ম্যানেজমেন্ট/.test(t)&&el.id!=='navActiveUsersBtn'){const box=el.closest('.card-3d,section,.panel')||el;if(box.id!=='adminReportsPanel')box.style.display='none';}});
-  const nav=document.getElementById('navActiveUsersBtn');
-  if(nav){nav.textContent='এডমিন রিপোর্ট (Admin Reports)';nav.setAttribute('aria-label','এডমিন রিপোর্ট (Admin Reports)');}
-  const host=document.getElementById('activeUsersDashboard');if(!host)return;
-  let panel=document.getElementById('adminReportsPanel');
-  if(!panel){panel=document.createElement('section');panel.id='adminReportsPanel';panel.className='card-3d';panel.style.cssText='margin:14px 0;padding:18px;border:1px solid #93c5fd;background:#eff6ff;color:#172033';
-   panel.innerHTML=`<h2>এডমিন রিপোর্ট (Admin Reports)</h2><p>এখান থেকে ম্যানেজার, অর্থ সম্পাদক ও তথ্য সম্পাদকের আইডি এবং অ্যাপে সংরক্ষিত বিভিন্ন কাজের রিপোর্ট দেখা ও CSV ফাইল হিসেবে ডাউনলোড করা যাবে।</p>
-   <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:end"><div style="flex:1;min-width:190px"><label for="adminReportType">রিপোর্টের ধরন (Report Type)</label><select id="adminReportType" class="input-3d" style="width:100%"><option value="all">সব রিপোর্ট (All Reports)</option>${SOURCES.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('')}</select></div><div style="flex:2;min-width:220px"><label for="adminReportSearch">খুঁজুন (Search)</label><input id="adminReportSearch" class="input-3d" style="width:100%" placeholder="নাম / আইডি / ফোন / কোড / বিবরণ"></div><button id="adminReportRefresh" class="btn-3d" type="button">রিপোর্ট দেখুন (Load Reports)</button><button id="adminReportDownload" class="btn-3d" type="button">রিপোর্ট ডাউনলোড (Download CSV)</button></div>
-   <p id="adminReportStatus" aria-live="polite">রিপোর্ট দেখতে “রিপোর্ট দেখুন” চাপুন।</p><div id="adminReportSummary" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"></div><div class="table-responsive" style="overflow:auto"><table><thead><tr><th>ধরন (Type)</th><th>নাম/শিরোনাম (Name/Title)</th><th>আইডি/রেফারেন্স (ID/Reference)</th><th>ফোন (Phone)</th><th>রোল (Role)</th><th>সময় (Time)</th><th>বিবরণ (Details)</th></tr></thead><tbody id="adminReportRows"><tr><td colspan="7">এডমিন রিপোর্ট লোড করুন।</td></tr></tbody></table></div><small>এই রিপোর্টে Firebase-এ যেসব তথ্য সংরক্ষিত আছে সেগুলোই দেখাবে। কোনো কাজের রেকর্ডে কর্মীর আইডি/রোল/সময় সংরক্ষিত না থাকলে সেই পুরোনো কাজ নির্দিষ্ট কর্মীর নামে শনাক্ত করা নাও যেতে পারে।</small>`;
-   host.appendChild(panel);
-   panel.querySelector('#adminReportType').addEventListener('change',()=>render());panel.querySelector('#adminReportSearch').addEventListener('input',()=>render());
-   panel.querySelector('#adminReportRefresh').addEventListener('click',loadReports);panel.querySelector('#adminReportDownload').addEventListener('click',downloadCSV);
-  }
-  if(role()!=='Admin'){panel.style.display='none';if(nav)nav.style.display='none';}else{panel.style.display='block';if(nav)nav.style.display='block';}
- }
- function norm(k,v){v=v&&typeof v==='object'?v:{};const source=SOURCES.find(x=>x[0]===k);const name=v.name||v.fullName||v.title||v.memberName||v.description||v.projectName||v.subject||v.type||k;const id=v.id||v.userId||v.memberId||v.code||v.referenceCode||v.receiptNo||v.transactionId||v.key||'';const phone=v.phone||v.mobile||v.mobileNumber||'';const r=v.role||v.userRole||'Staff';let time=v.time||v.date||v.createdAt||v.updatedAt||v.timestamp||'';if(typeof time==='number')try{time=new Date(time).toLocaleString('bn-BD')}catch(e){};const detail=Object.entries(v).filter(([key,val])=>!['password','pass','otp','photo','image','profilePhoto'].includes(key.toLowerCase())&&val!=null&&typeof val!=='object').map(([key,val])=>key+': '+val).join(' | ');return {source:k,type:source?source[1]:k,name:String(name),id:String(id),phone:String(phone),role:String(r),time:String(time),detail,raw:v};}
- function isOrg(r){return !r.raw.organizationId||String(r.raw.organizationId)===org();}
- function render(){const tbody=document.getElementById('adminReportRows');if(!tbody)return;const q=(document.getElementById('adminReportSearch')?.value||'').toLowerCase().trim();activeSource=document.getElementById('adminReportType')?.value||'all';let arr=records.filter(r=>(activeSource==='all'||r.source===activeSource)&&isOrg(r));if(q)arr=arr.filter(r=>[r.type,r.name,r.id,r.phone,r.role,r.time,r.detail].join(' ').toLowerCase().includes(q));arr=arr.slice(0,1000);tbody.innerHTML=arr.length?arr.map(r=>`<tr><td>${esc(r.type)}</td><td>${esc(r.name)}</td><td>${esc(r.id)}</td><td>${esc(r.phone)}</td><td>${esc(ROLE_BN[r.role]||r.role)}</td><td>${esc(r.time)}</td><td style="max-width:360px;white-space:normal">${esc(r.detail.slice(0,700))}</td></tr>`).join(''):'<tr><td colspan="7">এই অনুসন্ধানে কোনো রিপোর্ট পাওয়া যায়নি।</td></tr>';const summary=document.getElementById('adminReportSummary');if(summary){const users=records.filter(r=>r.source==='registeredUsers'&&STAFF_ROLES.includes(r.role)&&isOrg(r));const counts=[['ম্যানেজার',users.filter(r=>r.role==='Manager').length],['অর্থ সম্পাদক',users.filter(r=>r.role==='FinanceSecretary').length],['তথ্য সম্পাদক',users.filter(r=>r.role==='Information').length],['দেখানো রেকর্ড',arr.length]];summary.innerHTML=counts.map(x=>`<span style="padding:8px 12px;border-radius:9px;background:white;border:1px solid #cbd5e1">${esc(x[0])}: <b>${x[1]}</b></span>`).join('');}}
- async function loadReports(){if(role()!=='Admin'){alert('এই রিপোর্ট শুধু এডমিন দেখতে পারবেন।');return;}const d=db();const status=document.getElementById('adminReportStatus');if(!d){status.textContent='Firebase ডাটাবেইস সংযোগ পাওয়া যায়নি।';return;}status.textContent='রিপোর্ট লোড হচ্ছে…';records=[];try{const results=await Promise.all(SOURCES.map(async s=>{try{const snap=await d.ref(s[0]).once('value');const out=[];snap.forEach(c=>{const val=c.val();if(val&&typeof val==='object')out.push(norm(s[0],{...val,key:c.key}));});return out;}catch(e){return [];}}));records=results.flat();render();status.textContent=`রিপোর্ট লোড হয়েছে: ${records.length}টি রেকর্ড। সংগঠন কোড: ${org()}`;}catch(e){status.textContent='রিপোর্ট লোড করা যায়নি: '+e.message;}}
- function downloadCSV(){if(role()!=='Admin'){alert('শুধু এডমিন রিপোর্ট ডাউনলোড করতে পারবেন।');return;}const q=(document.getElementById('adminReportSearch')?.value||'').toLowerCase().trim();const type=document.getElementById('adminReportType')?.value||'all';const arr=records.filter(r=>(type==='all'||r.source===type)&&isOrg(r)&&(!q||[r.type,r.name,r.id,r.phone,r.role,r.time,r.detail].join(' ').toLowerCase().includes(q)));if(!arr.length){alert('ডাউনলোড করার মতো রিপোর্ট নেই। আগে রিপোর্ট লোড করুন।');return;}const cols=['ধরন','নাম/শিরোনাম','আইডি/রেফারেন্স','ফোন','রোল','সময়','বিবরণ'];const quote=x=>'"'+String(x??'').replace(/"/g,'""')+'"';const csv='\uFEFF'+[cols,...arr.map(r=>[r.type,r.name,r.id,r.phone,ROLE_BN[r.role]||r.role,r.time,r.detail])].map(row=>row.map(quote).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='admin-report-'+org()+'-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}
- document.addEventListener('DOMContentLoaded',()=>{ensure();const old=window.switchDashboard;if(typeof old==='function'&&!old.__adminReportsWrapped){const wrapped=function(type,...args){if(type==='activeUsers'&&role()==='Admin'){ensure();const el=document.getElementById('activeUsersDashboard');document.querySelectorAll('[id$="Dashboard"]').forEach(x=>{if(x!==el)x.classList.add('hidden')});el.classList.remove('hidden');const st=document.getElementById('adminReportStatus');if(st)st.textContent='রিপোর্ট দেখতে “রিপোর্ট দেখুন (Load Reports)” চাপুন। এতে অ্যাপ খোলার সময় অযথা সব ডেটা লোড হবে না।';return;}return old.call(this,type,...args)};wrapped.__adminReportsWrapped=true;window.switchDashboard=wrapped;} });
- // Removed the whole-page MutationObserver: it repeatedly scanned the full UI and could slow down mobile browsers. The report panel is initialized on DOMContentLoaded and when the admin report button is opened.
- window.projonmerLoadAdminReports=loadReports;
-})();
 </script>
 </body>
 </html>
