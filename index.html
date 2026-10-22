@@ -1,19 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="appBrowserTitle">এসো ভবিষ্যৎ গড়ি — ঐক্য সাফল্যের বিজয় ও আর্থিক ড্যাশবোর্ড</title>
-    <!-- FontAwesome icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Firebase Libraries (Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title id="appBrowserTitle">এসো ভবিষ্যৎ গড়ি — ঐক্য সাফল্যের বিজয় ও আর্থিক ড্যাশবোর্ড</title>
+<!-- FontAwesome icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<!-- html2pdf Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- Firebase Libraries (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<style>
         :root {
             --primary: #4f46e5;
             --primary-dark: #3730a3;
@@ -397,1117 +397,1017 @@
                 display: none !important;
             }
         }
-    </style>
+    
+/* Green feedback for the last clicked app option */
+button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked { background: linear-gradient(135deg,#22c55e,#15803d) !important; color:#fff !important; border-color:#15803d !important; box-shadow: inset 0 2px 7px rgba(0,0,0,.22) !important; }
+</style>
 </head>
 <body>
-
 <header>
-    <img id="headerLeftLogo" class="header-logo" src="" alt="Left Logo">
-    <div class="header-center">
-        <h1 id="headerAppName">এসো ভবিষ্যৎ গড়ি</h1>
-        <p id="headerAppTitle">ঐক্য সাফল্যের বিজয় — কেন্দ্রীয় কার্যনির্বাহী কমিটি ও আর্থিক ব্যবস্থাপনা সিস্টেম</p>
-        <p id="headerAppSlogan" style="font-size: 13px; margin-top: 4px; opacity: 0.85;">ঐক্য সাফল্যের বিজয় এসো ভবিষ্যৎ গড়ি</p>
-    </div>
-    <img id="headerRightLogo" class="header-logo" src="" alt="Right Logo">
+<img alt="Left Logo" class="header-logo" id="headerLeftLogo" src=""/>
+<div class="header-center">
+<h1 id="headerAppName">এসো ভবিষ্যৎ গড়ি</h1>
+<p id="headerAppTitle">ঐক্য সাফল্যের বিজয় — কেন্দ্রীয় কার্যনির্বাহী কমিটি ও আর্থিক ব্যবস্থাপনা সিস্টেম</p>
+<p id="headerAppSlogan" style="font-size: 13px; margin-top: 4px; opacity: 0.85;">ঐক্য সাফল্যের বিজয় এসো ভবিষ্যৎ গড়ি</p>
+</div>
+<img alt="Right Logo" class="header-logo" id="headerRightLogo" src=""/>
 </header>
-
 <div class="container">
-    <div id="authRequiredWrapper">
-        <div id="loginCard" class="card-3d">
-            <h2>ড্যাশবোর্ড সিস্টেম প্রবেশ করুন</h2>
-            
-            <div id="loginStep1">
-                <p class="hidden" style="font-size: 13px; color: #555; margin-bottom: 15px;">আপনার নিবন্ধিত মোবাইল/জিমেইল, পাসওয়ার্ড দিন এবং নির্দিষ্ট ক্যাটাগরি সিলেক্ট করে প্রবেশ করুন। (প্রথম সাইনআপকারী স্বয়ংক্রিয়ভাবে এডমিন হবেন)</p>
-                
-                <div class="form-group">
-                    <label>লগইন ক্যাটাগরি নির্বাচন করুন <span class="required-star">*</span></label>
-                    <select id="loginCategorySelect" class="input-3d" required>
-                        <option value="Staff">Staff / সদস্য আইডি</option>
-                        <option value="Information">তথ্য সম্পাদক (Information Secretary)</option>
-                        <option value="FinanceSecretary">Finance Secretary আইডি</option>
-                        <option value="Manager">Manager আইডি</option>
-                        <option value="Admin">Admin আইডি</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>মোবাইল নম্বর / ইউজার আইডি <span class="required-star">*</span></label>
-                    <input type="text" id="authPhoneInput" class="input-3d" placeholder="017xxxxxxxx বা জিমেইল আইডি" required>
-                </div>
-                <div class="form-group">
-                    <label>পাসওয়ার্ড <span class="required-star">*</span></label>
-                    <input type="password" id="authPassInput" class="input-3d" placeholder="পাসওয়ার্ড দিন" required>
-                </div>
-
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn-3d btn-phone" style="margin:0;" onclick="handleLogin()">প্রবেশ করুন</button>
-                    <button class="btn-3d btn-gmail" style="margin:0;" onclick="initiateSignup()">নতুন সাইনআপ (ওটিপি সহ)</button>
-                </div>
-            </div>
-
-            <div id="loginStep2" class="hidden">
-                <p style="font-size: 13px; color: #16a34a; margin-bottom: 15px;">সাইনআপের জন্য আপনার প্রোফাইল ছবি আপলোড করুন এবং ওটিপি দিন:</p>
-                
-                <div class="form-group">
-                    <label>প্রোফাইল ছবি (বাধ্যতামূলক) <span class="required-star">*</span></label>
-                    <input type="file" id="signupPhotoFile" class="input-3d" accept="image/*" onchange="previewSignupImage(event)" required>
-                </div>
-                <input type="hidden" id="signupPhotoBase64" value="">
-                <div id="signupImagePreviewContainer" style="margin-bottom: 10px; display: none; text-align: center;">
-                    <img id="signupOutputPreview" src="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
-                </div>
-
-                <div class="form-group">
-                    <label>৪ ডিজিটের ওটিপি কোড <span class="required-star">*</span></label>
-                    <input type="password" id="otpCodeInput" class="input-3d" placeholder="যেমন: 1234" required>
-                </div>
-                <button class="btn-3d" onclick="verifyOtpAndRegister()">ওটিপি ভেরিফাই ও সাইনআপ সম্পন্ন করুন</button>
-            </div>
-        </div>
-
-        <div id="appContent" class="hidden">
-            <button type="button" id="globalHomeReturnBtn" class="home-return-fab" onclick="finishAndGoBack()" aria-label="কাজ শেষ হয়েছে, আগের অপশনে ফিরে যান"><i class="fa-solid fa-arrow-left"></i> কাজ শেষ হয়েছে — ব্যাক</button>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
-                <span id="currentRoleDisplay" class="role-badge">ক্যাটাগরি: Staff</span>
-                <button class="btn-delete" style="width: auto; padding: 6px 12px;" onclick="handleLogout()">লগআউট</button>
-            </div>
-
-            <!-- গ্লোবাল নেভিগেশন প্যানেল -->
-            <div class="dashboard-nav">
-                <button class="nav-btn active" id="navHomeBtn" onclick="switchDashboard('home')"><i class="fa-solid fa-house"></i> হোম পেজ</button>
-                <button class="nav-btn" onclick="goBackDashboard()"><i class="fa-solid fa-arrow-left"></i> ব্যাক বাটন — কাজ শেষ হয়েছে</button>
-                
-                <button class="nav-btn" id="navMemberListBtn" onclick="switchDashboard('memberList')" style="display:none;">সদস্য তালিকা ও এপ্রুভ (PDF/A4)</button>
-                <button class="nav-btn" id="navMemberBtn" onclick="switchDashboard('member')">সদস্য ফরম ও প্যানেল</button>
-                <button class="nav-btn" onclick="switchDashboard('finance')">হিসাব দেখুন</button>
-                <button class="nav-btn" id="navStaffFundBtn" onclick="switchDashboard('staffFund')" style="display:none;">সদস্য জমা কৃত ফান্ড (আমার হিসাব)</button>
-                
-                <button class="nav-btn hidden" id="navWhatsappShareBtn" onclick="shareViaWhatsapp()" style="background:#25d366; color:white;"><i class="fa-brands fa-whatsapp"></i> হোয়াটসঅ্যাপে শেয়ার</button>
-
-                <button class="nav-btn" id="navReceiptBtn" onclick="switchDashboard('receipt')" style="display:none; background:#10b981; color:white;">টাকা জমা রশিদ (PDF/A4)</button>
-                <button class="nav-btn" onclick="switchDashboard('project')">প্রকল্প তথ্য ও পরিকল্পনা (প্র. সম্পাদক প্যানেল)</button>
-                <button class="nav-btn" onclick="switchDashboard('law')">আইন সম্পাদক</button>
-                <button class="nav-btn" onclick="switchDashboard('committeeForm')">কমিটি ফরম</button>
-                <button class="nav-btn" id="navCommitteeViewBtn" onclick="switchDashboard('committeeView')">কমিটি দেখুন</button>
-                <button class="nav-btn" id="navActiveUsersBtn" onclick="switchDashboard('activeUsers')" style="display:none; background:#7c3aed; color:white; font-weight:700;">সদস্য আইডি / ব্যবহারকারীর রোল পরিবর্তন (এডমিন)</button>
-                <button class="nav-btn" id="navChangePassBtn" onclick="switchDashboard('changePass')" style="display:none; background:#f59e0b; color:white;">পাসওয়ার্ড পরিবর্তন</button>
-                <button class="nav-btn" id="navAdminAppConfigBtn" onclick="switchDashboard('adminAppConfig')" style="display:none; background:#4f46e5; color:white;">অ্যাপ নাম ও টাইটেল (এডমিন)</button>
-            </div>
-
-            <!-- তথ্য সম্পাদক ড্যাশবোর্ড -->
-            <div id="infoNoticeDashboard" class="card-3d hidden" style="border: 2px dashed #06b6d4; background: #ecfeff;">
-                <h2><i class="fa-solid fa-bullhorn"></i> তথ্য সম্পাদক (Information Secretary) নোটিশ ও মিটিং প্যানেল</h2>
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                    <button class="btn-3d" style="background:#0891b2; margin:0; flex:1;" onclick="toggleInfoSection('noticePublishBox')"><i class="fa-solid fa-pen"></i> জরুরি নোটিশ প্রকাশ</button>
-                    <button class="btn-3d" style="background:#4f46e5; margin:0; flex:1;" onclick="toggleInfoSection('onlineMeetBox')"><i class="fa-solid fa-video"></i> অনলাইন মিটিং অপশন</button>
-                    <button class="btn-3d" style="background:#d97706; margin:0; flex:1;" onclick="toggleInfoSection('noticeManagementBox')"><i class="fa-solid fa-list-check"></i> নোটিশ ম্যানেজমেন্ট ও সার্চ</button>
-                </div>
-
-                <div id="noticePublishBox" class="info-sub-section card-3d" style="background:white; border:1px solid #06b6d4; margin-bottom:15px;">
-                    <h3 style="font-size:15px; color:#0891b2; margin-bottom:10px;"><i class="fa-solid fa-bullhorn"></i> জরুরি নোটিশ প্রদান করুন</h3>
-                    <div class="form-group">
-                        <label>জরুরি নোটিশের বিবরণ <span class="required-star">*</span></label>
-                        <textarea id="infoNoticeTextInput" class="input-3d" rows="3" placeholder="নোটিশের বিস্তারিত বার্তা লিখুন..."></textarea>
-                    </div>
-                    <button class="btn-3d" style="background:#0891b2;" onclick="submitInfoNotice()">জরুরি নোটিশ প্রকাশ করুন</button>
-                </div>
-
-                <div id="onlineMeetBox" class="info-sub-section card-3d hidden" style="background:white; border:1px solid #06b6d4; margin-bottom:15px;">
-                    <h3 style="font-size:15px; color:#0891b2; margin-bottom:10px;"><i class="fa-solid fa-video"></i> অনলাইন মিটিং অপশন (গুগোল মিট)</h3>
-                    <p style="font-size:12px; color:#555; margin-bottom:10px;">মিটিং এর বিষয় ও গুগল মিট লিংক দিয়ে প্রকাশ করুন।</p>
-                    <div class="form-group">
-                        <label>মিটিং এর বিষয় / টাইটেল <span class="required-star">*</span></label>
-                        <input type="text" id="meetTopicInput" class="input-3d" placeholder="যেমন: জরুরি অনলাইন সাধারণ সভা">
-                    </div>
-                    <div class="form-group">
-                        <label>গুগোল মিট লিংক <span class="required-star">*</span></label>
-                        <input type="url" id="meetUrlInput" class="input-3d" placeholder="https://meet.google.com/xyz-abc-def">
-                    </div>
-                    <button class="btn-3d" style="background:#4f46e5; margin-bottom:12px;" onclick="createGoogleMeetLink()"><i class="fa-solid fa-plus-circle"></i> নোটিশ বাক্সে মিটিং লিংক প্রকাশ করুন</button>
-                    <div id="activeMeetingBox" style="margin-top:10px;"></div>
-                </div>
-
-                <div id="noticeManagementBox" class="info-sub-section card-3d hidden" style="background:white; border:1px solid #cbd5e1; margin-bottom:15px;">
-                    <h3 style="font-size:14px; color:var(--primary); margin-bottom:8px;"><i class="fa-solid fa-list"></i> নোটিশ ম্যানেজমেন্ট, সার্চ ও প্রিন্ট/ডাউনলোড সিস্টেম</h3>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <input type="text" id="noticeSearchInput" class="input-3d" placeholder="নোটিশের বিবরণ বা তারিখ দিয়ে খুঁজুন..." oninput="filterInfoNoticesTable()">
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>তারিখ</th>
-                                    <th>নোটিশ বিবরণ</th>
-                                    <th>স্ট্যাটাস</th>
-                                    <th>অ্যাকশন (ডিলিট/ডাউনলোড)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="infoNoticeTableBody">
-                                <tr><td colspan="4" style="text-align:center;">কোনো নোটিশ লোড হচ্ছে...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ম্যানেজার আইডি ড্যাশবোর্ড -->
-            <div id="managerLawApprovalDashboard" class="card-3d hidden" style="border: 2px dashed #f59e0b; background: #fffbeb;">
-                <h2><i class="fa-solid fa-user-shield"></i> ম্যানেজার (Manager) যাচাই-বাছাই ও পারমিশন প্যানেল</h2>
-                
-                <!-- ম্যানেজার ব্যাকএন্ড - প্রকল্প তথ্য ও পরিকল্পনা যাচাই ও অনুমোদন সেকশন -->
-                <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #cbd5e1;">
-                    <h3 style="font-size:14px; color:#d97706; margin-bottom:8px;"><i class="fa-solid fa-list-check"></i> প্রকল্প তথ্য ও পরিকল্পনা যাচাই-বাছাই প্যানেল</h3>
-                    <p style="font-size:12px; color:#555; margin-bottom:10px;">প্রকল্প সম্পাদক/সদস্যদের প্রেরিত পরিকল্পনাগুলো এখান থেকে যাচাই করে অনুমোদন (Approve) দিন অথবা ডিলিট (Delete) করুন। অনুমোদন দিলে নোটিশ বাক্সে প্রদর্শিত হবে এবং পিডিএফ ডাউনলোড করা যাবে।</p>
-                    
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ছবি/তারিখ</th>
-                                    <th>প্রকল্পের নাম ও বিবরণ</th>
-                                    <th>বাজেট ও প্রেরক</th>
-                                    <th>প্রাপ্ত ব্যক্তি ও এনআইডি</th>
-                                    <th>যাচাই-বাছাই ও অ্যাকশন</th>
-                                </tr>
-                            </thead>
-                            <tbody id="managerProjectApprovalTableBody">
-                                <tr><td colspan="5" style="text-align:center;">কোনো প্রকল্প পর্যালোচনার জন্য জমা নেই।</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label>নতুন আইন প্রস্তাব ও এপ্রুভ করুন <span class="required-star">*</span></label>
-                    <textarea id="newLawTextInput" class="input-3d" rows="2" placeholder="নতুন আইনের বিস্তারিত ধারা ও নীতিমালা লিখুন..."></textarea>
-                    <button class="btn-3d" style="background:#f59e0b; margin-top:8px;" onclick="submitNewLawByManager()">আইন এপ্রুভালের জন্য জমা দিন</button>
-                </div>
-
-                <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #cbd5e1;">
-                    <h3 style="font-size:14px; color:#d97706; margin-bottom:8px;"><i class="fa-solid fa-key"></i> তথ্য সম্পাদকের নোটিশ ডিলিট পারমিশন প্যানেল</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>তারিখ</th>
-                                    <th>নোটিশ বার্তা</th>
-                                    <th>আবেদনকারী</th>
-                                    <th>অনুমোদন অ্যাকশন</th>
-                                </tr>
-                            </thead>
-                            <tbody id="managerPermissionTableBody">
-                                <tr><td colspan="4" style="text-align:center;">কোনো ডিলিট আবেদন নেই।</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ফিন্যান্স সেক্রেটারি আইডি ড্যাশবোর্ড -->
-            <div id="financeMonthlyYearlyDashboard" class="card-3d hidden" style="border: 2px dashed #16a34a; background: #f0fdf4;">
-                <h2><i class="fa-solid fa-calculator"></i> মাসিক ও বাৎসরিক আয়-ব্যয় রিপোর্ট ও রশিদ (Finance Secretary ড্যাশবোর্ড)</h2>
-                <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-                    <select id="reportMonthSelect" class="input-3d" style="flex:1; margin-top:0;">
-                        <option value="all">সকল মাস</option>
-                        <option value="জানুয়ারি">জানুয়ারি</option>
-                        <option value="ফেব্রুয়ারি">ফেব্রুয়ারি</option>
-                        <option value="মার্চ">মার্চ</option>
-                        <option value="এপ্রিল">এপ্রিল</option>
-                        <option value="মে">মে</option>
-                        <option value="জুন">জুন</option>
-                        <option value="জুলাই">জুলাই</option>
-                        <option value="আগস্ট">আগস্ট</option>
-                        <option value="সেপ্টেম্বর">সেপ্টেম্বর</option>
-                        <option value="অক্টোবর">অক্টোবর</option>
-                        <option value="নভেম্বর">নভেম্বর</option>
-                        <option value="ডিসেম্বর">ডিসেম্বর</option>
-                    </select>
-                    <select id="reportYearSelect" class="input-3d" style="flex:1; margin-top:0;">
-                        <option value="2026">2026</option>
-                        <option value="2027">2027</option>
-                    </select>
-                    <input id="reportProjectSearch" class="input-3d" style="flex:1; margin-top:0; min-width:150px;" placeholder="প্রকল্পের নাম (খালি = সব প্রকল্প)">
-                    <button class="btn-3d" style="margin-top:0; width:150px; background:#16a34a;" onclick="generateMonthlyYearlyReport()">রিপোর্ট তৈরি / পুরোনো রিপোর্ট খুঁজুন</button>
-                </div>
-                <div style="font-size:12px;color:#166534;margin-bottom:8px;">মাস, বছর ও প্রকল্পের নাম দিয়ে আগের অনুমোদিত আয়-ব্যয়ের হিসাব খুঁজুন। আয়/ব্যয় ০ হলেও রিপোর্ট প্রিভিউ ও PDF ডাউনলোড চালু থাকবে।</div>
-                <div id="financialReportResultArea" style="background:white; padding:15px; border-radius:8px; margin-top:10px; font-size:13px; position:relative;">
+<div id="authRequiredWrapper">
+<div class="card-3d" id="loginCard">
+<h2>ড্যাশবোর্ড সিস্টেম প্রবেশ করুন</h2>
+<div id="loginStep1">
+<p class="hidden" style="font-size: 13px; color: #555; margin-bottom: 15px;">আপনার নিবন্ধিত মোবাইল/জিমেইল, পাসওয়ার্ড দিন এবং নির্দিষ্ট ক্যাটাগরি সিলেক্ট করে প্রবেশ করুন। (প্রথম সাইনআপকারী স্বয়ংক্রিয়ভাবে এডমিন হবেন)</p>
+<div class="form-group">
+<label>লগইন ক্যাটাগরি নির্বাচন করুন <span class="required-star">*</span></label>
+<select class="input-3d" id="loginCategorySelect" required="">
+<option value="Staff">Staff / সদস্য আইডি</option>
+<option value="Information">তথ্য সম্পাদক (Information Secretary)</option>
+<option value="FinanceSecretary">Finance Secretary আইডি</option>
+<option value="Manager">Manager আইডি</option>
+<option value="Admin">Admin আইডি</option>
+</select>
+</div>
+<div class="form-group">
+<label>মোবাইল নম্বর / ইউজার আইডি <span class="required-star">*</span></label>
+<input class="input-3d" id="authPhoneInput" placeholder="017xxxxxxxx বা জিমেইল আইডি" required="" type="text"/>
+</div>
+<div class="form-group">
+<label>পাসওয়ার্ড <span class="required-star">*</span></label>
+<input class="input-3d" id="authPassInput" placeholder="পাসওয়ার্ড দিন" required="" type="password"/>
+</div>
+<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+<button class="btn-3d btn-phone" onclick="handleLogin()" style="margin:0;">প্রবেশ করুন</button>
+<button class="btn-3d btn-gmail" onclick="initiateSignup()" style="margin:0;">নতুন সাইনআপ (ওটিপি সহ)</button>
+</div>
+</div>
+<div class="hidden" id="loginStep2">
+<p style="font-size: 13px; color: #16a34a; margin-bottom: 15px;">সাইনআপের জন্য আপনার প্রোফাইল ছবি আপলোড করুন এবং ওটিপি দিন:</p>
+<div class="form-group">
+<label>প্রোফাইল ছবি (বাধ্যতামূলক) <span class="required-star">*</span></label>
+<input accept="image/*" class="input-3d" id="signupPhotoFile" onchange="previewSignupImage(event)" required="" type="file"/>
+</div>
+<input id="signupPhotoBase64" type="hidden" value=""/>
+<div id="signupImagePreviewContainer" style="margin-bottom: 10px; display: none; text-align: center;">
+<img id="signupOutputPreview" src="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);"/>
+</div>
+<div class="form-group">
+<label>৪ ডিজিটের ওটিপি কোড <span class="required-star">*</span></label>
+<input class="input-3d" id="otpCodeInput" placeholder="যেমন: 1234" required="" type="password"/>
+</div>
+<button class="btn-3d" onclick="verifyOtpAndRegister()">ওটিপি ভেরিফাই ও সাইনআপ সম্পন্ন করুন</button>
+</div>
+</div>
+<div class="hidden" id="appContent">
+<button aria-label="কাজ শেষ হয়েছে, আগের অপশনে ফিরে যান" class="home-return-fab" id="globalHomeReturnBtn" onclick="finishAndGoBack()" type="button"><i class="fa-solid fa-arrow-left"></i> কাজ শেষ হয়েছে — ব্যাক</button>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+<span class="role-badge" id="currentRoleDisplay">ক্যাটাগরি: Staff</span>
+<button class="btn-delete" onclick="handleLogout()" style="width: auto; padding: 6px 12px;">লগআউট</button>
+</div>
+<!-- গ্লোবাল নেভিগেশন প্যানেল -->
+<div class="dashboard-nav">
+<button class="nav-btn active" id="navHomeBtn" onclick="switchDashboard('home')"><i class="fa-solid fa-house"></i> হোম পেজ</button>
+<button class="nav-btn" onclick="goBackDashboard()"><i class="fa-solid fa-arrow-left"></i> ব্যাক বাটন — কাজ শেষ হয়েছে</button>
+<button class="nav-btn" id="navMemberListBtn" onclick="switchDashboard('memberList')" style="display:none;">সদস্য তালিকা ও এপ্রুভ (PDF/A4)</button>
+<button class="nav-btn" id="navMemberBtn" onclick="switchDashboard('member')">সদস্য ফরম ও প্যানেল</button>
+<button class="nav-btn" onclick="switchDashboard('finance')">হিসাব দেখুন</button>
+<button class="nav-btn" id="navStaffFundBtn" onclick="switchDashboard('staffFund')" style="display:none;">সদস্য জমা কৃত ফান্ড (আমার হিসাব)</button>
+<button class="nav-btn hidden" id="navWhatsappShareBtn" onclick="shareViaWhatsapp()" style="background:#25d366; color:white;"><i class="fa-brands fa-whatsapp"></i> হোয়াটসঅ্যাপে শেয়ার</button>
+<button class="nav-btn" id="navReceiptBtn" onclick="switchDashboard('receipt')" style="display:none; background:#10b981; color:white;">টাকা জমা রশিদ (PDF/A4)</button>
+<button class="nav-btn" onclick="switchDashboard('project')">প্রকল্প তথ্য ও পরিকল্পনা (প্র. সম্পাদক প্যানেল)</button>
+<button class="nav-btn" onclick="switchDashboard('law')">আইন সম্পাদক</button>
+<button class="nav-btn" onclick="switchDashboard('committeeForm')">কমিটি ফরম</button>
+<button class="nav-btn" id="navCommitteeViewBtn" onclick="switchDashboard('committeeView')">কমিটি দেখুন</button>
+<button class="nav-btn" id="navActiveUsersBtn" onclick="switchDashboard('activeUsers')" style="display:none; background:#7c3aed; color:white; font-weight:700;">সদস্য আইডি / ব্যবহারকারীর রোল পরিবর্তন (এডমিন)</button>
+<button class="nav-btn" id="navChangePassBtn" onclick="switchDashboard('changePass')" style="display:none; background:#f59e0b; color:white;">পাসওয়ার্ড পরিবর্তন</button>
+<button class="nav-btn" id="navAdminAppConfigBtn" onclick="switchDashboard('adminAppConfig')" style="display:none; background:#4f46e5; color:white;">অ্যাপ নাম ও টাইটেল (এডমিন)</button>
+</div>
+<!-- তথ্য সম্পাদক ড্যাশবোর্ড -->
+<div class="card-3d hidden" id="infoNoticeDashboard" style="border: 2px dashed #06b6d4; background: #ecfeff;">
+<h2><i class="fa-solid fa-bullhorn"></i> তথ্য সম্পাদক (Information Secretary) নোটিশ ও মিটিং প্যানেল</h2>
+<div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+<button class="btn-3d" onclick="toggleInfoSection('noticePublishBox')" style="background:#0891b2; margin:0; flex:1;"><i class="fa-solid fa-pen"></i> জরুরি নোটিশ প্রকাশ</button>
+<button class="btn-3d" onclick="toggleInfoSection('onlineMeetBox')" style="background:#4f46e5; margin:0; flex:1;"><i class="fa-solid fa-video"></i> অনলাইন মিটিং অপশন</button>
+<button class="btn-3d" onclick="toggleInfoSection('noticeManagementBox')" style="background:#d97706; margin:0; flex:1;"><i class="fa-solid fa-list-check"></i> নোটিশ ম্যানেজমেন্ট ও সার্চ</button>
+</div>
+<div class="info-sub-section card-3d" id="noticePublishBox" style="background:white; border:1px solid #06b6d4; margin-bottom:15px;">
+<h3 style="font-size:15px; color:#0891b2; margin-bottom:10px;"><i class="fa-solid fa-bullhorn"></i> জরুরি নোটিশ প্রদান করুন</h3>
+<div class="form-group">
+<label>জরুরি নোটিশের বিবরণ <span class="required-star">*</span></label>
+<textarea class="input-3d" id="infoNoticeTextInput" placeholder="নোটিশের বিস্তারিত বার্তা লিখুন..." rows="3"></textarea>
+</div>
+<button class="btn-3d" onclick="submitInfoNotice()" style="background:#0891b2;">জরুরি নোটিশ প্রকাশ করুন</button>
+</div>
+<div class="info-sub-section card-3d hidden" id="onlineMeetBox" style="background:white; border:1px solid #06b6d4; margin-bottom:15px;">
+<h3 style="font-size:15px; color:#0891b2; margin-bottom:10px;"><i class="fa-solid fa-video"></i> অনলাইন মিটিং অপশন (গুগোল মিট)</h3>
+<p style="font-size:12px; color:#555; margin-bottom:10px;">মিটিং এর বিষয় ও গুগল মিট লিংক দিয়ে প্রকাশ করুন।</p>
+<div class="form-group">
+<label>মিটিং এর বিষয় / টাইটেল <span class="required-star">*</span></label>
+<input class="input-3d" id="meetTopicInput" placeholder="যেমন: জরুরি অনলাইন সাধারণ সভা" type="text"/>
+</div>
+<div class="form-group">
+<label>গুগোল মিট লিংক <span class="required-star">*</span></label>
+<input class="input-3d" id="meetUrlInput" placeholder="https://meet.google.com/xyz-abc-def" type="url"/>
+</div>
+<button class="btn-3d" onclick="createGoogleMeetLink()" style="background:#4f46e5; margin-bottom:12px;"><i class="fa-solid fa-plus-circle"></i> নোটিশ বাক্সে মিটিং লিংক প্রকাশ করুন</button>
+<div id="activeMeetingBox" style="margin-top:10px;"></div>
+</div>
+<div class="info-sub-section card-3d hidden" id="noticeManagementBox" style="background:white; border:1px solid #cbd5e1; margin-bottom:15px;">
+<h3 style="font-size:14px; color:var(--primary); margin-bottom:8px;"><i class="fa-solid fa-list"></i> নোটিশ ম্যানেজমেন্ট, সার্চ ও প্রিন্ট/ডাউনলোড সিস্টেম</h3>
+<div class="form-group" style="margin-bottom: 12px;">
+<input class="input-3d" id="noticeSearchInput" oninput="filterInfoNoticesTable()" placeholder="নোটিশের বিবরণ বা তারিখ দিয়ে খুঁজুন..." type="text"/>
+</div>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>তারিখ</th>
+<th>নোটিশ বিবরণ</th>
+<th>স্ট্যাটাস</th>
+<th>অ্যাকশন (ডিলিট/ডাউনলোড)</th>
+</tr>
+</thead>
+<tbody id="infoNoticeTableBody">
+<tr><td colspan="4" style="text-align:center;">কোনো নোটিশ লোড হচ্ছে...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ম্যানেজার আইডি ড্যাশবোর্ড -->
+<div class="card-3d hidden" id="managerLawApprovalDashboard" style="border: 2px dashed #f59e0b; background: #fffbeb;">
+<h2><i class="fa-solid fa-user-shield"></i> ম্যানেজার (Manager) যাচাই-বাছাই ও পারমিশন প্যানেল</h2>
+<!-- ম্যানেজার ব্যাকএন্ড - প্রকল্প তথ্য ও পরিকল্পনা যাচাই ও অনুমোদন সেকশন -->
+<div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #cbd5e1;">
+<h3 style="font-size:14px; color:#d97706; margin-bottom:8px;"><i class="fa-solid fa-list-check"></i> প্রকল্প তথ্য ও পরিকল্পনা যাচাই-বাছাই প্যানেল</h3>
+<p style="font-size:12px; color:#555; margin-bottom:10px;">প্রকল্প সম্পাদক/সদস্যদের প্রেরিত পরিকল্পনাগুলো এখান থেকে যাচাই করে অনুমোদন (Approve) দিন অথবা ডিলিট (Delete) করুন। অনুমোদন দিলে নোটিশ বাক্সে প্রদর্শিত হবে এবং পিডিএফ ডাউনলোড করা যাবে।</p>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>ছবি/তারিখ</th>
+<th>প্রকল্পের নাম ও বিবরণ</th>
+<th>বাজেট ও প্রেরক</th>
+<th>প্রাপ্ত ব্যক্তি ও এনআইডি</th>
+<th>যাচাই-বাছাই ও অ্যাকশন</th>
+</tr>
+</thead>
+<tbody id="managerProjectApprovalTableBody">
+<tr><td colspan="5" style="text-align:center;">কোনো প্রকল্প পর্যালোচনার জন্য জমা নেই।</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="form-group" style="margin-bottom: 20px;">
+<label>নতুন আইন প্রস্তাব ও এপ্রুভ করুন <span class="required-star">*</span></label>
+<textarea class="input-3d" id="newLawTextInput" placeholder="নতুন আইনের বিস্তারিত ধারা ও নীতিমালা লিখুন..." rows="2"></textarea>
+<button class="btn-3d" onclick="submitNewLawByManager()" style="background:#f59e0b; margin-top:8px;">আইন এপ্রুভালের জন্য জমা দিন</button>
+</div>
+<div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #cbd5e1;">
+<h3 style="font-size:14px; color:#d97706; margin-bottom:8px;"><i class="fa-solid fa-key"></i> তথ্য সম্পাদকের নোটিশ ডিলিট পারমিশন প্যানেল</h3>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>তারিখ</th>
+<th>নোটিশ বার্তা</th>
+<th>আবেদনকারী</th>
+<th>অনুমোদন অ্যাকশন</th>
+</tr>
+</thead>
+<tbody id="managerPermissionTableBody">
+<tr><td colspan="4" style="text-align:center;">কোনো ডিলিট আবেদন নেই।</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ফিন্যান্স সেক্রেটারি আইডি ড্যাশবোর্ড -->
+<div class="card-3d hidden" id="financeMonthlyYearlyDashboard" style="border: 2px dashed #16a34a; background: #f0fdf4;">
+<h2><i class="fa-solid fa-calculator"></i> মাসিক ও বাৎসরিক আয়-ব্যয় রিপোর্ট ও রশিদ (Finance Secretary ড্যাশবোর্ড)</h2>
+<div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+<select class="input-3d" id="reportMonthSelect" style="flex:1; margin-top:0;">
+<option value="all">সকল মাস</option>
+<option value="জানুয়ারি">জানুয়ারি</option>
+<option value="ফেব্রুয়ারি">ফেব্রুয়ারি</option>
+<option value="মার্চ">মার্চ</option>
+<option value="এপ্রিল">এপ্রিল</option>
+<option value="মে">মে</option>
+<option value="জুন">জুন</option>
+<option value="জুলাই">জুলাই</option>
+<option value="আগস্ট">আগস্ট</option>
+<option value="সেপ্টেম্বর">সেপ্টেম্বর</option>
+<option value="অক্টোবর">অক্টোবর</option>
+<option value="নভেম্বর">নভেম্বর</option>
+<option value="ডিসেম্বর">ডিসেম্বর</option>
+</select>
+<select class="input-3d" id="reportYearSelect" style="flex:1; margin-top:0;">
+<option value="2026">2026</option>
+<option value="2027">2027</option>
+</select>
+<input class="input-3d" id="reportProjectSearch" placeholder="প্রকল্পের নাম (খালি = সব প্রকল্প)" style="flex:1; margin-top:0; min-width:150px;"/>
+<button class="btn-3d" onclick="generateMonthlyYearlyReport()" style="margin-top:0; width:150px; background:#16a34a;">রিপোর্ট তৈরি / পুরোনো রিপোর্ট খুঁজুন</button>
+</div>
+<div style="font-size:12px;color:#166534;margin-bottom:8px;">মাস, বছর ও প্রকল্পের নাম দিয়ে আগের অনুমোদিত আয়-ব্যয়ের হিসাব খুঁজুন। আয়/ব্যয় ০ হলেও রিপোর্ট প্রিভিউ ও PDF ডাউনলোড চালু থাকবে।</div>
+<div id="financialReportResultArea" style="background:white; padding:15px; border-radius:8px; margin-top:10px; font-size:13px; position:relative;">
                     রিপোর্ট দেখতে উপরের বাটন ক্লিক করুন।
                 </div>
-                <button class="btn-3d" id="financeReportReviewBtn" style="background:#2563eb; margin-top:10px;" onclick="reviewFinanceSecretaryReport()">রিপোর্ট প্রিভিউ / যাচাই</button>
-                <button class="btn-3d" id="financeReportDownloadBtn" style="background:#0284c7; margin-top:10px;" onclick="downloadFinancialReportA4PDF()" disabled><i class="fa-solid fa-download"></i> যাচাইয়ের পর রিপোর্ট A4 PDF ডাউনলোড</button>
-                <div id="financeReportReviewStatus" style="font-size:13px;margin-top:8px;">প্রথমে রিপোর্ট তৈরি করে প্রিভিউ যাচাই করুন।</div>
-            </div>
-
-            <!-- ম্যানেজার আইডি কোম্পানির আইডি কার্ড ড্যাশবোর্ড -->
-            <div id="managerCompanyIdCardDashboard" class="card-3d hidden" style="border: 2px dashed #3b82f6; background: #eff6ff;">
-                <h2><i class="fa-solid fa-id-card"></i> পদবি অনুযায়ী কোম্পানির আইডি কার্ড জেনারেটর (ম্যানেজার ড্যাশবোর্ড)</h2>
-                
-                <div class="form-group">
-                    <label>সদস্য নির্বাচন করুন:</label>
-                    <select id="idCardMemberSelect" class="input-3d" onchange="previewCompanyIdCard()">
-                        <option value="">সদস্য নির্বাচন করুন...</option>
-                    </select>
-                </div>
-
-                <div id="companyIdCardPreviewArea" style="background:white; padding:20px; border-radius:12px; border:2px solid #3b82f6; max-width:400px; margin: 15px auto; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.1); position:relative; overflow:hidden;">
-                    <!-- Auto Watermark dynamically appended -->
-                    <div class="pdf-content-wrapper">
-                        <img id="idCardPhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid var(--primary); margin-bottom:10px;">
-                        <h3 id="idCardName" style="color:var(--primary); margin:5px 0;">সদস্যের নাম</h3>
-                        <p style="margin:2px 0; font-weight:bold;"><span id="idCardDesignation" class="role-badge">পদবি</span></p>
-                        <p style="margin:5px 0; font-size:13px; color:#475569;">কার্ড জেনারেটেড কোড / PSL ID: <b id="idCardUniqueId">-</b></p>
-                        <p style="margin:2px 0; font-size:12px; color:#64748b;">মোবাইল: <span id="idCardPhone">-</span></p>
-                        <p style="margin:2px 0; font-size:12px; color:#64748b;">ঠিকানা: <span id="idCardAddr">-</span></p>
-                        <div style="margin-top:12px; border-top:1px dashed #cbd5e1; padding-top:8px; font-size:10px; color:#334155;">এসো ভবিষ্যৎ গড়ি — কেন্দ্রীয় কার্যনির্বাহী কমিটি</div>
-                    </div>
-                </div>
-
-                <button class="btn-3d" style="background:#2563eb;" onclick="reviewManagerIdCardPDF()">PDF প্রিভিউ / যাচাই</button>
-                <button class="btn-3d" id="downloadManagerIdCardBtn" style="background:#10b981;" onclick="downloadCompanyIdCardPDF()" disabled>যাচাইয়ের পর PDF ডাউনলোড</button>
-                <div id="managerIdCardReviewStatus">সদস্য নির্বাচন করে আগে প্রিভিউ যাচাই করুন।</div>
-            </div>
-
-            <div id="receiptDashboard" class="hidden">
-                <div class="card-3d">
-                    <h2><i class="fa-solid fa-file-invoice-dollar"></i> টাকা জমা রশিদ প্রিন্ট, ডাউনলোড ও পূর্বের রশিদ সার্চ প্যানেল (ম্যানেজার)</h2>
-                    
-                    <div class="form-group">
-                        <label>নতুন রশিদ তৈরির জন্য সদস্য নির্বাচন করুন <span class="required-star">*</span>:</label>
-                        <select id="receiptMemberSelect" class="input-3d" onchange="generateMemberReceiptAuto()">
-                            <option value="">সদস্য নির্বাচন করুন...</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 15px;">
-                        <label>পূর্বের সংরক্ষিত রশিদ সার্চ বা নির্বাচন করুন:</label>
-                        <input type="text" id="receiptSearchInput" class="input-3d" placeholder="রশিদ নম্বর বা সদস্যের নাম দিয়ে খুঁজুন..." oninput="filterSavedReceipts()" style="margin-bottom: 8px;">
-                        <select id="savedReceiptSelect" class="input-3d" onchange="loadSavedReceipt(this.value)">
-                            <option value="">পূর্বের রশিদ তালিকা থেকে নির্বাচন করুন...</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-top: 20px;" class="no-print">
-                        <button class="btn-3d" id="managerReceiptReviewBtn" style="background:#2563eb;" onclick="reviewManagerReceiptPDF()">রশিদ PDF প্রিভিউ / যাচাই</button>
-                <button class="btn-3d" id="downloadManagerReceiptBtn" style="background:#10b981;" onclick="downloadA4ReceiptPDF()" disabled>যাচাইয়ের পর A4 PDF ডাউনলোড</button>
-                <button class="btn-3d" id="adminReceiptDownloadBtn" style="background:#10b981;display:none;" onclick="downloadA4ReceiptPDFAdminLegacy()"><i class="fa-solid fa-download"></i> A4 পেজে PDF ডাউনলোড করুন</button>
-                <div id="managerReceiptReviewStatus">আগে রশিদ তৈরি বা সংরক্ষিত রশিদ নির্বাচন করে প্রিভিউ যাচাই করুন।</div>
-                        <button class="btn-3d" style="background:#3b82f6;" onclick="window.print()"><i class="fa-solid fa-print"></i> সরাসরি প্রিন্ট করুন</button>
-                    </div>
-                </div>
-
-                <div id="a4ReceiptArea">
-                    <img class="pdf-watermark-overlay" id="receiptWatermarkImg" src="" alt="Watermark Logo">
-                    <div class="pdf-content-wrapper">
-                        <div style="text-align: center; border-bottom: 2px solid #334155; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                            <img id="rcptLeftLogo" src="" style="width: 60px; height: 60px; object-fit: contain;">
-                            <div>
-                                <h2 id="rcptOrgName" style="color: #4f46e5; font-size: 24px; margin: 0;">এসো ভবিষ্যৎ গড়ি</h2>
-                                <p id="rcptOrgSlogan" style="font-size: 12px; color: #64748b; margin-top: 2px;">ঐক্য সাফল্যের বিজয় এসো ভবিষ্যৎ গড়ি</p>
-                                <span style="display: inline-block; background: #4f46e5; color: white; padding: 4px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-top: 8px;">টাকা জমাদান রশিদ</span>
-                            </div>
-                            <img id="rcptRightLogo" src="" style="width: 60px; height: 60px; object-fit: contain;">
-                        </div>
-
-                        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 20px; color: #475569;">
-                            <div><b>রশিদ / জেনারেটেড কোড নং:</b> <span id="rcptNo">TRX-AUTO</span></div>
-                            <div><b>তারিখ:</b> <span id="rcptDate">-</span></div>
-                        </div>
-
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
-                            <tr>
-                                <td style="padding: 10px; border: 1px solid #cbd5e1; width: 30%; background: #f8fafc;"><b>সদস্যের নাম:</b></td>
-                                <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: bold; color: #1e293b;" id="rcptMemberName">-</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;"><b>আইডি নাম্বার (PSL ID):</b></td>
-                                <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: bold; color: #4f46e5;" id="rcptMemberId">-</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;"><b>মোবাইল নম্বর:</b></td>
-                                <td style="padding: 10px; border: 1px solid #cbd5e1;" id="rcptMemberPhone">-</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;"><b>ঠিকানা:</b></td>
-                                <td style="padding: 10px; border: 1px solid #cbd5e1;" id="rcptMemberAddr">-</td>
-                            </tr>
-                        </table>
-
-                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;">
-                            <thead>
-                                <tr style="background: #4f46e5; color: white;">
-                                    <th style="padding: 10px; border: 1px solid #4f46e5;">বিবরণ / জমা খাত</th>
-                                    <th style="padding: 10px; border: 1px solid #4f46e5; text-align: right;">টাকার পরিমাণ (৳)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="rcptTableItems">
-                                <tr>
-                                    <td style="padding: 12px; border: 1px solid #cbd5e1;">ডাটাবেইজ অনুসারে সদস্যের মোট জমা ফান্ড</td>
-                                    <td style="padding: 12px; border: 1px solid #cbd5e1; text-align: right; font-weight: bold;" id="rcptAmount">৳ 0</td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr style="background: #f1f5f9;">
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: bold;">সর্বমোট জমা টাকা:</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: right; font-weight: bold; color: #16a34a; font-size: 16px;" id="rcptTotalAmount">৳ 0</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-
-                        <div style="margin-top: 100px; display: flex; justify-content: space-between; font-size: 13px;">
-                            <div style="border-top: 1px solid #334155; width: 180px; text-align: center; padding-top: 5px;">সদস্যের স্বাক্ষর</div>
-                            <div style="border-top: 1px solid #334155; width: 180px; text-align: center; padding-top: 5px;">ম্যানেজারের স্বাক্ষর</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="adminAppConfigDashboard" class="hidden">
-                <div class="card-3d">
-                    <h2>অ্যাপের নাম, টাইটেল ও লোগো পরিবর্তন প্যানেল (এডমিন)</h2>
-                    <div class="form-group">
-                        <label>১ম ঘর: অ্যাপের নাম <span class="required-star">*</span></label>
-                        <input type="text" id="configAppNameInput" class="input-3d" placeholder="যেমন: এসো ভবিষ্যৎ গড়ি">
-                    </div>
-                    <div class="form-group">
-                        <label>২য় ঘর: টাইটেল <span class="required-star">*</span></label>
-                        <input type="text" id="configAppTitleInput" class="input-3d" placeholder="যেমন: ঐক্য সাফল্যের বিজয় — কেন্দ্রীয় কার্যনির্বাহী কমিটি">
-                    </div>
-                    <div class="form-group">
-                        <label>বাম পাশের লোগো (ছবি আপলোড):</label>
-                        <input type="file" id="configLeftLogoFile" class="input-3d" accept="image/*" onchange="previewConfigLogo(event, 'left')">
-                        <input type="hidden" id="configLeftLogoBase64" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>ডান পাশের লোগো (ছবি আপলোড):</label>
-                        <input type="file" id="configRightLogoFile" class="input-3d" accept="image/*" onchange="previewConfigLogo(event, 'right')">
-                        <input type="hidden" id="configRightLogoBase64" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>স্লোগান (স্থায়ী):</label>
-                        <input type="text" class="input-3d" value="ঐক্য সাফল্যের বিজয় এসো ভবিষ্যৎ গড়ি" disabled style="background:#e2e8f0; color:#555;">
-                    </div>
-                    <button class="btn-3d" onclick="saveAppConfigToDatabase()">আপডেট ও রিয়েল-টাইম সেভ করুন</button>
-                </div>
-            </div>
-
-            <div id="changePassDashboard" class="hidden">
-                <div class="card-3d">
-                    <h2>পাসওয়ার্ড পরিবর্তন সিস্টেম (এডমিন এপ্রুভাল প্রয়োজন)</h2>
-                    <div class="form-group">
-                        <label>আগের পাসওয়ার্ড দিন <span class="required-star">*</span></label>
-                        <input type="password" id="cpOldPass" class="input-3d" placeholder="আগের পাসওয়ার্ড">
-                    </div>
-                    <div class="form-group">
-                        <label>নতুন পাসওয়ার্ড দিন <span class="required-star">*</span></label>
-                        <input type="password" id="cpNewPass" class="input-3d" placeholder="নতুন পাসওয়ার্ড">
-                    </div>
-                    <div class="form-group">
-                        <label>কনফার্ম নতুন পাসওয়ার্ড দিন <span class="required-star">*</span></label>
-                        <input type="password" id="cpConfirmPass" class="input-3d" placeholder="পুনরায় নতুন পাসওয়ার্ড দিন">
-                    </div>
-                    <button class="btn-3d" onclick="submitPasswordChangeRequest()">পাসওয়ার্ড পরিবর্তনের অনুরোধ পাঠান</button>
-                </div>
-            </div>
-
-            <div id="homeDashboard" class="hidden">
-                <div id="managerTaskDashboard" class="card-3d hidden" style="border:2px solid #2563eb;background:#eff6ff;margin-bottom:15px;">
-                    <h2>ম্যানেজার ড্যাশবোর্ড — কাজ নির্বাচন করুন</h2>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;">
-                        <button class="btn-3d" onclick="openManagerTask('finance')">হিসাব দেখুন</button>
-                        <button class="btn-3d" onclick="openManagerTask('idCard')">কোম্পানির আইডি কার্ড</button>
-                        <button class="btn-3d" onclick="openManagerTask('approval')">ম্যানেজার এপ্রুভ / পারমিশন</button>
-                        <button class="btn-3d" onclick="openManagerTask('receipt')">টাকা জমা রশিদ</button>
-                        <button class="btn-3d" onclick="openManagerTask('project')">প্রকল্প তথ্য</button>
-                    </div>
-                    <div style="background:#fff;padding:12px;border-radius:10px;margin-top:12px;">
-                        <h3 style="color:#1d4ed8;">অর্থ সম্পাদক জমাকৃত প্রকল্প ব্যয় — ম্যানেজার রিভিউ</h3>
-                        <div class="table-responsive"><table><thead><tr><th>তারিখ</th><th>প্রকল্প / খাত</th><th>পরিমাণ</th><th>স্ট্যাটাস / অ্যাকশন</th></tr></thead><tbody id="managerExpenseReviewBody"><tr><td colspan="4">লোড হচ্ছে...</td></tr></tbody></table></div>
-                    </div>
-                </div>
-                <div class="card-3d" style="background: linear-gradient(145deg, #e0e5ec, #f8fafc); border-left: 6px solid var(--primary);">
-                    <div class="user-profile-bar">
-                        <img id="homeProfilePhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="সদস্য ছবি">
-                        <div id="homeUniqueIdInfo" style="font-size: 14px; color: #334155; line-height: 1.6;">
+<button class="btn-3d" id="financeReportReviewBtn" onclick="reviewFinanceSecretaryReport()" style="background:#2563eb; margin-top:10px;">রিপোর্ট প্রিভিউ / যাচাই</button>
+<button class="btn-3d" disabled="" id="financeReportDownloadBtn" onclick="downloadFinancialReportA4PDF()" style="background:#0284c7; margin-top:10px;"><i class="fa-solid fa-download"></i> যাচাইয়ের পর রিপোর্ট A4 PDF ডাউনলোড</button>
+<div id="financeReportReviewStatus" style="font-size:13px;margin-top:8px;">প্রথমে রিপোর্ট তৈরি করে প্রিভিউ যাচাই করুন।</div>
+</div>
+<!-- ম্যানেজার আইডি কোম্পানির আইডি কার্ড ড্যাশবোর্ড -->
+<div class="card-3d hidden" id="managerCompanyIdCardDashboard" style="border: 2px dashed #3b82f6; background: #eff6ff;">
+<h2><i class="fa-solid fa-id-card"></i> পদবি অনুযায়ী কোম্পানির আইডি কার্ড জেনারেটর (ম্যানেজার ড্যাশবোর্ড)</h2>
+<div class="form-group">
+<label>সদস্য নির্বাচন করুন:</label>
+<select class="input-3d" id="idCardMemberSelect" onchange="previewCompanyIdCard()">
+<option value="">সদস্য নির্বাচন করুন...</option>
+</select>
+</div>
+<div id="companyIdCardPreviewArea" style="background:white; padding:20px; border-radius:12px; border:2px solid #3b82f6; max-width:400px; margin: 15px auto; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.1); position:relative; overflow:hidden;">
+<!-- Auto Watermark dynamically appended -->
+<div class="pdf-content-wrapper">
+<img id="idCardPhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid var(--primary); margin-bottom:10px;"/>
+<h3 id="idCardName" style="color:var(--primary); margin:5px 0;">সদস্যের নাম</h3>
+<p style="margin:2px 0; font-weight:bold;"><span class="role-badge" id="idCardDesignation">পদবি</span></p>
+<p style="margin:5px 0; font-size:13px; color:#475569;">কার্ড জেনারেটেড কোড / PSL ID: <b id="idCardUniqueId">-</b></p>
+<p style="margin:2px 0; font-size:12px; color:#64748b;">মোবাইল: <span id="idCardPhone">-</span></p>
+<p style="margin:2px 0; font-size:12px; color:#64748b;">ঠিকানা: <span id="idCardAddr">-</span></p>
+<div style="margin-top:12px; border-top:1px dashed #cbd5e1; padding-top:8px; font-size:10px; color:#334155;">এসো ভবিষ্যৎ গড়ি — কেন্দ্রীয় কার্যনির্বাহী কমিটি</div>
+</div>
+</div>
+<button class="btn-3d" onclick="reviewManagerIdCardPDF()" style="background:#2563eb;">PDF প্রিভিউ / যাচাই</button>
+<button class="btn-3d" disabled="" id="downloadManagerIdCardBtn" onclick="downloadCompanyIdCardPDF()" style="background:#10b981;">যাচাইয়ের পর PDF ডাউনলোড</button>
+<div id="managerIdCardReviewStatus">সদস্য নির্বাচন করে আগে প্রিভিউ যাচাই করুন।</div>
+</div>
+<div class="hidden" id="receiptDashboard">
+<div class="card-3d">
+<h2><i class="fa-solid fa-file-invoice-dollar"></i> টাকা জমা রশিদ প্রিন্ট, ডাউনলোড ও পূর্বের রশিদ সার্চ প্যানেল (ম্যানেজার)</h2>
+<div class="form-group">
+<label>নতুন রশিদ তৈরির জন্য সদস্য নির্বাচন করুন <span class="required-star">*</span>:</label>
+<select class="input-3d" id="receiptMemberSelect" onchange="generateMemberReceiptAuto()">
+<option value="">সদস্য নির্বাচন করুন...</option>
+</select>
+</div>
+<div class="form-group" style="margin-top: 15px;">
+<label>পূর্বের সংরক্ষিত রশিদ সার্চ বা নির্বাচন করুন:</label>
+<input class="input-3d" id="receiptSearchInput" oninput="filterSavedReceipts()" placeholder="রশিদ নম্বর বা সদস্যের নাম দিয়ে খুঁজুন..." style="margin-bottom: 8px;" type="text"/>
+<select class="input-3d" id="savedReceiptSelect" onchange="loadSavedReceipt(this.value)">
+<option value="">পূর্বের রশিদ তালিকা থেকে নির্বাচন করুন...</option>
+</select>
+</div>
+<div class="no-print" style="margin-top: 20px;">
+<button class="btn-3d" id="managerReceiptReviewBtn" onclick="reviewManagerReceiptPDF()" style="background:#2563eb;">রশিদ PDF প্রিভিউ / যাচাই</button>
+<button class="btn-3d" disabled="" id="downloadManagerReceiptBtn" onclick="downloadA4ReceiptPDF()" style="background:#10b981;">যাচাইয়ের পর A4 PDF ডাউনলোড</button>
+<button class="btn-3d" id="adminReceiptDownloadBtn" onclick="downloadA4ReceiptPDFAdminLegacy()" style="background:#10b981;display:none;"><i class="fa-solid fa-download"></i> A4 পেজে PDF ডাউনলোড করুন</button>
+<div id="managerReceiptReviewStatus">আগে রশিদ তৈরি বা সংরক্ষিত রশিদ নির্বাচন করে প্রিভিউ যাচাই করুন।</div>
+<button class="btn-3d" onclick="window.print()" style="background:#3b82f6;"><i class="fa-solid fa-print"></i> সরাসরি প্রিন্ট করুন</button>
+</div>
+</div>
+<div id="a4ReceiptArea">
+<img alt="Watermark Logo" class="pdf-watermark-overlay" id="receiptWatermarkImg" src=""/>
+<div class="pdf-content-wrapper">
+<div style="text-align: center; border-bottom: 2px solid #334155; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+<img id="rcptLeftLogo" src="" style="width: 60px; height: 60px; object-fit: contain;"/>
+<div>
+<h2 id="rcptOrgName" style="color: #4f46e5; font-size: 24px; margin: 0;">এসো ভবিষ্যৎ গড়ি</h2>
+<p id="rcptOrgSlogan" style="font-size: 12px; color: #64748b; margin-top: 2px;">ঐক্য সাফল্যের বিজয় এসো ভবিষ্যৎ গড়ি</p>
+<span style="display: inline-block; background: #4f46e5; color: white; padding: 4px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-top: 8px;">টাকা জমাদান রশিদ</span>
+</div>
+<img id="rcptRightLogo" src="" style="width: 60px; height: 60px; object-fit: contain;"/>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 20px; color: #475569;">
+<div><b>রশিদ / জেনারেটেড কোড নং:</b> <span id="rcptNo">TRX-AUTO</span></div>
+<div><b>তারিখ:</b> <span id="rcptDate">-</span></div>
+</div>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+<tr>
+<td style="padding: 10px; border: 1px solid #cbd5e1; width: 30%; background: #f8fafc;"><b>সদস্যের নাম:</b></td>
+<td id="rcptMemberName" style="padding: 10px; border: 1px solid #cbd5e1; font-weight: bold; color: #1e293b;">-</td>
+</tr>
+<tr>
+<td style="padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;"><b>আইডি নাম্বার (PSL ID):</b></td>
+<td id="rcptMemberId" style="padding: 10px; border: 1px solid #cbd5e1; font-weight: bold; color: #4f46e5;">-</td>
+</tr>
+<tr>
+<td style="padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;"><b>মোবাইল নম্বর:</b></td>
+<td id="rcptMemberPhone" style="padding: 10px; border: 1px solid #cbd5e1;">-</td>
+</tr>
+<tr>
+<td style="padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;"><b>ঠিকানা:</b></td>
+<td id="rcptMemberAddr" style="padding: 10px; border: 1px solid #cbd5e1;">-</td>
+</tr>
+</table>
+<table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;">
+<thead>
+<tr style="background: #4f46e5; color: white;">
+<th style="padding: 10px; border: 1px solid #4f46e5;">বিবরণ / জমা খাত</th>
+<th style="padding: 10px; border: 1px solid #4f46e5; text-align: right;">টাকার পরিমাণ (৳)</th>
+</tr>
+</thead>
+<tbody id="rcptTableItems">
+<tr>
+<td style="padding: 12px; border: 1px solid #cbd5e1;">ডাটাবেইজ অনুসারে সদস্যের মোট জমা ফান্ড</td>
+<td id="rcptAmount" style="padding: 12px; border: 1px solid #cbd5e1; text-align: right; font-weight: bold;">৳ 0</td>
+</tr>
+</tbody>
+<tfoot>
+<tr style="background: #f1f5f9;">
+<td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: bold;">সর্বমোট জমা টাকা:</td>
+<td id="rcptTotalAmount" style="padding: 10px; border: 1px solid #cbd5e1; text-align: right; font-weight: bold; color: #16a34a; font-size: 16px;">৳ 0</td>
+</tr>
+</tfoot>
+</table>
+<div style="margin-top: 100px; display: flex; justify-content: space-between; font-size: 13px;">
+<div style="border-top: 1px solid #334155; width: 180px; text-align: center; padding-top: 5px;">সদস্যের স্বাক্ষর</div>
+<div style="border-top: 1px solid #334155; width: 180px; text-align: center; padding-top: 5px;">ম্যানেজারের স্বাক্ষর</div>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden" id="adminAppConfigDashboard">
+<div class="card-3d">
+<h2>অ্যাপের নাম, টাইটেল ও লোগো পরিবর্তন প্যানেল (এডমিন)</h2>
+<div class="form-group">
+<label>১ম ঘর: অ্যাপের নাম <span class="required-star">*</span></label>
+<input class="input-3d" id="configAppNameInput" placeholder="যেমন: এসো ভবিষ্যৎ গড়ি" type="text"/>
+</div>
+<div class="form-group">
+<label>২য় ঘর: টাইটেল <span class="required-star">*</span></label>
+<input class="input-3d" id="configAppTitleInput" placeholder="যেমন: ঐক্য সাফল্যের বিজয় — কেন্দ্রীয় কার্যনির্বাহী কমিটি" type="text"/>
+</div>
+<div class="form-group">
+<label>বাম পাশের লোগো (ছবি আপলোড):</label>
+<input accept="image/*" class="input-3d" id="configLeftLogoFile" onchange="previewConfigLogo(event, 'left')" type="file"/>
+<input id="configLeftLogoBase64" type="hidden" value=""/>
+</div>
+<div class="form-group">
+<label>ডান পাশের লোগো (ছবি আপলোড):</label>
+<input accept="image/*" class="input-3d" id="configRightLogoFile" onchange="previewConfigLogo(event, 'right')" type="file"/>
+<input id="configRightLogoBase64" type="hidden" value=""/>
+</div>
+<div class="form-group">
+<label>স্লোগান (স্থায়ী):</label>
+<input class="input-3d" disabled="" style="background:#e2e8f0; color:#555;" type="text" value="ঐক্য সাফল্যের বিজয় এসো ভবিষ্যৎ গড়ি"/>
+</div>
+<button class="btn-3d" onclick="saveAppConfigToDatabase()">আপডেট ও রিয়েল-টাইম সেভ করুন</button>
+</div>
+</div>
+<div class="hidden" id="changePassDashboard">
+<div class="card-3d">
+<h2>পাসওয়ার্ড পরিবর্তন সিস্টেম (এডমিন এপ্রুভাল প্রয়োজন)</h2>
+<div class="form-group">
+<label>আগের পাসওয়ার্ড দিন <span class="required-star">*</span></label>
+<input class="input-3d" id="cpOldPass" placeholder="আগের পাসওয়ার্ড" type="password"/>
+</div>
+<div class="form-group">
+<label>নতুন পাসওয়ার্ড দিন <span class="required-star">*</span></label>
+<input class="input-3d" id="cpNewPass" placeholder="নতুন পাসওয়ার্ড" type="password"/>
+</div>
+<div class="form-group">
+<label>কনফার্ম নতুন পাসওয়ার্ড দিন <span class="required-star">*</span></label>
+<input class="input-3d" id="cpConfirmPass" placeholder="পুনরায় নতুন পাসওয়ার্ড দিন" type="password"/>
+</div>
+<button class="btn-3d" onclick="submitPasswordChangeRequest()">পাসওয়ার্ড পরিবর্তনের অনুরোধ পাঠান</button>
+</div>
+</div>
+<div class="hidden" id="homeDashboard">
+<div class="card-3d hidden" id="managerTaskDashboard" style="border:2px solid #2563eb;background:#eff6ff;margin-bottom:15px;">
+<h2>ম্যানেজার ড্যাশবোর্ড — কাজ নির্বাচন করুন</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;">
+<button class="btn-3d" onclick="openManagerTask('finance')">হিসাব দেখুন</button>
+<button class="btn-3d" onclick="openManagerTask('idCard')">কোম্পানির আইডি কার্ড</button>
+<button class="btn-3d" onclick="openManagerTask('approval')">ম্যানেজার এপ্রুভ / পারমিশন</button>
+<button class="btn-3d" onclick="openManagerTask('receipt')">টাকা জমা রশিদ</button>
+<button class="btn-3d" onclick="openManagerTask('project')">প্রকল্প তথ্য</button>
+</div>
+<div style="background:#fff;padding:12px;border-radius:10px;margin-top:12px;">
+<h3 style="color:#1d4ed8;">অর্থ সম্পাদক জমাকৃত প্রকল্প ব্যয় — ম্যানেজার রিভিউ</h3>
+<div class="table-responsive"><table><thead><tr><th>তারিখ</th><th>প্রকল্প / খাত</th><th>পরিমাণ</th><th>স্ট্যাটাস / অ্যাকশন</th></tr></thead><tbody id="managerExpenseReviewBody"><tr><td colspan="4">লোড হচ্ছে...</td></tr></tbody></table></div>
+</div>
+</div>
+<div class="card-3d" style="background: linear-gradient(145deg, #e0e5ec, #f8fafc); border-left: 6px solid var(--primary);">
+<div class="user-profile-bar">
+<img alt="সদস্য ছবি" id="homeProfilePhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"/>
+<div id="homeUniqueIdInfo" style="font-size: 14px; color: #334155; line-height: 1.6;">
                             লোডিং হচ্ছে...
                         </div>
-                    </div>
-                </div>
-
-                <div class="card-3d">
-                    <h2>জরুরি নোটিশ বোর্ড (সর্বশেষ নোটিশ রিভিউ)</h2>
-                    <div class="notice-box" id="homeNoticeDisplay"><strong>জরুরি নোটিশ:</strong> নতুন নোটিশ পেতে অপেক্ষা করুন।</div>
-                </div>
-            </div>
-
-            <div id="memberDashboard" class="hidden">
-                <div class="card-3d" style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <div class="counter-3d" style="flex: 1;">
-                        <span style="font-size: 14px; font-weight: 600; color: #555;">মোট নিবন্ধিত সদস্য</span>
-                        <div class="counter-number" id="memberCount">0</div>
-                    </div>
-                </div>
-
-                <div class="card-3d">
-                    <h2>নোটিশ বোর্ড (সর্বশেষ নোটিশ রিভিউ)</h2>
-                    <div style="margin-bottom: 12px;">
-                        <button class="btn-3d" id="managerNoticeBtn" style="background: linear-gradient(145deg, #f59e0b, #d97706); margin-top:0;" onclick="openManagerNoticeModal()">
-                            <i class="fa-solid fa-bullhorn"></i> জরুরি নোটিশ প্রদান করুন (ম্যানেজার)
+</div>
+</div>
+<div class="card-3d">
+<h2>জরুরি নোটিশ বোর্ড (সর্বশেষ নোটিশ রিভিউ)</h2>
+<div class="notice-box" id="homeNoticeDisplay"><strong>জরুরি নোটিশ:</strong> নতুন নোটিশ পেতে অপেক্ষা করুন।</div>
+</div>
+</div>
+<div class="hidden" id="memberDashboard">
+<div class="card-3d" style="display: flex; gap: 15px; flex-wrap: wrap;">
+<div class="counter-3d" style="flex: 1;">
+<span style="font-size: 14px; font-weight: 600; color: #555;">মোট নিবন্ধিত সদস্য</span>
+<div class="counter-number" id="memberCount">0</div>
+</div>
+</div>
+<div class="card-3d">
+<h2>নোটিশ বোর্ড (সর্বশেষ নোটিশ রিভিউ)</h2>
+<div style="margin-bottom: 12px;">
+<button class="btn-3d" id="managerNoticeBtn" onclick="openManagerNoticeModal()" style="background: linear-gradient(145deg, #f59e0b, #d97706); margin-top:0;">
+<i class="fa-solid fa-bullhorn"></i> জরুরি নোটিশ প্রদান করুন (ম্যানেজার)
                         </button>
-                    </div>
-                    <div class="notice-box" id="noticeDisplay"><strong>জরুরি নোটিশ:</strong> নতুন নোটিশ পেতে অপেক্ষা করুন।</div>
-                </div>
-
-                <div class="card-3d" style="background: linear-gradient(145deg, #e0e5ec, #f8fafc); border-left: 6px solid var(--primary);">
-                    <h2>আমার সদস্য আইডি ও প্রোফাইল</h2>
-                    <div class="user-profile-bar">
-                        <img id="myProfilePhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="সদস্য ছবি">
-                        <div id="myUniqueIdInfo" style="font-size: 14px; color: #334155; line-height: 1.6;">
+</div>
+<div class="notice-box" id="noticeDisplay"><strong>জরুরি নোটিশ:</strong> নতুন নোটিশ পেতে অপেক্ষা করুন।</div>
+</div>
+<div class="card-3d" style="background: linear-gradient(145deg, #e0e5ec, #f8fafc); border-left: 6px solid var(--primary);">
+<h2>আমার সদস্য আইডি ও প্রোফাইল</h2>
+<div class="user-profile-bar">
+<img alt="সদস্য ছবি" id="myProfilePhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"/>
+<div id="myUniqueIdInfo" style="font-size: 14px; color: #334155; line-height: 1.6;">
                             লোডিং হচ্ছে...
                         </div>
-                    </div>
-                </div>
-
-                <div class="card-3d">
-                    <h2>সদস্য নিবন্ধন ফরম ও অঙ্গীকারনামা (ভিন্ন ফরম্যাট)</h2>
-
-                    <form id="memberForm" onsubmit="handleFinalSubmit(event)">
-                        <input type="hidden" id="editMemberKey" value="">
-
-                        <div id="step1" class="step-section active">
-                            <h3 style="font-size:15px; color:var(--primary); margin-bottom:10px;">ধাপ ১: বিভাগ, জেলা, উপজেলা ও ইউনিয়ন সিলেকশন</h3>
-                            
-                            <div class="form-group">
-                                <label>সদস্যের ধরণ <span class="required-star">*</span>:</label>
-                                <select id="mMemberType" class="input-3d" required>
-                                    <option value="স্থায়ী">স্থায়ী সদস্য</option>
-                                    <option value="অস্থায়ী">অস্থায়ী সদস্য</option>
-                                    <option value="আজীবন">আজীবন সদস্য</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>বিভাগ <span class="required-star">*</span>:</label>
-                                <select id="mDivision" class="input-3d" required onchange="updateDistricts()">
-                                    <option value="ময়মনসিংহ">ময়মনসিংহ বিভাগ</option>
-                                    <option value="ঢাকা">ঢাকা বিভাগ</option>
-                                    <option value="অন্যান্য">অন্যান্য বিভাগ</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>জেলা <span class="required-star">*</span>:</label>
-                                <select id="mDistrict" class="input-3d" required onchange="updateUpazilas()">
-                                    <option value="">জেলা নির্বাচন করুন</option>
-                                    <option value="ময়মনসিংহ">ময়মনসিংহ</option>
-                                    <option value="জামালপুর">জামালপুর</option>
-                                    <option value="শেরপুর">শেরপুর</option>
-                                    <option value="নেত্রকোণা">নেত্রকোণা</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>উপজেলা / থানা <span class="required-star">*</span>:</label>
-                                <select id="mUpazila" class="input-3d" required onchange="updateUnions()">
-                                    <option value="">প্রথমে জেলা নির্বাচন করুন</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>ইউনিয়ন পরিষদ / ওয়ার্ড <span class="required-star">*</span>:</label>
-                                <select id="mUnionWard" class="input-3d" required>
-                                    <option value="">প্রথমে উপজেলা নির্বাচন করুন</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group"><label>সদস্যের ছবি:</label><input type="file" id="mPhotoFile" class="input-3d" accept="image/*" onchange="previewImage(event)"></div>
-                            <input type="hidden" id="mPhotoBase64" value="">
-                            <div id="imagePreviewContainer" style="margin-bottom: 10px; display: none;">
-                                <img id="outputPreview" src="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
-                            </div>
-                            
-                            <div class="form-group"><label>পূর্ণ নাম <span class="required-star">*</span>:</label><input type="text" id="mName" class="input-3d" required placeholder="পূর্ণ নাম"></div>
-                            <div class="form-group"><label>পিতার নাম <span class="required-star">*</span>:</label><input type="text" id="mFather" class="input-3d" required placeholder="পিতার নাম"></div>
-                            <div class="form-group"><label>মাতার নাম <span class="required-star">*</span>:</label><input type="text" id="mMother" class="input-3d" required placeholder="মাতার নাম"></div>
-                            
-                            <div class="form-group">
-                                <label>সংগঠনের পদবি <span class="required-star">*</span>:</label>
-                                <input type="text" id="mDesignation" class="input-3d" value="সাধারণ সদস্য" placeholder="যেমন: সভাপতি / সাধারণ সম্পাদক / অর্থ সম্পাদক / সদস্য">
-                            </div>
-
-                            <div class="form-group">
-                                <label>সনদ নির্বাচন <span class="required-star">*</span>:</label>
-                                <select id="mIdType" class="input-3d" required>
-                                    <option value="NID">এনআইডি কার্ড</option>
-                                    <option value="BirthCert">জন্ম নিবন্ধন</option>
-                                </select>
-                            </div>
-                            <div class="form-group"><label>এনআইডি / জন্ম নিবন্ধন নম্বর <span class="required-star">*</span>:</label><input type="text" id="mNid" class="input-3d" required placeholder="নম্বরটি লিখুন"></div>
-                            
-                            <div class="form-group"><label>স্থায়ী ঠিকানা <span class="required-star">*</span>:</label><input type="text" id="mPermanentAddr" class="input-3d" required placeholder="গ্রাম, ডাকঘর, উপজেলা, জেলা"></div>
-                            <div class="form-group"><label>মোবাইল নম্বর <span class="required-star">*</span>:</label><input type="tel" id="mPhone" class="input-3d" required placeholder="০১৭xxxxxxxx"></div>
-                            
-                            <button type="button" class="btn-3d" onclick="goToStep(2)">এগিয়ে যান (নমিনির তথ্য)</button>
-                        </div>
-
-                        <div id="step2" class="step-section">
-                            <h3 style="font-size:15px; color:var(--primary); margin-bottom:10px;">ধাপ ২: নমিনির তথ্য</h3>
-                            <div class="form-group"><label>নমিনির ছবি:</label><input type="file" id="nPhotoFile" class="input-3d" accept="image/*"></div>
-                            <div class="form-group"><label>নমিনির নাম <span class="required-star">*</span>:</label><input type="text" id="nName" class="input-3d" placeholder="নমিনির নাম"></div>
-                            <div class="form-group">
-                                <label>সম্পর্ক <span class="required-star">*</span>:</label>
-                                <select id="nRelation" class="input-3d">
-                                    <option value="পিতা">পিতা</option>
-                                    <option value="মাতা">মাতা</option>
-                                    <option value="স্বামী/স্ত্রী">স্বামী/স্ত্রী</option>
-                                    <option value="ভাই">ভাই</option>
-                                    <option value="বোন">বোন</option>
-                                    <option value="অন্যান্য">অন্যান্য</option>
-                                </select>
-                            </div>
-                            <div style="display: flex; gap: 10px;">
-                                <button type="button" class="btn-3d" style="background: #64748b;" onclick="goToStep(1)">পূর্ববর্তী</button>
-                                <button type="button" class="btn-3d" onclick="goToStep(3)">এগিয়ে যান (অঙ্গীকারনামা)</button>
-                            </div>
-                        </div>
-
-                        <div id="step3" class="step-section">
-                            <h3 style="font-size:15px; color:var(--primary); margin-bottom:10px;">ধাপ ৩: কঠোর শর্তাবলী ও আইনি অঙ্গীকারনামা</h3>
-                            
-                            <div class="pledge-box">
-                                <b>অঙ্গীকারনামা ও গঠনতন্ত্রের নিয়মাবলী:</b><br><br>
-                                ১. সংগঠনের যাবতীয় নিয়ম-কানুন, সংবিধান এবং শৃঙ্খলা মেনে চলতে বাধ্য থাকিব。<br>
-                                ২. সংগঠনের স্বার্থবিরোধী কোনো কার্যকলাপে লিপ্ত হইব না।<br>
-                                ৩. নিয়মিতভাবে আর্থিক চাঁদা ও ফান্ডে নির্ধারিত অর্থ প্রদান করিব।<br>
+</div>
+</div>
+<div class="card-3d">
+<h2>সদস্য নিবন্ধন ফরম ও অঙ্গীকারনামা (ভিন্ন ফরম্যাট)</h2>
+<form id="memberForm" onsubmit="handleFinalSubmit(event)">
+<input id="editMemberKey" type="hidden" value=""/>
+<div class="step-section active" id="step1">
+<h3 style="font-size:15px; color:var(--primary); margin-bottom:10px;">ধাপ ১: বিভাগ, জেলা, উপজেলা ও ইউনিয়ন সিলেকশন</h3>
+<div class="form-group">
+<label>সদস্যের ধরণ <span class="required-star">*</span>:</label>
+<select class="input-3d" id="mMemberType" required="">
+<option value="স্থায়ী">স্থায়ী সদস্য</option>
+<option value="অস্থায়ী">অস্থায়ী সদস্য</option>
+<option value="আজীবন">আজীবন সদস্য</option>
+</select>
+</div>
+<div class="form-group">
+<label>বিভাগ <span class="required-star">*</span>:</label>
+<select class="input-3d" id="mDivision" onchange="updateDistricts()" required="">
+<option value="ময়মনসিংহ">ময়মনসিংহ বিভাগ</option>
+<option value="ঢাকা">ঢাকা বিভাগ</option>
+<option value="অন্যান্য">অন্যান্য বিভাগ</option>
+</select>
+</div>
+<div class="form-group">
+<label>জেলা <span class="required-star">*</span>:</label>
+<select class="input-3d" id="mDistrict" onchange="updateUpazilas()" required="">
+<option value="">জেলা নির্বাচন করুন</option>
+<option value="ময়মনসিংহ">ময়মনসিংহ</option>
+<option value="জামালপুর">জামালপুর</option>
+<option value="শেরপুর">শেরপুর</option>
+<option value="নেত্রকোণা">নেত্রকোণা</option>
+</select>
+</div>
+<div class="form-group">
+<label>উপজেলা / থানা <span class="required-star">*</span>:</label>
+<select class="input-3d" id="mUpazila" onchange="updateUnions()" required="">
+<option value="">প্রথমে জেলা নির্বাচন করুন</option>
+</select>
+</div>
+<div class="form-group">
+<label>ইউনিয়ন পরিষদ / ওয়ার্ড <span class="required-star">*</span>:</label>
+<select class="input-3d" id="mUnionWard" required="">
+<option value="">প্রথমে উপজেলা নির্বাচন করুন</option>
+</select>
+</div>
+<div class="form-group"><label>সদস্যের ছবি:</label><input accept="image/*" class="input-3d" id="mPhotoFile" onchange="previewImage(event)" type="file"/></div>
+<input id="mPhotoBase64" type="hidden" value=""/>
+<div id="imagePreviewContainer" style="margin-bottom: 10px; display: none;">
+<img id="outputPreview" src="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);"/>
+</div>
+<div class="form-group"><label>পূর্ণ নাম <span class="required-star">*</span>:</label><input class="input-3d" id="mName" placeholder="পূর্ণ নাম" required="" type="text"/></div>
+<div class="form-group"><label>পিতার নাম <span class="required-star">*</span>:</label><input class="input-3d" id="mFather" placeholder="পিতার নাম" required="" type="text"/></div>
+<div class="form-group"><label>মাতার নাম <span class="required-star">*</span>:</label><input class="input-3d" id="mMother" placeholder="মাতার নাম" required="" type="text"/></div>
+<div class="form-group">
+<label>সংগঠনের পদবি <span class="required-star">*</span>:</label>
+<input class="input-3d" id="mDesignation" placeholder="যেমন: সভাপতি / সাধারণ সম্পাদক / অর্থ সম্পাদক / সদস্য" type="text" value="সাধারণ সদস্য"/>
+</div>
+<div class="form-group">
+<label>সনদ নির্বাচন <span class="required-star">*</span>:</label>
+<select class="input-3d" id="mIdType" required="">
+<option value="NID">এনআইডি কার্ড</option>
+<option value="BirthCert">জন্ম নিবন্ধন</option>
+</select>
+</div>
+<div class="form-group"><label>এনআইডি / জন্ম নিবন্ধন নম্বর <span class="required-star">*</span>:</label><input class="input-3d" id="mNid" placeholder="নম্বরটি লিখুন" required="" type="text"/></div>
+<div class="form-group"><label>স্থায়ী ঠিকানা <span class="required-star">*</span>:</label><input class="input-3d" id="mPermanentAddr" placeholder="গ্রাম, ডাকঘর, উপজেলা, জেলা" required="" type="text"/></div>
+<div class="form-group"><label>মোবাইল নম্বর <span class="required-star">*</span>:</label><input class="input-3d" id="mPhone" placeholder="০১৭xxxxxxxx" required="" type="tel"/></div>
+<button class="btn-3d" onclick="goToStep(2)" type="button">এগিয়ে যান (নমিনির তথ্য)</button>
+</div>
+<div class="step-section" id="step2">
+<h3 style="font-size:15px; color:var(--primary); margin-bottom:10px;">ধাপ ২: নমিনির তথ্য</h3>
+<div class="form-group"><label>নমিনির ছবি:</label><input accept="image/*" class="input-3d" id="nPhotoFile" type="file"/></div>
+<div class="form-group"><label>নমিনির নাম <span class="required-star">*</span>:</label><input class="input-3d" id="nName" placeholder="নমিনির নাম" type="text"/></div>
+<div class="form-group">
+<label>সম্পর্ক <span class="required-star">*</span>:</label>
+<select class="input-3d" id="nRelation">
+<option value="পিতা">পিতা</option>
+<option value="মাতা">মাতা</option>
+<option value="স্বামী/স্ত্রী">স্বামী/স্ত্রী</option>
+<option value="ভাই">ভাই</option>
+<option value="বোন">বোন</option>
+<option value="অন্যান্য">অন্যান্য</option>
+</select>
+</div>
+<div style="display: flex; gap: 10px;">
+<button class="btn-3d" onclick="goToStep(1)" style="background: #64748b;" type="button">পূর্ববর্তী</button>
+<button class="btn-3d" onclick="goToStep(3)" type="button">এগিয়ে যান (অঙ্গীকারনামা)</button>
+</div>
+</div>
+<div class="step-section" id="step3">
+<h3 style="font-size:15px; color:var(--primary); margin-bottom:10px;">ধাপ ৩: কঠোর শর্তাবলী ও আইনি অঙ্গীকারনামা</h3>
+<div class="pledge-box">
+<b>অঙ্গীকারনামা ও গঠনতন্ত্রের নিয়মাবলী:</b><br/><br/>
+                                ১. সংগঠনের যাবতীয় নিয়ম-কানুন, সংবিধান এবং শৃঙ্খলা মেনে চলতে বাধ্য থাকিব。<br/>
+                                ২. সংগঠনের স্বার্থবিরোধী কোনো কার্যকলাপে লিপ্ত হইব না।<br/>
+                                ৩. নিয়মিতভাবে আর্থিক চাঁদা ও ফান্ডে নির্ধারিত অর্থ প্রদান করিব।<br/>
                                 ৪. সংগঠনের কেন্দ্রীয় সিদ্ধান্ত ও এডমিন এপ্রুভ পদ্ধতি বিনাবাক্য মেনে চলিব।
                             </div>
-
-                            <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox" id="agreeCheck" required style="width: 20px; height: 20px;">
-                                <label for="agreeCheck">উপরের সকল শর্তাবলী ও অঙ্গীকারনামা আমি পড়িয়াছি এবং সম্পূর্ণ সম্মত আছি। <span class="required-star">*</span></label>
-                            </div>
-
-                            <div style="display: flex; gap: 10px;">
-                                <button type="button" class="btn-3d" style="background: #64748b;" onclick="goToStep(2)">পূর্ববর্তী</button>
-                                <button type="submit" id="submitBtn" class="btn-3d">চূড়ান্ত জমা দিন (অটো সেভ)</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="card-3d">
-                    <h2>লাইভ চ্যাট বক্স (সদস্য ছবি সহ)</h2>
-                    <div id="chatBoxContainer" style="max-height: 200px; overflow-y: auto; background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;"></div>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="chatInputText" class="input-3d" placeholder="আপনার বার্তা লিখুন..." style="margin-top:0;">
-                        <button class="btn-3d" style="margin-top:0; width: 100px;" onclick="sendChatMessage()">পাঠান</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="memberListDashboard" class="hidden">
-                <div class="card-3d">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h2>সদস্য তালিকা ও এপ্রুভ (PDF / A4) ডাটাবেজ</h2>
-                        <button class="btn-delete" style="width: auto; padding: 8px 12px;" onclick="deleteAllSelectedMembers()">একাধিক একাউন্ট মুছুন</button>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="memberSearchInput" class="input-3d" placeholder="নাম, মোবাইল, আইডি বা ধরণ দিয়ে খুঁজুন..." onkeyup="filterMemberList()">
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th><input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll(this)"></th>
-                                    <th>ছবি</th>
-                                    <th>আইডি / ধরণ</th>
-                                    <th>নাম ও মোবাইল</th>
-                                    <th>এলাকা ও পদবি</th>
-                                    <th>স্ট্যাটাস</th>
-                                    <th>অ্যাকশন</th>
-                                </tr>
-                            </thead>
-                            <tbody id="memberTableBody">
-                                <tr><td colspan="7" style="text-align:center;">কোনো তথ্য নেই।</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div style="margin-top: 25px;">
-                        <h3 style="color: #dc2626; font-size: 15px; margin-bottom: 10px;">রিজেক্টকৃত সদস্য তালিকা</h3>
-                        <div class="form-group" style="margin-bottom: 10px;">
-                            <input type="text" id="rejectedSearchInput" class="input-3d" placeholder="রিজেক্ট ফাইল আইডি, নাম বা মোবাইল নম্বর দিয়ে খুঁজুন..." onkeyup="filterRejectedList()">
-                        </div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>ছবি</th>
-                                        <th>আইডি ও নাম</th>
-                                        <th>মোবাইল</th>
-                                        <th>স্ট্যাটাস</th>
-                                        <th>অ্যাকশন</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="rejectedTableBody">
-                                    <tr><td colspan="5" style="text-align:center;">কোনো রিজেক্টকৃত তথ্য নেই।</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="activeUsersDashboard" class="hidden">
-                <div class="card-3d">
-                    <h2>সদস্য আইডি / ব্যবহারকারীর রোল পরিবর্তন (এডমিন প্যানেল)</h2>
-                    <p style="margin:8px 0 14px;color:#475569;font-size:14px;">নিচের তালিকায় সদস্য/মোবাইল আইডি খুঁজে রোল নির্বাচন করুন, তারপর <b>সেভ রোল</b> চাপুন। পরিবর্তন Firebase-এ সেভ করার চেষ্টা হবে।</p>
-                    
-                    <div class="form-card" style="background: #f1f5f9; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
-                        <h3 style="font-size:14px; color:var(--primary); margin-bottom:10px;">নতুন ব্যবহারকারী ও রোল যুক্ত করুন (সেভ)</h3>
-                        <div style="display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
-                            <input type="text" id="adminNewUserPhone" class="input-3d" placeholder="মোবাইল নম্বর / আইডি" style="margin-top:0; flex:1;" required>
-                            <input type="password" id="adminNewUserPass" class="input-3d" placeholder="পাসওয়ার্ড" style="margin-top:0; flex:1;" required>
-                            <select id="adminNewUserRole" class="input-3d" style="margin-top:0; width:150px;">
-                                <option value="Staff">Staff</option>
-                                <option value="Information">Information</option>
-                                <option value="FinanceSecretary">Finance Secretary</option>
-                                <option value="Manager">Manager</option>
-                                <option value="Admin">Admin</option>
-                            </select>
-                            <button onclick="addNewUserByAdmin()" class="btn-3d" style="margin-top:0; width:120px; background:#16a34a;">সেভ করুন</button>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>প্রোফাইল ছবি</th>
-                                    <th>ইউজার ও মোবাইল</th>
-                                    <th>বর্তমান রোল</th>
-                                    <th>পাসওয়ার্ড স্ট্যাটাস</th>
-                                    <th>অ্যাকশন ও রোল পরিবর্তন</th>
-                                </tr>
-                            </thead>
-                            <tbody id="activeUsersTableBody">
-                                <tr><td colspan="5" style="text-align:center;">কোনো ব্যবহারকারী নেই।</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div style="margin-top: 25px;">
-                        <h3 style="color: #dc2626; font-size: 15px; margin-bottom: 10px;">ডিলিটকৃত ও সুরক্ষিত ব্যবহারকারী তালিকা</h3>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>মোবাইল / আইডি</th>
-                                        <th>রোল</th>
-                                        <th>শেষ কার্যক্রম / ডিলিট তারিখ</th>
-                                        <th>স্ট্যাটাস</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="deletedUsersTableBody">
-                                    <tr><td colspan="4" style="text-align:center;">কোনো সুরক্ষিত ডিলিটকৃত ইউজার নেই।</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="financeDashboard" class="hidden">
-                <div class="card-3d">
-                    <h2>হিসাব দেখুন ও ফান্ড</h2>
-                    <div class="dashboard-stats">
-                        <div class="box income">
-                            <h4>মোট আয় / ফান্ড (এপ্রুভড)</h4>
-                            <h3 id="txtIncome">৳ 0</h3>
-                        </div>
-                        <div class="box expense">
-                            <h4>মোট ব্যয় (এপ্রুভড)</h4>
-                            <h3 id="txtExpense">৳ 0</h3>
-                        </div>
-                        <div class="box balance">
-                            <h4>নিট ব্যালেন্স</h4>
-                            <h3 id="txtBalance">৳ 0</h3>
-                        </div>
-                    </div>
-
-                    <div class="form-card" id="staffTxFormCard" style="background: #f1f5f9; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
-                        <h3>Staff / সদস্য হিসাব জমা ফরম (২৪ ঘণ্টায় ১ বার মাত্র)</h3>
-                        <form id="txForm" onsubmit="handleTransactionSubmit(event)">
-                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                                <input type="text" id="txMemberId" class="input-3d" placeholder="সদস্য আইডি" readonly style="margin-top:0; background:#e2e8f0;" required>
-                                <input type="text" id="txName" class="input-3d" placeholder="সদস্যের নাম" readonly style="margin-top:0; background:#e2e8f0;" required>
-                            </div>
-                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                                <select id="txType" class="input-3d" style="margin-top:0;">
-                                    <option value="Income">আয় / জমা (Income)</option>
-                                    <option value="Expense">ব্যয় (Expense)</option>
-                                </select>
-                                <input type="text" id="txCategory" class="input-3d" placeholder="খাত (যেমন: মাসিক চাঁদা, অনুদান)" required style="margin-top:0;">
-                            </div>
-                            <div style="margin-bottom:8px;">
-                                <input type="text" id="txProjectName" class="input-3d" placeholder="প্রকল্পের নাম (ব্যয়ের ক্ষেত্রে অবশ্যই দিতে হবে)" style="margin-top:0;">
-                            </div>
-                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                                <input type="number" id="txAmount" class="input-3d" placeholder="পরিমাণ (৳)" required style="margin-top:0;">
-                                <select id="txPaymentMethod" class="input-3d" style="margin-top:0;">
-                                    <option value="bKash">বিকাশ (bKash)</option>
-                                    <option value="Nagad">নগদ (Nagad)</option>
-                                    <option value="Bank">ব্যাংক ট্রান্সফার</option>
-                                    <option value="Cash">ক্যাশ</option>
-                                </select>
-                            </div>
-                            <div style="margin-bottom: 8px;">
-                                <input type="text" id="txAccountNo" class="input-3d" placeholder="একাউন্ট নম্বর বা TrxID" required style="margin-top:0;">
-                            </div>
-                            <button type="submit" class="btn-3d" style="width: 100%; background: #16a34a; margin-top:10px;">হিসাব জমা দিন (Finance Secretary-র কাছে পাঠাবে)</button>
-                        </form>
-                    </div>
-                    <div id="staffTxRestrictedMsg" class="hidden" style="padding:15px; background:#fef2f2; color:#dc2626; border-radius:8px; margin-bottom:16px; text-align:center; font-weight:bold;">
+<div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+<input id="agreeCheck" required="" style="width: 20px; height: 20px;" type="checkbox"/>
+<label for="agreeCheck">উপরের সকল শর্তাবলী ও অঙ্গীকারনামা আমি পড়িয়াছি এবং সম্পূর্ণ সম্মত আছি। <span class="required-star">*</span></label>
+</div>
+<div style="display: flex; gap: 10px;">
+<button class="btn-3d" onclick="goToStep(2)" style="background: #64748b;" type="button">পূর্ববর্তী</button>
+<button class="btn-3d" id="submitBtn" type="submit">চূড়ান্ত জমা দিন (অটো সেভ)</button>
+</div>
+</div>
+</form>
+</div>
+<div class="card-3d">
+<h2>লাইভ চ্যাট বক্স (সদস্য ছবি সহ)</h2>
+<div id="chatBoxContainer" style="max-height: 200px; overflow-y: auto; background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;"></div>
+<div style="display: flex; gap: 8px;">
+<input class="input-3d" id="chatInputText" placeholder="আপনার বার্তা লিখুন..." style="margin-top:0;" type="text"/>
+<button class="btn-3d" onclick="sendChatMessage()" style="margin-top:0; width: 100px;">পাঠান</button>
+</div>
+</div>
+</div>
+<div class="hidden" id="memberListDashboard">
+<div class="card-3d">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+<h2>সদস্য তালিকা ও এপ্রুভ (PDF / A4) ডাটাবেজ</h2>
+<button class="btn-delete" onclick="deleteAllSelectedMembers()" style="width: auto; padding: 8px 12px;">একাধিক একাউন্ট মুছুন</button>
+</div>
+<div class="form-group">
+<input class="input-3d" id="memberSearchInput" onkeyup="filterMemberList()" placeholder="নাম, মোবাইল, আইডি বা ধরণ দিয়ে খুঁজুন..." type="text"/>
+</div>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th><input id="selectAllCheckbox" onclick="toggleSelectAll(this)" type="checkbox"/></th>
+<th>ছবি</th>
+<th>আইডি / ধরণ</th>
+<th>নাম ও মোবাইল</th>
+<th>এলাকা ও পদবি</th>
+<th>স্ট্যাটাস</th>
+<th>অ্যাকশন</th>
+</tr>
+</thead>
+<tbody id="memberTableBody">
+<tr><td colspan="7" style="text-align:center;">কোনো তথ্য নেই।</td></tr>
+</tbody>
+</table>
+</div>
+<div style="margin-top: 25px;">
+<h3 style="color: #dc2626; font-size: 15px; margin-bottom: 10px;">রিজেক্টকৃত সদস্য তালিকা</h3>
+<div class="form-group" style="margin-bottom: 10px;">
+<input class="input-3d" id="rejectedSearchInput" onkeyup="filterRejectedList()" placeholder="রিজেক্ট ফাইল আইডি, নাম বা মোবাইল নম্বর দিয়ে খুঁজুন..." type="text"/>
+</div>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>ছবি</th>
+<th>আইডি ও নাম</th>
+<th>মোবাইল</th>
+<th>স্ট্যাটাস</th>
+<th>অ্যাকশন</th>
+</tr>
+</thead>
+<tbody id="rejectedTableBody">
+<tr><td colspan="5" style="text-align:center;">কোনো রিজেক্টকৃত তথ্য নেই।</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden" id="activeUsersDashboard">
+<div class="card-3d">
+<h2>সদস্য আইডি / ব্যবহারকারীর রোল পরিবর্তন (এডমিন প্যানেল)</h2>
+<p style="margin:8px 0 14px;color:#475569;font-size:14px;">নিচের তালিকায় সদস্য/মোবাইল আইডি খুঁজে রোল নির্বাচন করুন, তারপর <b>সেভ রোল</b> চাপুন। পরিবর্তন Firebase-এ সেভ করার চেষ্টা হবে।</p>
+<div class="form-card" style="background: #f1f5f9; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
+<h3 style="font-size:14px; color:var(--primary); margin-bottom:10px;">নতুন ব্যবহারকারী ও রোল যুক্ত করুন (সেভ)</h3>
+<div style="display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+<input class="input-3d" id="adminNewUserPhone" placeholder="মোবাইল নম্বর / আইডি" required="" style="margin-top:0; flex:1;" type="text"/>
+<input class="input-3d" id="adminNewUserPass" placeholder="পাসওয়ার্ড" required="" style="margin-top:0; flex:1;" type="password"/>
+<select class="input-3d" id="adminNewUserRole" style="margin-top:0; width:150px;">
+<option value="Staff">Staff</option>
+<option value="Information">Information</option>
+<option value="FinanceSecretary">Finance Secretary</option>
+<option value="Manager">Manager</option>
+<option value="Admin">Admin</option>
+</select>
+<button class="btn-3d" onclick="addNewUserByAdmin()" style="margin-top:0; width:120px; background:#16a34a;">সেভ করুন</button>
+</div>
+</div>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>প্রোফাইল ছবি</th>
+<th>ইউজার ও মোবাইল</th>
+<th>বর্তমান রোল</th>
+<th>পাসওয়ার্ড স্ট্যাটাস</th>
+<th>অ্যাকশন ও রোল পরিবর্তন</th>
+</tr>
+</thead>
+<tbody id="activeUsersTableBody">
+<tr><td colspan="5" style="text-align:center;">কোনো ব্যবহারকারী নেই।</td></tr>
+</tbody>
+</table>
+</div>
+<div style="margin-top: 25px;">
+<h3 style="color: #dc2626; font-size: 15px; margin-bottom: 10px;">ডিলিটকৃত ও সুরক্ষিত ব্যবহারকারী তালিকা</h3>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>মোবাইল / আইডি</th>
+<th>রোল</th>
+<th>শেষ কার্যক্রম / ডিলিট তারিখ</th>
+<th>স্ট্যাটাস</th>
+</tr>
+</thead>
+<tbody id="deletedUsersTableBody">
+<tr><td colspan="4" style="text-align:center;">কোনো সুরক্ষিত ডিলিটকৃত ইউজার নেই।</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden" id="financeDashboard">
+<div class="card-3d">
+<h2>হিসাব দেখুন ও ফান্ড</h2>
+<div class="dashboard-stats">
+<div class="box income">
+<h4>মোট আয় / ফান্ড (এপ্রুভড)</h4>
+<h3 id="txtIncome">৳ 0</h3>
+</div>
+<div class="box expense">
+<h4>মোট ব্যয় (এপ্রুভড)</h4>
+<h3 id="txtExpense">৳ 0</h3>
+</div>
+<div class="box balance">
+<h4>নিট ব্যালেন্স</h4>
+<h3 id="txtBalance">৳ 0</h3>
+</div>
+</div>
+<div class="form-card" id="staffTxFormCard" style="background: #f1f5f9; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
+<h3>Staff / সদস্য হিসাব জমা ফরম (২৪ ঘণ্টায় ১ বার মাত্র)</h3>
+<form id="txForm" onsubmit="handleTransactionSubmit(event)">
+<div style="display: flex; gap: 8px; margin-bottom: 8px;">
+<input class="input-3d" id="txMemberId" placeholder="সদস্য আইডি" readonly="" required="" style="margin-top:0; background:#e2e8f0;" type="text"/>
+<input class="input-3d" id="txName" placeholder="সদস্যের নাম" readonly="" required="" style="margin-top:0; background:#e2e8f0;" type="text"/>
+</div>
+<div style="display: flex; gap: 8px; margin-bottom: 8px;">
+<select class="input-3d" id="txType" style="margin-top:0;">
+<option value="Income">আয় / জমা (Income)</option>
+<option value="Expense">ব্যয় (Expense)</option>
+</select>
+<input class="input-3d" id="txCategory" placeholder="খাত (যেমন: মাসিক চাঁদা, অনুদান)" required="" style="margin-top:0;" type="text"/>
+</div>
+<div style="margin-bottom:8px;">
+<input class="input-3d" id="txProjectName" placeholder="প্রকল্পের নাম (ব্যয়ের ক্ষেত্রে অবশ্যই দিতে হবে)" style="margin-top:0;" type="text"/>
+</div>
+<div style="display: flex; gap: 8px; margin-bottom: 8px;">
+<input class="input-3d" id="txAmount" placeholder="পরিমাণ (৳)" required="" style="margin-top:0;" type="number"/>
+<select class="input-3d" id="txPaymentMethod" style="margin-top:0;">
+<option value="bKash">বিকাশ (bKash)</option>
+<option value="Nagad">নগদ (Nagad)</option>
+<option value="Bank">ব্যাংক ট্রান্সফার</option>
+<option value="Cash">ক্যাশ</option>
+</select>
+</div>
+<div style="margin-bottom: 8px;">
+<input class="input-3d" id="txAccountNo" placeholder="একাউন্ট নম্বর বা TrxID" required="" style="margin-top:0;" type="text"/>
+</div>
+<button class="btn-3d" style="width: 100%; background: #16a34a; margin-top:10px;" type="submit">হিসাব জমা দিন (Finance Secretary-র কাছে পাঠাবে)</button>
+</form>
+</div>
+<div class="hidden" id="staffTxRestrictedMsg" style="padding:15px; background:#fef2f2; color:#dc2626; border-radius:8px; margin-bottom:16px; text-align:center; font-weight:bold;">
                         সদস্য হিসাব জমা ফরম শুধুমাত্র Staff আইডি থেকে পূরণ করা যাবে।
                     </div>
-
-                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                        <input type="text" id="txSearchInput" class="input-3d" placeholder="খুঁজুন..." oninput="filterTransactions()" style="margin-top:0;">
-                        <button onclick="window.print()" class="btn-3d" style="margin-top:0; width:120px; background:#0f172a;">PDF / প্রিন্ট</button>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>তারিখ</th>
-                                    <th>আইডি ও বিবরণ</th>
-                                    <th>মাধ্যম</th>
-                                    <th>পরিমাণ</th>
-                                    <th>এপ্রুভাল স্ট্যাটাস</th>
-                                    <th>ধাপ ভিত্তিক এপ্রুভ অ্যাকশন</th>
-                                </tr>
-                            </thead>
-                            <tbody id="txTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="staffFundDashboard" class="hidden">
-                <div class="card-3d">
-                    <h2>সদস্য জমা কৃত ফান্ড (আমার হিসাব)</h2>
-                    <div class="dashboard-stats" style="margin-bottom: 20px;">
-                        <div class="box income">
-                            <h4>আমার জমাকৃত মোট ফান্ড</h4>
-                            <h3 id="myTotalFundTxt">৳ 0</h3>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>তারিখ</th>
-                                    <th>বিবরণ / খাত</th>
-                                    <th>মাধ্যম ও হিসাব নম্বর</th>
-                                    <th>পরিমাণ</th>
-                                    <th>স্ট্যাটাস</th>
-                                </tr>
-                            </thead>
-                            <tbody id="staffFundTableBody">
-                                <tr><td colspan="5" style="text-align:center;">কোনো তথ্য পাওয়া যায়নি।</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="projectDashboard" class="hidden">
-                <div class="card-3d" style="border: 2px dashed var(--primary); background: #f8fafc;">
-                    <h2><i class="fa-solid fa-bullhorn"></i> নতুন পরিকল্পনা ও প্রকল্প সিস্টেম যুক্ত করুন (প্রকল্প সম্পাদক প্যানেল)</h2>
-                    <p style="font-size: 13px; color: #555; margin-bottom: 15px;">প্রকল্প সম্পাদক আইডি থেকে জমা দেওয়া পরিকল্পনাটি সরাসরি ম্যানেজার আইডি (Manager)-তে পাঠানো হবে। ম্যানেজার যাচাই-বাছাই করে পারমিশন বা ডিলিট করতে পারবেন। পারমিশন দিলে নোটিশ বাক্সে প্রকাশ পাবে এবং ম্যানেজার আইডি থেকে পিডিএফ ডাউনলোড করা যাবে।</p>
-                    
-                    <div class="form-group">
-                        <label>পরিকল্পনা বা প্যানেলের নাম <span class="required-star">*</span></label>
-                        <input type="text" id="newPlanNameInput" class="input-3d" placeholder="যেমন: নতুন প্রকল্প পরিকল্পনা ও কার্যক্রম">
-                    </div>
-                    <div class="form-group">
-                        <label>বিস্তারিত বিবরণ ও কর্মপরিকল্পনা <span class="required-star">*</span></label>
-                        <textarea id="newPlanDetailsInput" class="input-3d" rows="3" placeholder="কার্যক্রম ও কর্মপরিকল্পনার বিবরণ লিখুন..."></textarea>
-                    </div>
-                    <button class="btn-3d" style="background:#16a34a;" onclick="addNewPlanOrProjectSystem()">ম্যানেজারের পর্যালোচনার জন্য জমা দিন</button>
-                </div>
-
-                <div class="card-3d" style="margin-top: 20px;">
-                    <h2 id="projectFormTitle">প্রকল্প তথ্য সংগ্রহ ফরম (ম্যানেজার যাচাইয়ের জন্য)</h2>
-                    <form id="projectForm" onsubmit="handleProjectSubmit(event)">
-                        <h3 style="font-size:14px; color:var(--primary); margin-bottom:10px;">প্রকল্পের নাম, বিবরণ ও বাজেট</h3>
-                        
-                        <div class="form-group"><label>প্রকল্পের নাম <span class="required-star">*</span></label><input type="text" id="pProjectName" class="input-3d" required placeholder="প্রকল্পের নাম লিখুন"></div>
-                        <div class="form-group"><label>প্রকল্প বিবরণ <span class="required-star">*</span></label><textarea id="pProjectDetails" class="input-3d" rows="3" required placeholder="প্রকল্পের বিবরণ লিখুন..."></textarea></div>
-                        <div class="form-group"><label>প্রকল্প বাজেট (৳) <span class="required-star">*</span></label><input type="number" id="pProjectBudget" class="input-3d" required placeholder="যেমন: ৫০,০০০"></div>
-                        <div class="form-group"><label>তারিখ (অটো সেভ হবে)</label><input type="text" id="pDate" class="input-3d" readonly style="background:#e2e8f0;" placeholder="স্বয়ংক্রিয়ভাবে সেভ হবে"></div>
-
-                        <h3 style="font-size:14px; color:var(--primary); margin-top:15px; margin-bottom:10px;">প্রকল্প প্রাপ্ত ব্যক্তির তথ্য</h3>
-                        <div class="form-group"><label>প্রকল্প প্রাপ্ত ব্যক্তির নাম <span class="required-star">*</span></label><input type="text" id="pRecipientName" class="input-3d" required placeholder="প্রাপ্ত ব্যক্তির নাম"></div>
-                        <div class="form-group"><label>বর্তমান ঠিকানা <span class="required-star">*</span></label><input type="text" id="pPresentAddr" class="input-3d" required placeholder="বর্তমান ঠিকানা"></div>
-                        <div class="form-group"><label>অস্থায়ী ঠিকানা (ঐচ্ছিক)</label><input type="text" id="pTempAddr" class="input-3d" placeholder="অস্থায়ী ঠিকানা (যদি থাকে)"></div>
-                        <div class="form-group"><label>এনআইডি নাম্বার <span class="required-star">*</span></label><input type="text" id="pNid" class="input-3d" required placeholder="NID নম্বর"></div>
-                        <div class="form-group"><label>সচল ফোন নাম্বার <span class="required-star">*</span></label><input type="tel" id="pPhone" class="input-3d" required placeholder="017xxxxxxxx"></div>
-                        
-                        <div class="form-group"><label>ছবি <span class="required-star">*</span></label><input type="file" id="pPhotoFile" class="input-3d" accept="image/*" onchange="previewProjectRecipientPhoto(event)"></div>
-                        <input type="hidden" id="pPhotoBase64" value="">
-
-                        <button type="submit" id="projectSubmitBtn" class="btn-3d" style="margin-top:15px; background:linear-gradient(145deg, #0284c7, #0369a1);">ম্যানেজার আইডি তে জমা দিন (যাচাই-বাছাইয়ের জন্য)</button>
-                    </form>
-                    <div id="projectRestrictedMsg" class="hidden" style="padding:15px; background:#fef2f2; color:#dc2626; border-radius:8px; margin-bottom:16px; text-align:center; font-weight:bold;">
+<div style="display: flex; gap: 8px; margin-bottom: 12px;">
+<input class="input-3d" id="txSearchInput" oninput="filterTransactions()" placeholder="খুঁজুন..." style="margin-top:0;" type="text"/>
+<button class="btn-3d" onclick="window.print()" style="margin-top:0; width:120px; background:#0f172a;">PDF / প্রিন্ট</button>
+</div>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>তারিখ</th>
+<th>আইডি ও বিবরণ</th>
+<th>মাধ্যম</th>
+<th>পরিমাণ</th>
+<th>এপ্রুভাল স্ট্যাটাস</th>
+<th>ধাপ ভিত্তিক এপ্রুভ অ্যাকশন</th>
+</tr>
+</thead>
+<tbody id="txTableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="hidden" id="staffFundDashboard">
+<div class="card-3d">
+<h2>সদস্য জমা কৃত ফান্ড (আমার হিসাব)</h2>
+<div class="dashboard-stats" style="margin-bottom: 20px;">
+<div class="box income">
+<h4>আমার জমাকৃত মোট ফান্ড</h4>
+<h3 id="myTotalFundTxt">৳ 0</h3>
+</div>
+</div>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>তারিখ</th>
+<th>বিবরণ / খাত</th>
+<th>মাধ্যম ও হিসাব নম্বর</th>
+<th>পরিমাণ</th>
+<th>স্ট্যাটাস</th>
+</tr>
+</thead>
+<tbody id="staffFundTableBody">
+<tr><td colspan="5" style="text-align:center;">কোনো তথ্য পাওয়া যায়নি।</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="hidden" id="projectDashboard">
+<div class="card-3d" style="border: 2px dashed var(--primary); background: #f8fafc;">
+<h2><i class="fa-solid fa-bullhorn"></i> নতুন পরিকল্পনা ও প্রকল্প সিস্টেম যুক্ত করুন (প্রকল্প সম্পাদক প্যানেল)</h2>
+<p style="font-size: 13px; color: #555; margin-bottom: 15px;">প্রকল্প সম্পাদক আইডি থেকে জমা দেওয়া পরিকল্পনাটি সরাসরি ম্যানেজার আইডি (Manager)-তে পাঠানো হবে। ম্যানেজার যাচাই-বাছাই করে পারমিশন বা ডিলিট করতে পারবেন। পারমিশন দিলে নোটিশ বাক্সে প্রকাশ পাবে এবং ম্যানেজার আইডি থেকে পিডিএফ ডাউনলোড করা যাবে।</p>
+<div class="form-group">
+<label>পরিকল্পনা বা প্যানেলের নাম <span class="required-star">*</span></label>
+<input class="input-3d" id="newPlanNameInput" placeholder="যেমন: নতুন প্রকল্প পরিকল্পনা ও কার্যক্রম" type="text"/>
+</div>
+<div class="form-group">
+<label>বিস্তারিত বিবরণ ও কর্মপরিকল্পনা <span class="required-star">*</span></label>
+<textarea class="input-3d" id="newPlanDetailsInput" placeholder="কার্যক্রম ও কর্মপরিকল্পনার বিবরণ লিখুন..." rows="3"></textarea>
+</div>
+<button class="btn-3d" onclick="addNewPlanOrProjectSystem()" style="background:#16a34a;">ম্যানেজারের পর্যালোচনার জন্য জমা দিন</button>
+</div>
+<div class="card-3d" style="margin-top: 20px;">
+<h2 id="projectFormTitle">প্রকল্প তথ্য সংগ্রহ ফরম (ম্যানেজার যাচাইয়ের জন্য)</h2>
+<form id="projectForm" onsubmit="handleProjectSubmit(event)">
+<h3 style="font-size:14px; color:var(--primary); margin-bottom:10px;">প্রকল্পের নাম, বিবরণ ও বাজেট</h3>
+<div class="form-group"><label>প্রকল্পের নাম <span class="required-star">*</span></label><input class="input-3d" id="pProjectName" placeholder="প্রকল্পের নাম লিখুন" required="" type="text"/></div>
+<div class="form-group"><label>প্রকল্প বিবরণ <span class="required-star">*</span></label><textarea class="input-3d" id="pProjectDetails" placeholder="প্রকল্পের বিবরণ লিখুন..." required="" rows="3"></textarea></div>
+<div class="form-group"><label>প্রকল্প বাজেট (৳) <span class="required-star">*</span></label><input class="input-3d" id="pProjectBudget" placeholder="যেমন: ৫০,০০০" required="" type="number"/></div>
+<div class="form-group"><label>তারিখ (অটো সেভ হবে)</label><input class="input-3d" id="pDate" placeholder="স্বয়ংক্রিয়ভাবে সেভ হবে" readonly="" style="background:#e2e8f0;" type="text"/></div>
+<h3 style="font-size:14px; color:var(--primary); margin-top:15px; margin-bottom:10px;">প্রকল্প প্রাপ্ত ব্যক্তির তথ্য</h3>
+<div class="form-group"><label>প্রকল্প প্রাপ্ত ব্যক্তির নাম <span class="required-star">*</span></label><input class="input-3d" id="pRecipientName" placeholder="প্রাপ্ত ব্যক্তির নাম" required="" type="text"/></div>
+<div class="form-group"><label>বর্তমান ঠিকানা <span class="required-star">*</span></label><input class="input-3d" id="pPresentAddr" placeholder="বর্তমান ঠিকানা" required="" type="text"/></div>
+<div class="form-group"><label>অস্থায়ী ঠিকানা (ঐচ্ছিক)</label><input class="input-3d" id="pTempAddr" placeholder="অস্থায়ী ঠিকানা (যদি থাকে)" type="text"/></div>
+<div class="form-group"><label>এনআইডি নাম্বার <span class="required-star">*</span></label><input class="input-3d" id="pNid" placeholder="NID নম্বর" required="" type="text"/></div>
+<div class="form-group"><label>সচল ফোন নাম্বার <span class="required-star">*</span></label><input class="input-3d" id="pPhone" placeholder="017xxxxxxxx" required="" type="tel"/></div>
+<div class="form-group"><label>ছবি <span class="required-star">*</span></label><input accept="image/*" class="input-3d" id="pPhotoFile" onchange="previewProjectRecipientPhoto(event)" type="file"/></div>
+<input id="pPhotoBase64" type="hidden" value=""/>
+<button class="btn-3d" id="projectSubmitBtn" style="margin-top:15px; background:linear-gradient(145deg, #0284c7, #0369a1);" type="submit">ম্যানেজার আইডি তে জমা দিন (যাচাই-বাছাইয়ের জন্য)</button>
+</form>
+<div class="hidden" id="projectRestrictedMsg" style="padding:15px; background:#fef2f2; color:#dc2626; border-radius:8px; margin-bottom:16px; text-align:center; font-weight:bold;">
                         প্রকল্প তথ্য ফরম শুধুমাত্র Finance Secretary, Manager অথবা প্রকল্প সম্পাদক আইডি থেকে পূরণ করা যাবে।
                     </div>
-                </div>
-
-                <div class="card-3d">
-                    <h2>অনুমোদিত প্রকল্প তথ্য ও পরিকল্পনা প্যানেল</h2>
-                    <div id="dynamicPlansContainer" style="margin-bottom: 20px;"></div>
-
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <input type="text" id="projectSearchInput" class="input-3d" placeholder="প্রকল্পের নাম, প্রাপ্ত ব্যক্তির নাম, ফোন বা NID দিয়ে রিয়েল-টাইম খুঁজুন..." oninput="filterProjects()">
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ছবি</th>
-                                    <th>প্রকল্পের নাম ও বাজেট</th>
-                                    <th>প্রাপ্ত ব্যক্তির নাম ও ফোন</th>
-                                    <th>ঠিকানা ও এনআইডি</th>
-                                    <th>স্ট্যাটাস</th>
-                                    <th>অ্যাকশন / ডাউনলোড / প্রিন্ট</th>
-                                </tr>
-                            </thead>
-                            <tbody id="projectTableBody">
-                                <tr><td colspan="6" style="text-align:center;">কোনো তথ্য পাওয়া যায়নি।</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="lawDashboard" class="hidden">
-                <div class="card-3d">
-                    <h2>সংগঠনের সকল আইন ও ধারাসমূহ (আইন সম্পাদক প্যানেল)</h2>
-                    
-                    <div id="lawEditorPanel" class="card-3d hidden" style="background:#f8fafc; border:1px solid #cbd5e1; margin-bottom:15px;">
-                        <h3 style="font-size:15px; color:var(--primary); margin-bottom:10px;">নতুন আইন বা ধারা যুক্ত / সম্পাদনা করুন (আইন সম্পাদক)</h3>
-                        <div class="form-group">
-                            <label>আইনের শিরোনাম <span class="required-star">*</span></label>
-                            <input type="text" id="editLawTitleInput" class="input-3d" placeholder="যেমন: ধারা ৫ (বিশেষ শৃঙ্খলা)">
-                        </div>
-                        <div class="form-group">
-                            <label>আইনের বিস্তারিত বিবরণ <span class="required-star">*</span></label>
-                            <textarea id="editLawDescInput" class="input-3d" rows="3" placeholder="আইনের বিস্তারিত বর্ণনা লিখুন..."></textarea>
-                        </div>
-                        <button class="btn-3d" style="background:#16a34a;" onclick="saveNewLawByEditor()">আইন ডাটাবেজে সংরক্ষণ করুন</button>
-                    </div>
-
-                    <div class="pledge-box" style="max-height: none; background: #fafafa; font-size: 13px; color: #1e293b; line-height: 1.8;">
-                        <h3 style="color: var(--primary); text-align: center; margin-bottom: 12px;"><span id="lawHeaderAppName">এসো ভবিষ্যৎ গড়ি</span> — আইনি নীতিমালা ও গঠনতন্ত্র</h3>
-                        <div id="dynamicLawsContainer">
-                            <p><b>ধারা ১ (সদস্যপদ):</b> সংগঠনের সকল সদস্যকে নিয়মিত আইন ও শৃঙ্খলা মেনে চলতে হবে। কোনো শৃঙ্খলাভঙ্গ সংগঠন বাতিল বলে গণ্য করবে।</p>
-                            <p><b>ধারা ২ (আর্থিক স্বচ্ছতা):</b> সংগঠনের সকল হিসাব ও ফান্ড তিন স্তরের এপ্রুভালের পর ডাটাবেইজে চূড়ান্ত জমা হিসেবে গণ্য হবে।</p>
-                            <p><b>ধারা ৩ (প্রকল্প আইন):</b> যেকোনো প্রকল্পের ক্ষেত্রে প্রকল্প প্রাপ্ত ব্যক্তির ছবি, এনআইডি এবং সচল ফোন নম্বর দেওয়া বাধ্যতামূলক। এপ্রুভ ব্যতীত কোনো অনুদান বা ফান্ড ছাড় করা হবে না।</p>
-                            <p><b>ধারা ৪ (প্রশাসনিক অধিকার):</b> কেন্দ্রীয় এডমিন বা ম্যানেজার যেকোনো ভূয়া তথ্য বা আইন লঙ্ঘনকারী অ্যাকাউন্ট সাময়িক বা স্থায়ীভাবে ডিলিট করতে পারবেন।</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="committeeFormDashboard" class="hidden">
-                <div class="card-3d">
-                    <h2>কমিটি ফরম পূরণের জন্য পাসওয়ার্ড লিখুন</h2>
-                    <div id="committeeAuthBox">
-                        <input type="password" id="adminPinInput" class="input-3d" placeholder="আপনার এডমিন পাসওয়ার্ড">
-                        <button class="btn-3d" onclick="verifyAdminForCommittee()">প্রবেশ করুন</button>
-                    </div>
-
-                    <div id="committeeFormContainer" class="hidden">
-                        <h3 style="color:var(--primary); margin-bottom:15px;">কেন্দ্রীয় কার্যনির্বাহী কমিটি ফরমেট</h3>
-                        <form id="committeeForm" onsubmit="saveCommitteeData(event)">
-                            <div class="form-group"><label>কমিটির মেয়াদ (বছর)</label><input type="text" id="cTerm" class="input-3d" placeholder="যেমন: ২ বছর" required></div>
-                            <div class="form-group"><label>গঠনের তারিখ</label><input type="text" id="cDate" class="input-3d" placeholder="তারিখ লিখুন" required></div>
-                            <div class="form-group"><label>কার্যালয়</label><input type="text" id="cOffice" class="input-3d" placeholder="কার্যালয়ের ঠিকানা" required></div>
-
-                            <h3 style="color:var(--secondary); font-size:15px; margin-top:15px;">পদসমূহ ও নাম</h3>
-                            <div class="form-group"><label>১. চেয়ারম্যান</label><input type="text" id="cChairman" class="input-3d"></div>
-                            <div class="form-group"><label>২. সভাপতি</label><input type="text" id="cPresident" class="input-3d"></div>
-                            <div class="form-group"><label>৩. সহ-সভাপতি</label><input type="text" id="cVicePresident" class="input-3d"></div>
-                            <div class="form-group"><label>৪. সাধারণ সম্পাদক</label><input type="text" id="cGenSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>৫. যুগ্ম সাধারণ সম্পাদক</label><input type="text" id="cJointSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>৬. সাংগঠনিক সম্পাদক</label><input type="text" id="cOrgSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>৭. সহ-সাংগঠনিক সম্পাদক</label><input type="text" id="cSubOrgSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>৮. অর্থ সম্পাদক</label><input type="text" id="cTreasurer" class="input-3d"></div>
-                            <div class="form-group"><label>৯. দপ্তর সম্পাদক</label><input type="text" id="cOfficeSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১০. প্রচার ও প্রকাশনা সম্পাদক</label><input type="text" id="cPubSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১১. সমাজকল্যাণ সম্পাদক</label><input type="text" id="cSocialSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১২. শিক্ষা ও সংস্কৃতি সম্পাদক</label><input type="text" id="cCulturalSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১৩. ক্রীড়া সম্পাদক</label><input type="text" id="cSportsSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১৪. মহিলা ও শিশু বিষয়ক সম্পাদক</label><input type="text" id="cWomenSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১৫. তথ্য ও প্রযুক্তি সম্পাদক</label><input type="text" id="cIctSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১৬. আইন বিষয়ক সম্পাদক</label><input type="text" id="cLawSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১৭. স্বাস্থ্য বিষয়ক সম্পাদক</label><input type="text" id="cHealthSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১৮. পরিবেশ বিষয়ক সম্পাদক</label><input type="text" id="cEnvSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>১৯. ধর্ম বিষয়ক সম্পাদক</label><input type="text" id="cRelSecretary" class="input-3d"></div>
-                            <div class="form-group"><label>২০-২৪. কার্যনির্বাহী সদস্যবৃন্দ</label><input type="text" id="cExecMembers" class="input-3d" placeholder="নামসমূহ কমা দিয়ে লিখুন"></div>
-
-                            <button type="submit" class="btn-3d" style="margin-top: 20px;">কমিটি ডাটাবেজে সেভ করুন</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div id="committeeViewDashboard" class="hidden">
-                <div class="card-3d">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
-                        <h2>সদস্যগণ কমিটি দেখতে পারবে</h2>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn-3d" style="margin:0; padding:8px 12px; background:#3b82f6;" onclick="window.print()">প্রিন্ট</button>
-                            <button class="btn-3d" style="margin:0; padding:8px 12px; background:#f59e0b;" onclick="downloadPDF()">PDF</button>
-                            <button class="btn-3d" style="margin:0; padding:8px 12px; background:#ef4444;" onclick="openDeleteModal()">ডিলিট</button>
-                        </div>
-                    </div>
-
-                    <div id="printable-dashboard" class="printable-area">
-                        <img class="pdf-watermark-overlay" id="committeeWatermarkImg" src="" alt="Watermark Logo">
-                        <div class="pdf-content-wrapper">
-                            <div class="committee-header">
-                                <h3 id="printHeaderTitle" style="color: #0284c7; margin: 0 0 3px 0;">ঐক্য সাফল্যের বিজয়</h3>
-                                <h1 id="printHeaderName" style="color: #4f46e5; margin: 0 0 5px 0; font-size: 22px;">এসো ভবিষ্যৎ গড়ি</h1>
-                                <p style="margin: 0; font-weight: bold; color: #334155;">কেন্দ্রীয় কার্যনির্বাহী কমিটি</p>
-                            </div>
-
-                            <div class="committee-grid">
-                                <div class="member-box"><b>১. চেয়ারম্যান:</b> <span id="viewChairman">-</span></div>
-                                <div class="member-box"><b>২. সভাপতি:</b> <span id="viewPresident">-</span></div>
-                                <div class="member-box"><b>৩. সহ-সভাপতি:</b> <span id="viewVicePresident">-</span></div>
-                                <div class="member-box"><b>৪. সাধারণ সম্পাদক:</b> <span id="viewGenSecretary">-</span></div>
-                                <div class="member-box"><b>৫. যুগ্ম সাধারণ সম্পাদক:</b> <span id="viewJointSecretary">-</span></div>
-                                <div class="member-box"><b>৬. সাংগঠনিক সম্পাদক:</b> <span id="viewOrgSecretary">-</span></div>
-                                <div class="member-box"><b>৭. সহ-সাংগঠনিক সম্পাদক:</b> <span id="viewSubOrgSecretary">-</span></div>
-                                <div class="member-box"><b>৮. অর্থ সম্পাদক:</b> <span id="viewTreasurer">-</span></div>
-                                <div class="member-box"><b>৯. দপ্তর সম্পাদক:</b> <span id="viewOfficeSecretary">-</span></div>
-                                <div class="member-box"><b>১০. প্রচার ও প্রকাশনা সম্পাদক:</b> <span id="viewPubSecretary">-</span></div>
-                                <div class="member-box"><b>১১. সমাজকল্যাণ সম্পাদক:</b> <span id="viewSocialSecretary">-</span></div>
-                                <div class="member-box"><b>১২. শিক্ষা ও সংস্কৃতি সম্পাদক:</b> <span id="viewCulturalSecretary">-</span></div>
-                                <div class="member-box"><b>১৩. ক্রীড়া সম্পাদক:</b> <span id="viewSportsSecretary">-</span></div>
-                                <div class="member-box"><b>১৪. মহিলা ও শিশু বিষয়ক সম্পাদক:</b> <span id="viewWomenSecretary">-</span></div>
-                                <div class="member-box"><b>১৫. তথ্য ও প্রযুক্তি সম্পাদক:</b> <span id="viewIctSecretary">-</span></div>
-                                <div class="member-box"><b>১৬. আইন বিষয়ক সম্পাদক:</b> <span id="viewLawSecretary">-</span></div>
-                                <div class="member-box"><b>১৭. স্বাস্থ্য বিষয়ক সম্পাদক:</b> <span id="viewHealthSecretary">-</span></div>
-                                <div class="member-box"><b>১৮. পরিবেশ বিষয়ক সম্পাদক:</b> <span id="viewEnvSecretary">-</span></div>
-                                <div class="member-box"><b>১৯. ধর্ম বিষয়ক সম্পাদক:</b> <span id="viewRelSecretary">-</span></div>
-                                <div class="member-box" style="grid-column: 1 / -1;"><b>২০-২৪. কার্যনির্বাহী সদস্য:</b> <span id="viewExecMembers">-</span></div>
-                            </div>
-
-                            <div style="margin-top: 25px; font-size: 13px; line-height: 1.6;">
-                                <p><b>কমিটির মেয়াদ:</b> <span id="viewTerm">-</span> বছর</p>
-                                <p><b>গঠনের তারিখ:</b> <span id="viewDate">-</span></p>
-                                <p><b>কার্যালয়:</b> <span id="viewOffice">-</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-
+<div class="card-3d">
+<h2>অনুমোদিত প্রকল্প তথ্য ও পরিকল্পনা প্যানেল</h2>
+<div id="dynamicPlansContainer" style="margin-bottom: 20px;"></div>
+<div class="form-group" style="margin-bottom: 15px;">
+<input class="input-3d" id="projectSearchInput" oninput="filterProjects()" placeholder="প্রকল্পের নাম, প্রাপ্ত ব্যক্তির নাম, ফোন বা NID দিয়ে রিয়েল-টাইম খুঁজুন..." type="text"/>
+</div>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>ছবি</th>
+<th>প্রকল্পের নাম ও বাজেট</th>
+<th>প্রাপ্ত ব্যক্তির নাম ও ফোন</th>
+<th>ঠিকানা ও এনআইডি</th>
+<th>স্ট্যাটাস</th>
+<th>অ্যাকশন / ডাউনলোড / প্রিন্ট</th>
+</tr>
+</thead>
+<tbody id="projectTableBody">
+<tr><td colspan="6" style="text-align:center;">কোনো তথ্য পাওয়া যায়নি।</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="hidden" id="lawDashboard">
+<div class="card-3d">
+<h2>সংগঠনের সকল আইন ও ধারাসমূহ (আইন সম্পাদক প্যানেল)</h2>
+<div class="card-3d hidden" id="lawEditorPanel" style="background:#f8fafc; border:1px solid #cbd5e1; margin-bottom:15px;">
+<h3 style="font-size:15px; color:var(--primary); margin-bottom:10px;">নতুন আইন বা ধারা যুক্ত / সম্পাদনা করুন (আইন সম্পাদক)</h3>
+<div class="form-group">
+<label>আইনের শিরোনাম <span class="required-star">*</span></label>
+<input class="input-3d" id="editLawTitleInput" placeholder="যেমন: ধারা ৫ (বিশেষ শৃঙ্খলা)" type="text"/>
+</div>
+<div class="form-group">
+<label>আইনের বিস্তারিত বিবরণ <span class="required-star">*</span></label>
+<textarea class="input-3d" id="editLawDescInput" placeholder="আইনের বিস্তারিত বর্ণনা লিখুন..." rows="3"></textarea>
+</div>
+<button class="btn-3d" onclick="saveNewLawByEditor()" style="background:#16a34a;">আইন ডাটাবেজে সংরক্ষণ করুন</button>
+</div>
+<div class="pledge-box" style="max-height: none; background: #fafafa; font-size: 13px; color: #1e293b; line-height: 1.8;">
+<h3 style="color: var(--primary); text-align: center; margin-bottom: 12px;"><span id="lawHeaderAppName">এসো ভবিষ্যৎ গড়ি</span> — আইনি নীতিমালা ও গঠনতন্ত্র</h3>
+<div id="dynamicLawsContainer">
+<p><b>ধারা ১ (সদস্যপদ):</b> সংগঠনের সকল সদস্যকে নিয়মিত আইন ও শৃঙ্খলা মেনে চলতে হবে। কোনো শৃঙ্খলাভঙ্গ সংগঠন বাতিল বলে গণ্য করবে।</p>
+<p><b>ধারা ২ (আর্থিক স্বচ্ছতা):</b> সংগঠনের সকল হিসাব ও ফান্ড তিন স্তরের এপ্রুভালের পর ডাটাবেইজে চূড়ান্ত জমা হিসেবে গণ্য হবে।</p>
+<p><b>ধারা ৩ (প্রকল্প আইন):</b> যেকোনো প্রকল্পের ক্ষেত্রে প্রকল্প প্রাপ্ত ব্যক্তির ছবি, এনআইডি এবং সচল ফোন নম্বর দেওয়া বাধ্যতামূলক। এপ্রুভ ব্যতীত কোনো অনুদান বা ফান্ড ছাড় করা হবে না।</p>
+<p><b>ধারা ৪ (প্রশাসনিক অধিকার):</b> কেন্দ্রীয় এডমিন বা ম্যানেজার যেকোনো ভূয়া তথ্য বা আইন লঙ্ঘনকারী অ্যাকাউন্ট সাময়িক বা স্থায়ীভাবে ডিলিট করতে পারবেন।</p>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden" id="committeeFormDashboard">
+<div class="card-3d">
+<h2>কমিটি ফরম পূরণের জন্য পাসওয়ার্ড লিখুন</h2>
+<div id="committeeAuthBox">
+<input class="input-3d" id="adminPinInput" placeholder="আপনার এডমিন পাসওয়ার্ড" type="password"/>
+<button class="btn-3d" onclick="verifyAdminForCommittee()">প্রবেশ করুন</button>
+</div>
+<div class="hidden" id="committeeFormContainer">
+<h3 style="color:var(--primary); margin-bottom:15px;">কেন্দ্রীয় কার্যনির্বাহী কমিটি ফরমেট</h3>
+<form id="committeeForm" onsubmit="saveCommitteeData(event)">
+<div class="form-group"><label>কমিটির মেয়াদ (বছর)</label><input class="input-3d" id="cTerm" placeholder="যেমন: ২ বছর" required="" type="text"/></div>
+<div class="form-group"><label>গঠনের তারিখ</label><input class="input-3d" id="cDate" placeholder="তারিখ লিখুন" required="" type="text"/></div>
+<div class="form-group"><label>কার্যালয়</label><input class="input-3d" id="cOffice" placeholder="কার্যালয়ের ঠিকানা" required="" type="text"/></div>
+<h3 style="color:var(--secondary); font-size:15px; margin-top:15px;">পদসমূহ ও নাম</h3>
+<div class="form-group"><label>১. চেয়ারম্যান</label><input class="input-3d" id="cChairman" type="text"/></div>
+<div class="form-group"><label>২. সভাপতি</label><input class="input-3d" id="cPresident" type="text"/></div>
+<div class="form-group"><label>৩. সহ-সভাপতি</label><input class="input-3d" id="cVicePresident" type="text"/></div>
+<div class="form-group"><label>৪. সাধারণ সম্পাদক</label><input class="input-3d" id="cGenSecretary" type="text"/></div>
+<div class="form-group"><label>৫. যুগ্ম সাধারণ সম্পাদক</label><input class="input-3d" id="cJointSecretary" type="text"/></div>
+<div class="form-group"><label>৬. সাংগঠনিক সম্পাদক</label><input class="input-3d" id="cOrgSecretary" type="text"/></div>
+<div class="form-group"><label>৭. সহ-সাংগঠনিক সম্পাদক</label><input class="input-3d" id="cSubOrgSecretary" type="text"/></div>
+<div class="form-group"><label>৮. অর্থ সম্পাদক</label><input class="input-3d" id="cTreasurer" type="text"/></div>
+<div class="form-group"><label>৯. দপ্তর সম্পাদক</label><input class="input-3d" id="cOfficeSecretary" type="text"/></div>
+<div class="form-group"><label>১০. প্রচার ও প্রকাশনা সম্পাদক</label><input class="input-3d" id="cPubSecretary" type="text"/></div>
+<div class="form-group"><label>১১. সমাজকল্যাণ সম্পাদক</label><input class="input-3d" id="cSocialSecretary" type="text"/></div>
+<div class="form-group"><label>১২. শিক্ষা ও সংস্কৃতি সম্পাদক</label><input class="input-3d" id="cCulturalSecretary" type="text"/></div>
+<div class="form-group"><label>১৩. ক্রীড়া সম্পাদক</label><input class="input-3d" id="cSportsSecretary" type="text"/></div>
+<div class="form-group"><label>১৪. মহিলা ও শিশু বিষয়ক সম্পাদক</label><input class="input-3d" id="cWomenSecretary" type="text"/></div>
+<div class="form-group"><label>১৫. তথ্য ও প্রযুক্তি সম্পাদক</label><input class="input-3d" id="cIctSecretary" type="text"/></div>
+<div class="form-group"><label>১৬. আইন বিষয়ক সম্পাদক</label><input class="input-3d" id="cLawSecretary" type="text"/></div>
+<div class="form-group"><label>১৭. স্বাস্থ্য বিষয়ক সম্পাদক</label><input class="input-3d" id="cHealthSecretary" type="text"/></div>
+<div class="form-group"><label>১৮. পরিবেশ বিষয়ক সম্পাদক</label><input class="input-3d" id="cEnvSecretary" type="text"/></div>
+<div class="form-group"><label>১৯. ধর্ম বিষয়ক সম্পাদক</label><input class="input-3d" id="cRelSecretary" type="text"/></div>
+<div class="form-group"><label>২০-২৪. কার্যনির্বাহী সদস্যবৃন্দ</label><input class="input-3d" id="cExecMembers" placeholder="নামসমূহ কমা দিয়ে লিখুন" type="text"/></div>
+<button class="btn-3d" style="margin-top: 20px;" type="submit">কমিটি ডাটাবেজে সেভ করুন</button>
+</form>
+</div>
+</div>
+</div>
+<div class="hidden" id="committeeViewDashboard">
+<div class="card-3d">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+<h2>সদস্যগণ কমিটি দেখতে পারবে</h2>
+<div style="display: flex; gap: 8px;">
+<button class="btn-3d" onclick="window.print()" style="margin:0; padding:8px 12px; background:#3b82f6;">প্রিন্ট</button>
+<button class="btn-3d" onclick="downloadPDF()" style="margin:0; padding:8px 12px; background:#f59e0b;">PDF</button>
+<button class="btn-3d" onclick="openDeleteModal()" style="margin:0; padding:8px 12px; background:#ef4444;">ডিলিট</button>
+</div>
+</div>
+<div class="printable-area" id="printable-dashboard">
+<img alt="Watermark Logo" class="pdf-watermark-overlay" id="committeeWatermarkImg" src=""/>
+<div class="pdf-content-wrapper">
+<div class="committee-header">
+<h3 id="printHeaderTitle" style="color: #0284c7; margin: 0 0 3px 0;">ঐক্য সাফল্যের বিজয়</h3>
+<h1 id="printHeaderName" style="color: #4f46e5; margin: 0 0 5px 0; font-size: 22px;">এসো ভবিষ্যৎ গড়ি</h1>
+<p style="margin: 0; font-weight: bold; color: #334155;">কেন্দ্রীয় কার্যনির্বাহী কমিটি</p>
+</div>
+<div class="committee-grid">
+<div class="member-box"><b>১. চেয়ারম্যান:</b> <span id="viewChairman">-</span></div>
+<div class="member-box"><b>২. সভাপতি:</b> <span id="viewPresident">-</span></div>
+<div class="member-box"><b>৩. সহ-সভাপতি:</b> <span id="viewVicePresident">-</span></div>
+<div class="member-box"><b>৪. সাধারণ সম্পাদক:</b> <span id="viewGenSecretary">-</span></div>
+<div class="member-box"><b>৫. যুগ্ম সাধারণ সম্পাদক:</b> <span id="viewJointSecretary">-</span></div>
+<div class="member-box"><b>৬. সাংগঠনিক সম্পাদক:</b> <span id="viewOrgSecretary">-</span></div>
+<div class="member-box"><b>৭. সহ-সাংগঠনিক সম্পাদক:</b> <span id="viewSubOrgSecretary">-</span></div>
+<div class="member-box"><b>৮. অর্থ সম্পাদক:</b> <span id="viewTreasurer">-</span></div>
+<div class="member-box"><b>৯. দপ্তর সম্পাদক:</b> <span id="viewOfficeSecretary">-</span></div>
+<div class="member-box"><b>১০. প্রচার ও প্রকাশনা সম্পাদক:</b> <span id="viewPubSecretary">-</span></div>
+<div class="member-box"><b>১১. সমাজকল্যাণ সম্পাদক:</b> <span id="viewSocialSecretary">-</span></div>
+<div class="member-box"><b>১২. শিক্ষা ও সংস্কৃতি সম্পাদক:</b> <span id="viewCulturalSecretary">-</span></div>
+<div class="member-box"><b>১৩. ক্রীড়া সম্পাদক:</b> <span id="viewSportsSecretary">-</span></div>
+<div class="member-box"><b>১৪. মহিলা ও শিশু বিষয়ক সম্পাদক:</b> <span id="viewWomenSecretary">-</span></div>
+<div class="member-box"><b>১৫. তথ্য ও প্রযুক্তি সম্পাদক:</b> <span id="viewIctSecretary">-</span></div>
+<div class="member-box"><b>১৬. আইন বিষয়ক সম্পাদক:</b> <span id="viewLawSecretary">-</span></div>
+<div class="member-box"><b>১৭. স্বাস্থ্য বিষয়ক সম্পাদক:</b> <span id="viewHealthSecretary">-</span></div>
+<div class="member-box"><b>১৮. পরিবেশ বিষয়ক সম্পাদক:</b> <span id="viewEnvSecretary">-</span></div>
+<div class="member-box"><b>১৯. ধর্ম বিষয়ক সম্পাদক:</b> <span id="viewRelSecretary">-</span></div>
+<div class="member-box" style="grid-column: 1 / -1;"><b>২০-২৪. কার্যনির্বাহী সদস্য:</b> <span id="viewExecMembers">-</span></div>
+</div>
+<div style="margin-top: 25px; font-size: 13px; line-height: 1.6;">
+<p><b>কমিটির মেয়াদ:</b> <span id="viewTerm">-</span> বছর</p>
+<p><b>গঠনের তারিখ:</b> <span id="viewDate">-</span></p>
+<p><b>কার্যালয়:</b> <span id="viewOffice">-</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- নোটিশ প্রিন্ট বা পিডিএফ মোডাল -->
-<div id="noticePrintModal" class="modal-overlay">
-    <div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
-        <div id="noticePrintArea" style="background: #fff; padding: 20px; color: #1e293b; position:relative;">
-            <img class="pdf-watermark-overlay" id="noticeWatermarkImg" src="" alt="Watermark Logo">
-            <div class="pdf-content-wrapper">
-                <div style="text-align: center; border-bottom: 2px solid #334155; padding-bottom: 12px; margin-bottom: 15px;">
-                    <h2 style="color: #4f46e5; margin: 0; font-size: 20px;" id="noticeModalOrgName">এসো ভবিষ্যৎ গড়ি</h2>
-                    <p style="font-size: 12px; color: #64748b; margin: 2px 0;">জরুরি নোটিশ বিবরণী ও অফিশিয়াল সার্কুলার</p>
-                </div>
-                <div id="noticePrintContentDetails" style="font-size: 14px; line-height: 1.8;"></div>
-            </div>
-        </div>
-        <div class="no-print" style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
-            <button class="btn-3d" style="width: auto; background: #10b981; margin:0;" onclick="executeNoticePDFDownload()">PDF ডাউনলোড</button>
-            <button class="btn-3d" style="width: auto; background: #3b82f6; margin:0;" onclick="window.print()">সরাসরি প্রিন্ট</button>
-            <button class="btn-3d" style="width: auto; background: #64748b; margin:0;" onclick="closeNoticePrintModal()">বন্ধ করুন</button>
-        </div>
-    </div>
+<div class="modal-overlay" id="noticePrintModal">
+<div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+<div id="noticePrintArea" style="background: #fff; padding: 20px; color: #1e293b; position:relative;">
+<img alt="Watermark Logo" class="pdf-watermark-overlay" id="noticeWatermarkImg" src=""/>
+<div class="pdf-content-wrapper">
+<div style="text-align: center; border-bottom: 2px solid #334155; padding-bottom: 12px; margin-bottom: 15px;">
+<h2 id="noticeModalOrgName" style="color: #4f46e5; margin: 0; font-size: 20px;">এসো ভবিষ্যৎ গড়ি</h2>
+<p style="font-size: 12px; color: #64748b; margin: 2px 0;">জরুরি নোটিশ বিবরণী ও অফিশিয়াল সার্কুলার</p>
 </div>
-
-<div id="a4MemberModal" class="modal-overlay">
-    <div style="background: white; padding: 25px 30px; border-radius: 12px; max-width: 750px; width: 100%; max-height: 95vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
-        <div id="a4PrintableContent" style="color: #1e293b; position:relative;">
-            <img class="pdf-watermark-overlay" id="memberWatermarkImg" src="" alt="Watermark Logo">
-            <div class="pdf-content-wrapper">
-                <div style="text-align: center; border-bottom: 2px solid #334155; padding-bottom: 8px; margin-bottom: 10px;">
-                    <h3 id="a4AppTitleHeader" style="color: #0284c7; margin: 0 0 2px 0;">ঐক্য সাফল্যের বিজয়</h3>
-                    <h1 id="a4AppNameHeader" style="color: #4f46e5; margin: 0 0 3px 0; font-size: 18px;">এসো ভবিষ্যৎ গড়ি</h1>
-                    <p style="margin: 0; font-weight: bold; color: #334155; font-size: 12px;">সদস্য নিবন্ধন ও পরিচিতি ফরম (বিশেষ ফরম্যাট)</p>
-                </div>
-                <div id="a4MemberBodyDetails" style="font-size: 12px; line-height: 1.4;"></div>
-            </div>
-        </div>
-        <div class="no-print" style="display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end;">
-            <button class="btn-3d" style="width: auto; padding: 8px 16px; background: #16a34a; margin:0; font-size:13px;" onclick="downloadMemberA4PDF()">A4 PDF ডাউনলোড</button>
-            <button class="btn-3d" style="width: auto; padding: 8px 16px; background: #64748b; margin:0; font-size:13px;" onclick="closeA4MemberModal()">বন্ধ করুন</button>
-        </div>
-    </div>
+<div id="noticePrintContentDetails" style="font-size: 14px; line-height: 1.8;"></div>
 </div>
-
-<div id="projectPrintModal" class="modal-overlay">
-    <div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
-        <div id="projectPrintArea" style="background: #fff; padding: 20px; color: #1e293b; position:relative;">
-            <img class="pdf-watermark-overlay" id="projectWatermarkImg" src="" alt="Watermark Logo">
-            <div class="pdf-content-wrapper">
-                <div style="text-align: center; border-bottom: 2px solid #334155; padding-bottom: 12px; margin-bottom: 15px;">
-                    <h2 style="color: #4f46e5; margin: 0; font-size: 20px;" id="projModalOrgName">এসো ভবিষ্যৎ গড়ি</h2>
-                    <p style="font-size: 12px; color: #64748b; margin: 2px 0;">প্রকল্প তথ্য বিবরণী ও অনুমোদন রশিদ</p>
-                </div>
-                <div id="projectPrintContentDetails" style="font-size: 13px; line-height: 1.7;"></div>
-            </div>
-        </div>
-        <div class="no-print" style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
-            <button class="btn-3d" style="width: auto; background: #10b981; margin:0;" onclick="executeProjectPDFDownload()">PDF ডাউনলোড</button>
-            <button class="btn-3d" style="width: auto; background: #3b82f6; margin:0;" onclick="window.print()">সরাসরি প্রিন্ট</button>
-            <button class="btn-3d" style="width: auto; background: #64748b; margin:0;" onclick="closeProjectPrintModal()">বন্ধ করুন</button>
-        </div>
-    </div>
 </div>
-
-<div id="managerNoticeModal" class="modal-overlay">
-    <div class="modal-box">
-        <h3>ম্যানেজার নোটিশ ও বার্তা</h3>
-        <div class="form-group" style="text-align: left;">
-            <label>জরুরি নোটিশের বিবরণ:</label>
-            <textarea id="managerNoticeTextInput" class="input-3d" rows="3" placeholder="নোটিশের বিস্তারিত লিখুন..."></textarea>
-        </div>
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="btn-3d" style="background:#16a34a; margin:0;" onclick="submitManagerNotice()">নোটিশ প্রকাশ করুন</button>
-            <button class="btn-3d" style="background:#64748b; margin:0;" onclick="closeManagerNoticeModal()">বাতিল</button>
-        </div>
-    </div>
+<div class="no-print" style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
+<button class="btn-3d" onclick="executeNoticePDFDownload()" style="width: auto; background: #10b981; margin:0;">PDF ডাউনলোড</button>
+<button class="btn-3d" onclick="window.print()" style="width: auto; background: #3b82f6; margin:0;">সরাসরি প্রিন্ট</button>
+<button class="btn-3d" onclick="closeNoticePrintModal()" style="width: auto; background: #64748b; margin:0;">বন্ধ করুন</button>
 </div>
-
-<div id="deleteModal" class="modal-overlay">
-    <div class="modal-box">
-        <h3>এডমিন পাসওয়ার্ড দিন</h3>
-        <input type="password" id="adminDeletePin" class="input-3d" placeholder="পাসওয়ার্ড লিখুন">
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="btn-3d" style="background:#ef4444; margin:0;" onclick="confirmDeleteCommittee()">ডিলিট নিশ্চিত</button>
-            <button class="btn-3d" style="background:#64748b; margin:0;" onclick="closeDeleteModal()">বাতিল</button>
-        </div>
-    </div>
 </div>
-
-<script>
+</div>
+<div class="modal-overlay" id="a4MemberModal">
+<div style="background: white; padding: 25px 30px; border-radius: 12px; max-width: 750px; width: 100%; max-height: 95vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+<div id="a4PrintableContent" style="color: #1e293b; position:relative;">
+<img alt="Watermark Logo" class="pdf-watermark-overlay" id="memberWatermarkImg" src=""/>
+<div class="pdf-content-wrapper">
+<div style="text-align: center; border-bottom: 2px solid #334155; padding-bottom: 8px; margin-bottom: 10px;">
+<h3 id="a4AppTitleHeader" style="color: #0284c7; margin: 0 0 2px 0;">ঐক্য সাফল্যের বিজয়</h3>
+<h1 id="a4AppNameHeader" style="color: #4f46e5; margin: 0 0 3px 0; font-size: 18px;">এসো ভবিষ্যৎ গড়ি</h1>
+<p style="margin: 0; font-weight: bold; color: #334155; font-size: 12px;">সদস্য নিবন্ধন ও পরিচিতি ফরম (বিশেষ ফরম্যাট)</p>
+</div>
+<div id="a4MemberBodyDetails" style="font-size: 12px; line-height: 1.4;"></div>
+</div>
+</div>
+<div class="no-print" style="display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end;">
+<button class="btn-3d" onclick="downloadMemberA4PDF()" style="width: auto; padding: 8px 16px; background: #16a34a; margin:0; font-size:13px;">A4 PDF ডাউনলোড</button>
+<button class="btn-3d" onclick="closeA4MemberModal()" style="width: auto; padding: 8px 16px; background: #64748b; margin:0; font-size:13px;">বন্ধ করুন</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="projectPrintModal">
+<div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+<div id="projectPrintArea" style="background: #fff; padding: 20px; color: #1e293b; position:relative;">
+<img alt="Watermark Logo" class="pdf-watermark-overlay" id="projectWatermarkImg" src=""/>
+<div class="pdf-content-wrapper">
+<div style="text-align: center; border-bottom: 2px solid #334155; padding-bottom: 12px; margin-bottom: 15px;">
+<h2 id="projModalOrgName" style="color: #4f46e5; margin: 0; font-size: 20px;">এসো ভবিষ্যৎ গড়ি</h2>
+<p style="font-size: 12px; color: #64748b; margin: 2px 0;">প্রকল্প তথ্য বিবরণী ও অনুমোদন রশিদ</p>
+</div>
+<div id="projectPrintContentDetails" style="font-size: 13px; line-height: 1.7;"></div>
+</div>
+</div>
+<div class="no-print" style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
+<button class="btn-3d" onclick="executeProjectPDFDownload()" style="width: auto; background: #10b981; margin:0;">PDF ডাউনলোড</button>
+<button class="btn-3d" onclick="window.print()" style="width: auto; background: #3b82f6; margin:0;">সরাসরি প্রিন্ট</button>
+<button class="btn-3d" onclick="closeProjectPrintModal()" style="width: auto; background: #64748b; margin:0;">বন্ধ করুন</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="managerNoticeModal">
+<div class="modal-box">
+<h3>ম্যানেজার নোটিশ ও বার্তা</h3>
+<div class="form-group" style="text-align: left;">
+<label>জরুরি নোটিশের বিবরণ:</label>
+<textarea class="input-3d" id="managerNoticeTextInput" placeholder="নোটিশের বিস্তারিত লিখুন..." rows="3"></textarea>
+</div>
+<div style="display: flex; gap: 10px; margin-top: 15px;">
+<button class="btn-3d" onclick="submitManagerNotice()" style="background:#16a34a; margin:0;">নোটিশ প্রকাশ করুন</button>
+<button class="btn-3d" onclick="closeManagerNoticeModal()" style="background:#64748b; margin:0;">বাতিল</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="deleteModal">
+<div class="modal-box">
+<h3>এডমিন পাসওয়ার্ড দিন</h3>
+<input class="input-3d" id="adminDeletePin" placeholder="পাসওয়ার্ড লিখুন" type="password"/>
+<div style="display: flex; gap: 10px; margin-top: 15px;">
+<button class="btn-3d" onclick="confirmDeleteCommittee()" style="background:#ef4444; margin:0;">ডিলিট নিশ্চিত</button>
+<button class="btn-3d" onclick="closeDeleteModal()" style="background:#64748b; margin:0;">বাতিল</button>
+</div>
+</div>
+</div>
+<script type="text/javascript">
     const firebaseConfig = {
       apiKey: "AIzaSyCL-wNpmwF6VAtEWr6PqKETdcrdC4reonE",
       authDomain: "shirighat-teghoria-ags.firebaseapp.com",
@@ -1782,19 +1682,42 @@
         }
     }
 
-    function refreshUserRoleAndLoad(userPhone) {
-        database.ref('registeredUsers').orderByChild('phone').equalTo(userPhone).once('value', (snapshot) => {
-            let role = localStorage.getItem('userRole') || 'Staff';
-            if(snapshot.exists()) {
-                snapshot.forEach(child => {
-                    if(child.val().role) role = child.val().role;
-                });
-            }
-            
-            if (isPrimaryAdminIdentifier(userPhone)) {
-                role = 'Admin';
-            }
+    function resolveAuthoritativeRole(userPhone, usersSnapshot, membersSnapshot) {
+        const normalize = value => normalizeLoginIdentifier(value);
+        const target = normalize(userPhone);
+        const idFields = ['phone','mobile','mobileNumber','userId','userID','id','memberId','memberID','username','email','loginId','loginID','uniqueId','uniqueID','pslId','PSL_ID'];
+        const candidates = [];
+        const collect = (snapshot, source, priority) => {
+            if (!snapshot || !snapshot.exists()) return;
+            snapshot.forEach(child => {
+                const record = child.val() || {};
+                const matches = idFields.some(field => record[field] !== undefined && normalize(record[field]) === target);
+                const role = record.role || record.category;
+                if (matches && role) {
+                    candidates.push({
+                        role: role,
+                        updatedAt: Number(record.roleUpdatedAt || 0),
+                        priority: priority,
+                        source: source
+                    });
+                }
+            });
+        };
+        collect(usersSnapshot, 'registeredUsers', 2);
+        collect(membersSnapshot, 'members', 1);
+        candidates.sort((a, b) => (b.updatedAt - a.updatedAt) || (b.priority - a.priority));
+        if (isPrimaryAdminIdentifier(userPhone)) return 'Admin';
+        return candidates.length ? candidates[0].role : 'Staff';
+    }
 
+    function refreshUserRoleAndLoad(userPhone) {
+        // Always resolve the newest role record from Firebase; never trust stale localStorage.
+        const normalizedPhone = normalizeLoginIdentifier(userPhone);
+        Promise.all([
+            database.ref('registeredUsers').once('value'),
+            database.ref('members').once('value')
+        ]).then(([usersSnapshot, membersSnapshot]) => {
+            const role = resolveAuthoritativeRole(normalizedPhone, usersSnapshot, membersSnapshot);
             localStorage.setItem('userRole', role);
             document.getElementById('loginCard').classList.add('hidden');
             document.getElementById('appContent').classList.remove('hidden');
@@ -1802,7 +1725,6 @@
 
             applyRoleUI(role);
             startRealtimeRoleSync(userPhone);
-
             fetchAndDisplayLatestNoticeOnly();
             loadChatMessages();
             loadHomeProfileInfo(userPhone);
@@ -1811,49 +1733,28 @@
             loadProjects();
             loadStaffFundData(userPhone);
             loadMembersForIdCardDropdown();
+        }).catch(error => {
+            console.error('Unable to refresh current user role:', error);
+            alert('আপনার বর্তমান রোল যাচাই করা যায়নি। ইন্টারনেট/Firebase Database Rules পরীক্ষা করুন।');
         });
     }
 
     function startRealtimeRoleSync(userPhone) {
-        // Keep role synchronized from both registered accounts and legacy member records.
-        // Detach prior listeners before creating new ones.
+        // Watch both account collections. The newest roleUpdatedAt wins if legacy records differ.
         if (currentRoleSyncRef) {
             if (Array.isArray(currentRoleSyncRef)) currentRoleSyncRef.forEach(ref => ref && ref.off());
             else currentRoleSyncRef.off();
             currentRoleSyncRef = null;
         }
-        const normalizeRoleValue = value => String(value || '').trim()
-            .replace(/[০-৯]/g, d => '0123456789'['০১২৩৪৫৬৭৮৯'.indexOf(d)])
-            .toLowerCase();
-        const normalizeId = value => typeof normalizeLoginIdentifier === 'function'
-            ? normalizeLoginIdentifier(value) : normalizeRoleValue(value);
-        const registeredRef = database.ref('registeredUsers').orderByChild('phone').equalTo(userPhone);
+        const registeredRef = database.ref('registeredUsers');
         const membersRef = database.ref('members');
         currentRoleSyncRef = [registeredRef, membersRef];
-
+        let refreshQueued = false;
         const refreshRole = () => {
+            if (refreshQueued) return;
+            refreshQueued = true;
             Promise.all([registeredRef.once('value'), membersRef.once('value')]).then(([usersSnap, membersSnap]) => {
-                let latestRole = 'Staff';
-                let found = false;
-                if (usersSnap.exists()) {
-                    usersSnap.forEach(child => {
-                        const u = child.val() || {};
-                        if (u.role || u.category) { latestRole = u.role || u.category; found = true; }
-                    });
-                }
-                if (!found && membersSnap.exists()) {
-                    membersSnap.forEach(child => {
-                        const m = child.val() || {};
-                        const identifiers = [m.phone, m.mobile, m.mobileNumber, m.id, m.memberId, m.memberID,
-                            m.userId, m.userID, m.uniqueId, m.uniqueID, m.pslId, m.PSL_ID, m.username];
-                        if (identifiers.some(v => normalizeId(v) === normalizeId(userPhone)) && (m.role || m.category)) {
-                            latestRole = m.role || m.category;
-                            found = true;
-                        }
-                    });
-                }
-                // Preserve the existing primary-admin account behavior.
-                if (isPrimaryAdminIdentifier(userPhone)) latestRole = 'Admin';
+                const latestRole = resolveAuthoritativeRole(userPhone, usersSnap, membersSnap);
                 const previousRole = localStorage.getItem('userRole') || 'Staff';
                 if (previousRole !== latestRole) {
                     localStorage.setItem('userRole', latestRole);
@@ -1866,9 +1767,9 @@
                     }
                     alert('আপনার অ্যাকাউন্টের রোল এডমিন দ্বারা আপডেট হয়েছে: ' + latestRole);
                 }
-            }).catch(error => console.error('Realtime role refresh failed:', error));
+            }).catch(error => console.error('Realtime role refresh failed:', error))
+              .finally(() => { refreshQueued = false; });
         };
-        // Database value listeners trigger a fresh authoritative role read.
         registeredRef.on('value', refreshRole, error => console.error('Realtime role sync failed:', error));
         membersRef.on('value', refreshRole, error => console.error('Member role sync failed:', error));
     }
@@ -1889,8 +1790,11 @@
         const managerLawApprovalDashboard = document.getElementById('managerLawApprovalDashboard');
         const financeMonthlyYearlyDashboard = document.getElementById('financeMonthlyYearlyDashboard');
         const managerCompanyIdCardDashboard = document.getElementById('managerCompanyIdCardDashboard');
+        const managerTaskDashboard = document.getElementById('managerTaskDashboard');
         const lawEditorPanel = document.getElementById('lawEditorPanel');
 
+        // Hide role-specific panels from the previous session before showing the new role UI.
+        if(managerTaskDashboard) managerTaskDashboard.classList.add('hidden');
         if(infoNoticeDashboard) infoNoticeDashboard.classList.add('hidden');
         if(managerLawApprovalDashboard) managerLawApprovalDashboard.classList.add('hidden');
         if(financeMonthlyYearlyDashboard) financeMonthlyYearlyDashboard.classList.add('hidden');
@@ -2247,9 +2151,10 @@
                 return;
             }
 
-            let userRole = uData.role || uData.category || selectedCategory;
             const userPhone = String(uData.phone || uData.mobile || uData.mobileNumber || loginInput).trim();
-
+            // Resolve duplicate/legacy records by latest admin role-update timestamp.
+            let userRole = resolveAuthoritativeRole(userPhone, usersSnap, membersSnap);
+            if (!userRole) userRole = uData.role || uData.category || selectedCategory;
             if (isPrimaryAdminIdentifier(loginInput) || isPrimaryAdminIdentifier(userPhone)) {
                 userRole = 'Admin';
             }
@@ -2537,36 +2442,50 @@
         const isMemberOnly = String(userKey).startsWith('member::');
         const actualKey = isMemberOnly ? String(userKey).slice('member::'.length) : userKey;
 
-        let savePromise;
-        if (isMemberOnly) {
-            // This path is for older member IDs that have no registeredUsers entry.
-            savePromise = database.ref('members/' + actualKey).update({
-                role: newRole, category: newRole, designation: designationMap[newRole],
-                roleUpdatedAt: Date.now(), roleUpdatedBy: localStorage.getItem('loggedInUser') || 'Admin'
-            });
-        } else {
-            savePromise = database.ref('registeredUsers/' + actualKey).update({
-                role: newRole, category: newRole,
-                lastActiveDate: new Date().toLocaleString('bn-BD'),
-                roleUpdatedAt: Date.now(), roleUpdatedBy: localStorage.getItem('loggedInUser') || 'Admin'
-            }).then(() => database.ref('members').once('value').then(snapshot => {
-                const updates = {};
-                const allMembers = snapshot.val() || {};
-                Object.keys(allMembers).forEach(memberKey => {
-                    const m = allMembers[memberKey] || {};
-                    const memberValues = [m.phone, m.mobile, m.mobileNumber, m.id, m.memberId, m.memberID, m.userId, m.userID, m.uniqueId, m.uniqueID, m.pslId, m.PSL_ID, m.username];
-                    if (target && memberValues.some(value => normalize(value) === target)) {
-                        updates['members/' + memberKey + '/designation'] = designationMap[newRole];
-                        updates['members/' + memberKey + '/role'] = newRole;
-                        updates['members/' + memberKey + '/category'] = newRole;
-                    }
+        // Keep role synchronized across duplicate/legacy account records so login reads the new role.
+        const identifiers = new Set([userPhone, userPhone && String(userPhone).trim()].filter(Boolean).map(normalize));
+        const idFields = ['phone','mobile','mobileNumber','userId','userID','id','memberId','memberID','username','email','loginId','loginID','uniqueId','uniqueID','pslId','PSL_ID'];
+        const roleTimestamp = Date.now();
+        const roleUpdatedBy = localStorage.getItem('loggedInUser') || 'Admin';
+        const matchesTarget = record => idFields.some(field => record[field] !== undefined && identifiers.has(normalize(record[field])));
+        let savePromise = Promise.all([
+            database.ref('registeredUsers').once('value'),
+            database.ref('members').once('value')
+        ]).then(([usersSnapshot, membersSnapshot]) => {
+            const updates = {};
+            const roleFields = { role: newRole, category: newRole, roleUpdatedAt: roleTimestamp, roleUpdatedBy };
+            // Update fields individually. Do not replace the whole user/member record:
+            // ancestor + child paths in one Firebase update conflict, and replacing the
+            // record would erase credentials and profile data.
+            if (isMemberOnly) {
+                Object.keys(roleFields).forEach(field => {
+                    updates['members/' + actualKey + '/' + field] = roleFields[field];
                 });
-                return Object.keys(updates).length ? database.ref().update(updates) : Promise.resolve();
-            }));
-        }
+                updates['members/' + actualKey + '/designation'] = designationMap[newRole];
+            } else {
+                Object.keys(roleFields).forEach(field => {
+                    updates['registeredUsers/' + actualKey + '/' + field] = roleFields[field];
+                });
+            }
+            if (usersSnapshot.exists()) usersSnapshot.forEach(child => {
+                const u = child.val() || {};
+                if ((!isMemberOnly && child.key === actualKey) || matchesTarget(u)) {
+                    Object.keys(roleFields).forEach(field => updates['registeredUsers/' + child.key + '/' + field] = roleFields[field]);
+                }
+            });
+            if (membersSnapshot.exists()) membersSnapshot.forEach(child => {
+                const m = child.val() || {};
+                if ((isMemberOnly && child.key === actualKey) || matchesTarget(m)) {
+                    Object.keys(roleFields).forEach(field => updates['members/' + child.key + '/' + field] = roleFields[field]);
+                    updates['members/' + child.key + '/designation'] = designationMap[newRole];
+                }
+            });
+            if (!Object.keys(updates).length) throw new Error('সংশ্লিষ্ট অ্যাকাউন্ট পাওয়া যায়নি');
+            return database.ref().update(updates);
+        });
 
         savePromise.then(() => {
-            alert('সফল! রোল Firebase-এ সেভ হয়েছে: ' + newRole + '\nসংশ্লিষ্ট সদস্যের পদবিও আপডেট করা হয়েছে (ম্যাচ পাওয়া গেলে)।');
+            alert('সফল! রোল Firebase-এ সেভ হয়েছে: ' + newRole + '\nলগইন অ্যাকাউন্ট ও সংশ্লিষ্ট সদস্যের রোল একসঙ্গে আপডেট করা হয়েছে। পরিবর্তন যাচাই করতে লগআউট করে আবার লগইন করুন।');
             loadActiveUsersList();
         }).catch(error => {
             console.error('Role update failed:', error);
@@ -2948,7 +2867,7 @@
         if(!root) throw new Error('PDF প্রিভিউ পাওয়া যায়নি।');
         const imgs=Array.from(root.querySelectorAll('img'));
         await Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve;setTimeout(resolve,5000);})));
-        return html2pdf().set({margin:8,filename,image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.pdf-keep-together']}}).from(root).save();
+        return html2pdf().set({margin:[5,8,8,8],filename,image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.pdf-keep-together']}}).from(root).save();
     }
     function reviewManagerIdCardPDF() {
         if(localStorage.getItem('userRole')!=='Manager'){alert('শুধু ম্যানেজার আইডি থেকে এই কাজ করা যাবে।');return;}
@@ -3064,10 +2983,10 @@
         }
         const element = document.getElementById('financialReportResultArea');
         const opt = {
-          margin:       10,
+          margin:       [5, 8, 8, 8],
           filename:     'Financial_Income_Expense_Report.pdf',
           image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2 },
+          html2canvas:  { scale: 2, scrollY: 0 },
           jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(element).save();
@@ -3191,7 +3110,7 @@
           margin:       0,
           filename:     'Official_Notice_Circular.pdf',
           image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2 },
+          html2canvas:  { scale: 2, scrollY: 0 },
           jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(element).save();
@@ -3503,7 +3422,7 @@
     function downloadA4ReceiptPDFAdminLegacy() {
         if(localStorage.getItem('userRole') !== 'Admin') { alert('এই অপশনটি শুধু এডমিনের জন্য।'); return; }
         const element=document.getElementById('a4ReceiptArea');
-        const opt={margin:0,filename:'Money_Receipt_A4.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
+        const opt={margin:0,filename:'Money_Receipt_A4.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
         html2pdf().set(opt).from(element).save();
     }
 
@@ -3808,7 +3727,7 @@
         if (button) { button.disabled = true; button.dataset.originalText = button.innerText; button.innerText = 'PDF তৈরি হচ্ছে...'; }
         try {
             await html2pdf().set({
-                margin: [8, 8, 10, 8],
+                margin: [5, 8, 8, 8],
                 filename: fileName,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', scrollY: 0 },
@@ -4423,7 +4342,7 @@
           margin:       0,
           filename:     'Project_Info_Receipt.pdf',
           image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2 },
+          html2canvas:  { scale: 2, scrollY: 0 },
           jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(element).save();
@@ -4531,10 +4450,7 @@
         }
     }
 </script>
-
-
-
-<script>
+<script type="text/javascript">
 /* Admin Reports update: remove role assignment UI and replace it with reports for admin. */
 (function(){
  const STAFF_ROLES=['Manager','FinanceSecretary','Information'];
@@ -4579,8 +4495,7 @@
  window.projonmerLoadAdminReports=loadReports;
 })();
 </script>
-
-<script>
+<script type="text/javascript">
 /* Additive role controls and expense-PDF workflow; existing app sections are retained. */
 (function(){
  const ADMIN_PHONE='01647302616';
@@ -4608,11 +4523,26 @@
   tb.innerHTML=rows.map((v,i)=>`<tr><td>${esc(v.name||v.fullName||'-')}</td><td>${esc(v.phone||v.id||v.memberId||v._ident)}</td><td>${esc(roles[v.role||v.category]||v.role||v.category||'সদস্য')}</td><td><select class="input-3d" id="addRoleSel${i}">${Object.entries(roles).filter(([k])=>k!=='Member').map(([k,n])=>`<option value="${k}" ${k===(v.role||v.category||'Staff')?'selected':''}>${n}</option>`).join('')}</select></td><td><button class="btn-edit" id="addRoleSave${i}">সেভ</button></td></tr>`).join('')||'<tr><td colspan="5">কোনো আইডি পাওয়া যায়নি।</td></tr>';
   rows.forEach((v,i)=>{const b=$('addRoleSave'+i);if(b)b.onclick=()=>saveRole(v,$('addRoleSel'+i).value,b);});
  }
- function saveRole(v,newRole,b){if(!isAdmin()){alert('অনুমতি নেই।');return;}b.disabled=true;const d=db();const designation=roles[newRole]||newRole;
+ function saveRole(v,newRole,b){
+  if(!isAdmin()){alert('অনুমতি নেই। শুধু নির্ধারিত এডমিন আইডি রোল পরিবর্তন করতে পারবেন।');return;}
+  if(!['Staff','Manager','FinanceSecretary','Information','Admin'].includes(newRole)){alert('অকার্যকর রোল।');return;}
+  if(!v||!v._key||!v._path){alert('এই আইডির ডাটাবেইজ রেফারেন্স পাওয়া যায়নি। তালিকা রিফ্রেশ করুন।');return;}
+  b.disabled=true;const d=db();if(!d){b.disabled=false;alert('Firebase ডাটাবেইজ সংযোগ নেই।');return;}
+  const designation=roles[newRole]||newRole;
   const updates={role:newRole,category:newRole,designation,roleUpdatedAt:Date.now(),roleUpdatedBy:user()};
-  const jobs=[d.ref(v._path+'/'+v._key).update(updates)];
-  if(v.phone||v.id||v.memberId){jobs.push(d.ref('members').once('value').then(snap=>{const up={};snap.forEach(c=>{const m=c.val()||{};const vals=[m.phone,m.mobile,m.id,m.memberId,m.userId,m.pslId,m.PSL_ID];if(vals.some(x=>String(x||'')===String(v.phone||v.id||v.memberId||v._ident))){up[c.key+'/role']=newRole;up[c.key+'/category']=newRole;up[c.key+'/designation']=designation;}});return Object.keys(up).length?d.ref('members').update(up):null;}));}
-  Promise.all(jobs).then(()=>{alert('রোল Firebase-এ আপডেট হয়েছে।');loadRoles();}).catch(e=>alert('সেভ হয়নি: '+e.message)).finally(()=>b.disabled=false);
+  const normalizeId=x=>String(x||'').replace(/[^0-9a-z@._+-]/gi,'').toLowerCase().replace(/^88(?=0?1[3-9])/, '0');
+  const targetIds=[v.phone,v.mobile,v.mobileNumber,v.userId,v.userID,v.id,v.memberId,v.memberID,v.pslId,v.PSL_ID,v.username,v._ident].filter(Boolean).map(normalizeId);
+  // Update the selected source record and every matching legacy/member record atomically.
+  // Firebase root update requires leaf paths only; never mix a record path with its child paths.
+  const multi={};Object.entries(updates).forEach(([field,value])=>{multi[v._path+'/'+v._key+'/'+field]=value;});
+  d.ref('members').once('value').then(snap=>{
+   snap.forEach(c=>{const m=c.val()||{};const ids=[m.phone,m.mobile,m.mobileNumber,m.userId,m.userID,m.id,m.memberId,m.memberID,m.pslId,m.PSL_ID,m.username].filter(Boolean).map(normalizeId);
+    if(ids.some(id=>targetIds.includes(id))){Object.entries(updates).forEach(([k,val])=>multi['members/'+c.key+'/'+k]=val);}
+   });
+   return d.ref().update(multi);
+  }).then(()=>{alert('রোল Firebase ডাটাবেইজে সেভ হয়েছে। ব্যবহারকারীর রোল রিয়েল-টাইমে আপডেট হবে।');loadRoles();})
+   .catch(e=>alert('রোল সেভ হয়নি: '+(e&&e.message?e.message:'Firebase সংযোগ/নিয়ম পরীক্ষা করুন।')))
+   .finally(()=>b.disabled=false);
  }
  function identity(){
   const phone=user();let out={name:phone,psl:phone,designation:roles[role()]||role()};
@@ -4624,7 +4554,7 @@
   box.innerHTML=`<h2 style="text-align:center">এসো ভবিষ্যৎ গড়ি — ব্যয় হিসাব</h2><hr><p><b>রেফারেন্স:</b> ${esc(key)} &nbsp; <b>তারিখ:</b> ${esc(tx.date||'-')}</p><p><b>প্রকল্প/খাত:</b> ${esc(tx.projectName||tx.category||'-')}</p><p><b>বিবরণ:</b> ${esc(tx.category||'-')}</p><p><b>পরিমাণ:</b> ৳ ${Number(tx.amount)||0}</p><p><b>জমাদানকারী:</b> ${esc(id.name)}</p><p><b>PSL ID:</b> ${esc(id.psl)}</p><p><b>পদবি:</b> ${esc(id.designation)}</p><p><b>লগইন আইডি:</b> ${esc(tx.submittedBy||user())}</p><p><b>স্ট্যাটাস:</b> ${esc(tx.managerApproval==='Approved'?'ম্যানেজার অনুমোদিত':'পর্যালোচনাধীন')}</p><hr><p style="font-size:11px">এই নথি অ্যাপের সংরক্ষিত ব্যয় হিসাব থেকে তৈরি।</p>`;
   if(!download){const w=window.open('','_blank');if(!w){alert('PDF প্রিভিউ খুলতে পপ-আপ অনুমতি দিন।');return;}w.document.write('<html><head><title>ব্যয় PDF প্রিভিউ</title></head><body>'+box.outerHTML+'</body></html>');w.document.close();return;}
   if(!window.html2pdf){alert('PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন।');return;}
-  return html2pdf().set({margin:8,filename:'Expense_'+key+'.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(box).save().then(()=>db().ref('downloadReviews').push({type:'expense_pdf',transactionKey:key,downloadedBy:user(),downloadedByRole:role(),timestamp:Date.now()}));
+  return html2pdf().set({margin:[5,8,8,8],filename:'Expense_'+key+'.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(box).save().then(()=>db().ref('downloadReviews').push({type:'expense_pdf',transactionKey:key,downloadedBy:user(),downloadedByRole:role(),timestamp:Date.now()}));
  });}
  window.reviewExpensePdfAdd=(key)=>{if(!['Admin','Manager','FinanceSecretary','Information'].includes(role()))return alert('অনুমতি নেই');db().ref('transactions/'+key).once('value').then(s=>{const tx=s.val();if(tx&&tx.type==='Expense')return makeExpensePdf(tx,key,false);alert('ব্যয় হিসাব পাওয়া যায়নি');});};
  window.downloadExpensePdfAdd=(key)=>{if(!['Admin','Manager','FinanceSecretary','Information'].includes(role()))return alert('অনুমতি নেই');db().ref('transactions/'+key).once('value').then(s=>{const tx=s.val();if(tx&&tx.type==='Expense')return makeExpensePdf(tx,key,true);alert('ব্যয় হিসাব পাওয়া যায়নি');});};
@@ -4661,9 +4591,7 @@
  const oldOnload=window.onload;window.addEventListener('load',()=>{init();if(isAdmin())loadRoles();});
 })();
 </script>
-
-
-<script>
+<script type="text/javascript">
 /* Additive finance report + real Firebase Phone OTP. Existing sections are retained. */
 (function(){
  const $=id=>document.getElementById(id);
@@ -4732,12 +4660,12 @@
   const total=reportRows.reduce((sum,r)=>sum+(Number(r.t.amount)||0),0);
   wrap.innerHTML=`<div style="text-align:center"><h2>এসো ভবিষ্যৎ গড়ি</h2><h3>${isIncome?'আয় হিসাব':'ব্যয় হিসাব'} রিপোর্ট</h3><p>রেফারেন্স কোড: <b>${esc(reportCode)}</b></p><p>সময়কাল: ${esc($('iePeriodAdd').value==='all'?'সকল সংরক্ষিত হিসাব':year+' সাল')}</p><p>তৈরির তারিখ: ${new Date().toLocaleString('bn-BD')}</p></div><hr><p>মোট রেকর্ড: ${reportRows.length} | মোট ${isIncome?'আয়':'ব্যয়'}: ৳ ${total.toLocaleString('en-US')}</p><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="border:1px solid #999;padding:7px">ডাটাবেইজ আইডি</th><th style="border:1px solid #999;padding:7px">তারিখ</th><th style="border:1px solid #999;padding:7px">খাত / বিবরণ</th><th style="border:1px solid #999;padding:7px">পরিমাণ</th><th style="border:1px solid #999;padding:7px">স্ট্যাটাস</th></tr></thead><tbody>${reportRows.map(({key,t,dateText})=>`<tr><td style="border:1px solid #aaa;padding:6px">${esc(key)}</td><td style="border:1px solid #aaa;padding:6px">${esc(dateText||'-')}</td><td style="border:1px solid #aaa;padding:6px">${esc(t.projectName||t.category||t.note||t.description||'-')}</td><td style="border:1px solid #aaa;padding:6px;text-align:right">৳ ${Number(t.amount)||0}</td><td style="border:1px solid #aaa;padding:6px">${esc(t.status||((t.financeApproval==='Approved'||t.managerApproval==='Approved'||t.adminApproval==='Approved')?'অনুমোদিত':'পর্যালোচনাধীন'))}</td></tr>`).join('')||'<tr><td colspan="5" style="padding:12px;text-align:center">কোনো হিসাব নেই</td></tr>'}</tbody></table><hr><p style="font-size:10px">তৈরিকারী লগইন: ${esc(who())} | রোল: ${esc(role())}</p>`;
   const filename=(isIncome?'Income':'Expense')+'_'+String(year)+'_'+reportCode+'.pdf';
-  window.html2pdf().set({margin:8,filename,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(wrap).save().then(()=>{
+  window.html2pdf().set({margin:[5,8,8,8],filename,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(wrap).save().then(()=>{
    const d=db();if(d)d.ref('downloadReviews').push({type:isIncome?'income_report_pdf':'expense_report_pdf',reportCode,year,recordCount:reportRows.length,total,downloadedBy:who(),downloadedByRole:role(),timestamp:Date.now()}).catch(()=>{});
   }).catch(e=>alert('PDF তৈরি করা যায়নি: '+e.message));
  }
 
- // Real SMS OTP via Firebase Authentication. Existing member records and other app features remain unchanged.
+ // Real SMS OTP via Firebase Authentication. This intentionally replaces the old locally generated OTP.
  window.initiateSignup=function(){
   const phoneRaw=$('authPhoneInput').value.trim(), pass=$('authPassInput').value;
   if($('loginCategorySelect').value!=='Staff'){alert('নতুন সাইনআপ শুধু সদস্য / Staff আইডির জন্য।');return;}
@@ -4745,39 +4673,26 @@
   if(pass.length<6){alert('কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন।');return;}
   if(typeof isPrimaryAdminIdentifier==='function'&&isPrimaryAdminIdentifier(phoneRaw)){alert('বর্তমান এডমিন আইডি দিয়ে নতুন সাইনআপ করা যাবে না।');return;}
   if(!window.firebase||!firebase.auth){alert('Firebase Authentication লাইব্রেরি পাওয়া যায়নি।');return;}
-  // Firebase Phone Auth/reCAPTCHA cannot run from a content:// file opened directly on the phone.
-  if(location.protocol==='content:' || !location.hostname){
-   alert('সাইনআপের SMS OTP চালাতে এই HTML ফাইল সরাসরি ফোনের ফাইল ম্যানেজার থেকে খোলা যাবে না। অ্যাপটি HTTPS ওয়েব ঠিকানায় (যেমন Firebase Hosting) খুলুন এবং Firebase Console > Authentication > Settings > Authorized domains-এ সেই ডোমেইন যোগ করুন। পুরোনো সদস্য/ডেটাবেইজ মুছবেন না।');
-   return;
-  }
   const d=db(); if(!d){alert('Firebase Database সংযোগ পাওয়া যায়নি।');return;}
   const phone=normPhone(phoneRaw);
   d.ref('registeredUsers').once('value').then(snap=>{
    let exists=false;snap.forEach(c=>{const u=c.val()||{};if([u.phone,u.mobile,u.mobileNumber,u.userId,u.username].some(v=>v&&normPhone(v)===phone))exists=true;});
    if(exists){alert('এই নম্বর দিয়ে অ্যাকাউন্ট আছে। লগইন করুন।');return;}
    otpPhone=phone;window.__pendingOtpPhone=phone;window.__pendingOtpPass=pass;otpConfirmation=null;
-   if(otpVerifier){try{otpVerifier.clear();}catch(e){}otpVerifier=null;}
-   let holder=$('phoneOtpRecaptchaAdd');
-   if(!holder){holder=document.createElement('div');holder.id='phoneOtpRecaptchaAdd';$('loginStep1').appendChild(holder);}
-   otpVerifier=new firebase.auth.RecaptchaVerifier('phoneOtpRecaptchaAdd',{size:'normal',callback:()=>{},'expired-callback':()=>alert('reCAPTCHA মেয়াদ শেষ হয়েছে। আবার চেষ্টা করুন।')});
-   return otpVerifier.render()
-    .then(()=>firebase.auth().signInWithPhoneNumber(phone,otpVerifier))
-    .then(conf=>{
+   try{
+    if(otpVerifier){try{otpVerifier.clear();}catch(e){}otpVerifier=null;}
+    let holder=$('phoneOtpRecaptchaAdd');
+    if(!holder){holder=document.createElement('div');holder.id='phoneOtpRecaptchaAdd';$('loginStep1').appendChild(holder);}
+    otpVerifier=new firebase.auth.RecaptchaVerifier('phoneOtpRecaptchaAdd',{size:'normal',callback:()=>{},'expired-callback':()=>alert('reCAPTCHA মেয়াদ শেষ হয়েছে। আবার চেষ্টা করুন।')});
+    return otpVerifier.render().then(()=>firebase.auth().signInWithPhoneNumber(phone,otpVerifier)).then(conf=>{
      otpConfirmation=conf;window.__phoneOtpConfirmation=conf;
      $('loginStep1').classList.add('hidden');$('loginStep2').classList.remove('hidden');
      const label=$('otpCodeInput').previousElementSibling;if(label)label.innerHTML='SMS-এ পাওয়া OTP কোড <span class="required-star">*</span>';
      $('otpCodeInput').placeholder='SMS-এ পাওয়া কোড লিখুন';
      alert(phone+' নম্বরে Firebase SMS OTP পাঠানো হয়েছে।');
     });
-  }).catch(e=>{
-   const code=String(e&&e.code||'');
-   let msg=(e&&e.message)||'অজানা ত্রুটি';
-   if(code.includes('unauthorized-domain')) msg='এই ওয়েব ডোমেইন Firebase Authentication-এর Authorized domains-এ যোগ করা নেই।';
-   else if(code.includes('operation-not-allowed')) msg='Firebase Console-এ Phone provider চালু নেই।';
-   else if(code.includes('too-many-requests')) msg='অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ অপেক্ষা করে আবার চেষ্টা করুন।';
-   else if(code.includes('captcha')||code.includes('recaptcha')||code.includes('internal-error')) msg='Firebase reCAPTCHA/Phone Auth চালু হতে পারেনি। HTTPS ডোমেইনে অ্যাপ খুলুন, Authorized domains ও Phone provider যাচাই করুন।';
-   alert('সাইনআপ/OTP পাঠানো যায়নি: '+msg+' ('+code+').');
-  });
+   }catch(e){alert('OTP পাঠানো যায়নি: '+e.message+'। Firebase Phone provider, authorized domain এবং SMS quota পরীক্ষা করুন।');}
+  }).catch(e=>alert('সাইনআপ যাচাই করা যায়নি: '+e.message));
  };
  window.verifyOtpAndRegister=function(){
   const code=$('otpCodeInput').value.trim(), photo=$('signupPhotoBase64').value, conf=otpConfirmation||window.__phoneOtpConfirmation;
@@ -4809,6 +4724,9 @@
  const oldSwitch=window.switchDashboard;
  if(typeof oldSwitch==='function')window.switchDashboard=function(page){const r=oldSwitch.apply(this,arguments);setTimeout(()=>{init();if(page==='home'&&allowed())$('incomeExpenseReportAdd')?.classList.remove('hidden');},80);return r;};
 })();
+</script>
+<script type="text/javascript">
+(function(){document.addEventListener('click',function(e){var el=e.target&&e.target.closest?e.target.closest('button,.nav-btn,[role="button"]'):null;if(!el||el.disabled)return;document.querySelectorAll('.option-clicked').forEach(function(x){x.classList.remove('option-clicked');});el.classList.add('option-clicked');});})();
 </script>
 </body>
 </html>
