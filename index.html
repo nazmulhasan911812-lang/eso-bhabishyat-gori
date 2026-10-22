@@ -442,7 +442,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
 </div>
 </div>
 <div class="hidden" id="loginStep2">
-<p style="font-size: 13px; color: #16a34a; margin-bottom: 15px;">সাইনআপের জন্য আপনার প্রোফাইল ছবি আপলোড করুন এবং ওটিপি দিন:</p>
+<p style="font-size: 13px; color: #16a34a; margin-bottom: 15px;">সাইনআপের জন্য প্রোফাইল ছবি আপলোড করুন এবং অ্যাপে দেখানো ৪ ডিজিটের ওটিপি দিন:</p>
 <div class="form-group">
 <label>প্রোফাইল ছবি (বাধ্যতামূলক) <span class="required-star">*</span></label>
 <input accept="image/*" class="input-3d" id="signupPhotoFile" onchange="previewSignupImage(event)" required="" type="file"/>
@@ -1955,7 +1955,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
             pendingPass = pass;
             generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
             return database.ref('otps/' + encodeURIComponent(phone)).set({ otp: generatedOtp, time: Date.now() }).then(() => {
-                alert("সাইনআপ যাচাই কোড: " + generatedOtp + "\nনোট: এটি অ্যাপের ভেতরের কোড; SMS OTP নয়।");
+                alert(generatedOtp);
                 document.getElementById('loginStep1').classList.add('hidden');
                 document.getElementById('loginStep2').classList.remove('hidden');
             });
@@ -1966,7 +1966,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
     }
 
     function verifyOtpAndRegister() {
-        const userOtp = document.getElementById('otpCodeInput').value;
+        const userOtp = String(document.getElementById('otpCodeInput').value || '').trim();
         const signupPhoto = document.getElementById('signupPhotoBase64').value;
         const selectedCategory = document.getElementById('loginCategorySelect').value;
 
@@ -1976,70 +1976,102 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
             document.getElementById('loginStep1').classList.remove('hidden');
             return;
         }
-        if(!signupPhoto) {
+        if (!pendingPhone || !pendingPass) {
+            alert("আগে মোবাইল/আইডি ও পাসওয়ার্ড দিয়ে সাইনআপ শুরু করুন।");
+            return;
+        }
+        if (!signupPhoto) {
             alert("প্রোফাইল ছবি বাধ্যতামূলক!");
             return;
         }
+        if (!userOtp) {
+            alert("৪ ডিজিটের ওটিপি কোড লিখুন।");
+            return;
+        }
+        if (typeof isPrimaryAdminIdentifier === 'function' && isPrimaryAdminIdentifier(pendingPhone)) {
+            alert("বর্তমান এডমিন আইডি বহাল আছে। এই নম্বর দিয়ে সাইনআপ করা যাবে না।");
+            return;
+        }
 
-        if(userOtp === generatedOtp) {
-            database.ref('registeredUsers').once('value', (usersSnap) => {
-                // Never grant Admin or another privileged role through public signup.
-                // Existing admin number is preserved and cannot be recreated here.
-                let assignedRole = 'Staff';
-                if (isPrimaryAdminIdentifier(pendingPhone)) {
-                    alert("বর্তমান এডমিন আইডি বহাল আছে। এই নম্বর দিয়ে সাইনআপ করা যাবে না।");
+        const otpRef = database.ref('otps/' + encodeURIComponent(pendingPhone));
+        otpRef.once('value').then(otpSnap => {
+            const saved = otpSnap.val();
+            if (!saved || String(saved.otp) !== userOtp) {
+                alert("ভুল ওটিপি কোড!");
+                return;
+            }
+            if (!saved.time || (Date.now() - Number(saved.time)) > 5 * 60 * 1000) {
+                alert("ওটিপির মেয়াদ শেষ। নতুন কোড তৈরি করুন।");
+                return;
+            }
+
+            return database.ref('registeredUsers').once('value').then(usersSnap => {
+                let exists = false;
+                usersSnap.forEach(child => {
+                    const u = child.val() || {};
+                    const ids = [u.phone, u.mobile, u.mobileNumber, u.userId, u.userID, u.username, u.loginId, u.loginID];
+                    if (ids.some(v => v !== undefined && normalizeLoginIdentifier(v) === normalizeLoginIdentifier(pendingPhone))) exists = true;
+                });
+                if (exists) {
+                    alert("এই নম্বর/আইডি দিয়ে অ্যাকাউন্ট রয়েছে! লগইন করুন।");
                     return;
                 }
 
-                database.ref('members').orderByChild('phone').equalTo(pendingPhone).once('value', (memberSnap) => {
+                return database.ref('members').orderByChild('phone').equalTo(pendingPhone).once('value').then(memberSnap => {
+                    let memberKey = '';
                     let memberId = '';
-                    if(memberSnap.exists()) {
-                        memberSnap.forEach(child => {
-                            if(child.val().id) memberId = child.val().id;
-                        });
-                    }
+                    memberSnap.forEach(child => {
+                        memberKey = child.key;
+                        if (child.val() && child.val().id) memberId = child.val().id;
+                    });
 
-                    let defaultDesignation = 'সাধারণ সদস্য';
-                    if(assignedRole === 'Admin') defaultDesignation = 'এডমিন';
-                    else if(assignedRole === 'Manager') defaultDesignation = 'ম্যানেজার';
-                    else if(assignedRole === 'FinanceSecretary') defaultDesignation = 'অর্থ সম্পাদক';
-                    else if(assignedRole === 'Information') defaultDesignation = 'তথ্য সম্পাদক';
+                    const assignedRole = 'Staff';
+                    const defaultDesignation = 'সাধারণ সদস্য';
+                    memberId = 'PSL-' + Math.floor(100000 + Math.random() * 900000);
 
-                    if(!memberId) {
-                        // অটোমেটিক ডাটাবেজ ইউনিক আইডি জেনারেশন
-                        memberId = 'PSL-' + Math.floor(100000 + Math.random() * 900000);
-                        database.ref('members').push({
+                    const memberData = {
+                        phone: pendingPhone,
+                        id: memberId,
+                        name: 'সদস্য (' + pendingPhone + ')',
+                        photo: signupPhoto,
+                        status: 'Pending',
+                        designation: defaultDesignation,
+                        timestamp: Date.now()
+                    };
+                    // Preserve every existing/legacy member record; create a separate signup request record.
+                    memberData.signupRequest = true;
+                    const saveMember = database.ref('members').push(memberData);
+
+                    let signupMemberKey = '';
+                    return saveMember.then(newMemberRef => {
+                        signupMemberKey = newMemberRef.key;
+                        return database.ref('registeredUsers').push({
                             phone: pendingPhone,
-                            id: memberId,
-                            name: 'সদস্য (' + pendingPhone + ')',
+                            password: pendingPass,
+                            role: assignedRole,
                             photo: signupPhoto,
                             status: 'Pending',
-                            designation: defaultDesignation,
-                            timestamp: Date.now()
+                            approvalStatus: 'Pending',
+                            signupRequest: true,
+                            memberId: memberId,
+                            signupMemberKey: signupMemberKey,
+                            createdDate: Date.now(),
+                            lastActiveDate: new Date().toLocaleString('bn-BD')
                         });
-                    }
-
-                    database.ref('registeredUsers').push({
-                        phone: pendingPhone,
-                        password: pendingPass,
-                        role: assignedRole,
-                        photo: signupPhoto,
-                        createdDate: Date.now(),
-                        lastActiveDate: new Date().toLocaleString('bn-BD')
-                    }).then(() => {
-                        alert("সাইনআপ সম্পন্ন! রোল: " + assignedRole + "\nইউনিক আইডি: " + memberId);
-                        
-                        localStorage.setItem('loginSessionTime', new Date().getTime());
-                        localStorage.setItem('loggedInUser', pendingPhone);
-                        localStorage.setItem('userRole', assignedRole);
-
-                        refreshUserRoleAndLoad(pendingPhone);
+                    }).then(userRef => database.ref('members/' + signupMemberKey).update({status:'Pending', approvalStatus:'Pending', signupRequest:true, signupUserKey:userRef.key}).then(()=>userRef)).then(() => otpRef.remove()).then(() => {
+                        pendingPass = '';
+                        generatedOtp = '';
+                        document.getElementById('otpCodeInput').value = '';
+                        alert("ওটিপি যাচাই সফল হয়েছে। আপনার সাইনআপ তথ্য তথ্য সম্পাদক (Information Secretary)-এর অনুমোদনের জন্য পাঠানো হয়েছে। অনুমোদন না পাওয়া পর্যন্ত লগইন করা যাবে না।");
+                        document.getElementById('loginStep2').classList.add('hidden');
+                        document.getElementById('loginStep1').classList.remove('hidden');
                     });
                 });
             });
-        } else {
-            alert("ভুল ওটিপি কোড!");
-        }
+        }).catch(error => {
+            console.error('Database OTP verification failed:', error);
+            alert("ওটিপি যাচাই/সাইনআপ ব্যর্থ হয়েছে। ইন্টারনেট ও Firebase Database Rules পরীক্ষা করুন।");
+        });
     }
 
     // Legacy ID compatibility: supports existing phone-based accounts and older
@@ -2145,6 +2177,15 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
             }
 
             const uData = matchedUser.data;
+            const accountStatus = String(uData.approvalStatus || uData.status || '').toLowerCase();
+            if (accountStatus === 'pending') {
+                alert("আপনার সাইনআপ তথ্য তথ্য সম্পাদক (Information Secretary)-এর অনুমোদনের অপেক্ষায় আছে। অনুমোদনের পর লগইন করতে পারবেন।");
+                return;
+            }
+            if (accountStatus === 'rejected' || uData.deleted === true || uData.accountDeleted === true) {
+                alert("এই সাইনআপটি বাতিল/ডিলিট করা হয়েছে। লগইন করা যাবে না; নতুন করে সাইনআপ করুন।");
+                return;
+            }
             const savedPassword = uData.password !== undefined ? uData.password : uData.pass;
             if (String(savedPassword === undefined ? '' : savedPassword) !== pass) {
                 alert("ভুল পাসওয়ার্ড!");
@@ -4665,59 +4706,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
   }).catch(e=>alert('PDF তৈরি করা যায়নি: '+e.message));
  }
 
- // Real SMS OTP via Firebase Authentication. This intentionally replaces the old locally generated OTP.
- window.initiateSignup=function(){
-  const phoneRaw=$('authPhoneInput').value.trim(), pass=$('authPassInput').value;
-  if($('loginCategorySelect').value!=='Staff'){alert('নতুন সাইনআপ শুধু সদস্য / Staff আইডির জন্য।');return;}
-  if(!phoneRaw||!pass){alert('মোবাইল নম্বর ও পাসওয়ার্ড দিন।');return;}
-  if(pass.length<6){alert('কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন।');return;}
-  if(typeof isPrimaryAdminIdentifier==='function'&&isPrimaryAdminIdentifier(phoneRaw)){alert('বর্তমান এডমিন আইডি দিয়ে নতুন সাইনআপ করা যাবে না।');return;}
-  if(!window.firebase||!firebase.auth){alert('Firebase Authentication লাইব্রেরি পাওয়া যায়নি।');return;}
-  const d=db(); if(!d){alert('Firebase Database সংযোগ পাওয়া যায়নি।');return;}
-  const phone=normPhone(phoneRaw);
-  d.ref('registeredUsers').once('value').then(snap=>{
-   let exists=false;snap.forEach(c=>{const u=c.val()||{};if([u.phone,u.mobile,u.mobileNumber,u.userId,u.username].some(v=>v&&normPhone(v)===phone))exists=true;});
-   if(exists){alert('এই নম্বর দিয়ে অ্যাকাউন্ট আছে। লগইন করুন।');return;}
-   otpPhone=phone;window.__pendingOtpPhone=phone;window.__pendingOtpPass=pass;otpConfirmation=null;
-   try{
-    if(otpVerifier){try{otpVerifier.clear();}catch(e){}otpVerifier=null;}
-    let holder=$('phoneOtpRecaptchaAdd');
-    if(!holder){holder=document.createElement('div');holder.id='phoneOtpRecaptchaAdd';$('loginStep1').appendChild(holder);}
-    otpVerifier=new firebase.auth.RecaptchaVerifier('phoneOtpRecaptchaAdd',{size:'normal',callback:()=>{},'expired-callback':()=>alert('reCAPTCHA মেয়াদ শেষ হয়েছে। আবার চেষ্টা করুন।')});
-    return otpVerifier.render().then(()=>firebase.auth().signInWithPhoneNumber(phone,otpVerifier)).then(conf=>{
-     otpConfirmation=conf;window.__phoneOtpConfirmation=conf;
-     $('loginStep1').classList.add('hidden');$('loginStep2').classList.remove('hidden');
-     const label=$('otpCodeInput').previousElementSibling;if(label)label.innerHTML='SMS-এ পাওয়া OTP কোড <span class="required-star">*</span>';
-     $('otpCodeInput').placeholder='SMS-এ পাওয়া কোড লিখুন';
-     alert(phone+' নম্বরে Firebase SMS OTP পাঠানো হয়েছে।');
-    });
-   }catch(e){alert('OTP পাঠানো যায়নি: '+e.message+'। Firebase Phone provider, authorized domain এবং SMS quota পরীক্ষা করুন।');}
-  }).catch(e=>alert('সাইনআপ যাচাই করা যায়নি: '+e.message));
- };
- window.verifyOtpAndRegister=function(){
-  const code=$('otpCodeInput').value.trim(), photo=$('signupPhotoBase64').value, conf=otpConfirmation||window.__phoneOtpConfirmation;
-  if($('loginCategorySelect').value!=='Staff'){alert('শুধু সদস্য/Staff সাইনআপ করতে পারবেন।');return;}
-  if(!photo){alert('প্রোফাইল ছবি আপলোড করুন।');return;}
-  if(!code||!conf){alert('আগে SMS OTP পাঠান এবং কোড লিখুন।');return;}
-  conf.confirm(code).then(cred=>{
-   const phone=otpPhone||window.__pendingOtpPhone, pass=window.__pendingOtpPass, d=db();
-   return d.ref('registeredUsers').once('value').then(snap=>{
-    let exists=false;snap.forEach(c=>{const u=c.val()||{};if([u.phone,u.mobile,u.mobileNumber].some(v=>v&&normPhone(v)===phone))exists=true;});
-    if(exists)throw new Error('এই নম্বর দিয়ে ইতিমধ্যে অ্যাকাউন্ট রয়েছে।');
-    return d.ref('members').orderByChild('phone').equalTo(phone).once('value').then(ms=>{
-     let memberKey='',memberId='';ms.forEach(c=>{memberKey=c.key;memberId=(c.val()||{}).id||'';});
-     if(!memberId)memberId='PSL-'+Math.floor(100000+Math.random()*900000);
-     const memberData={phone,id:memberId,name:'সদস্য ('+phone+')',photo,status:'Pending',designation:'সাধারণ সদস্য',timestamp:Date.now()};
-     const memberJob=memberKey?d.ref('members/'+memberKey).update({photo:photo}):d.ref('members').push(memberData);
-     return memberJob.then(()=>d.ref('registeredUsers').push({phone,password:pass,role:'Staff',photo,createdDate:Date.now(),lastActiveDate:new Date().toLocaleString('bn-BD'),firebaseUid:cred.user.uid,phoneVerified:true,phoneVerifiedAt:Date.now()})).then(()=>{
-      alert('রিয়েল SMS OTP যাচাই সফল। সাইনআপ সম্পন্ন হয়েছে। সদস্য ID: '+memberId);
-      localStorage.setItem('loginSessionTime',Date.now());localStorage.setItem('loggedInUser',phone);localStorage.setItem('userRole','Staff');
-      if(typeof refreshUserRoleAndLoad==='function')refreshUserRoleAndLoad(phone);else location.reload();
-     });
-    });
-   });
-  }).catch(e=>alert('OTP যাচাই / সাইনআপ ব্যর্থ: '+e.message));
- };
+ // Database OTP is used by the original initiateSignup() and verifyOtpAndRegister() functions above.
  function init(){setupFinancePanel();setFinanceVisibility();if(allowed()&&$('incomeExpenseReportAdd'))$('incomeExpenseReportAdd').classList.remove('hidden');}
  document.addEventListener('DOMContentLoaded',init);
  window.addEventListener('load',()=>{init();setTimeout(init,900);});
@@ -4727,6 +4716,73 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
 </script>
 <script type="text/javascript">
 (function(){document.addEventListener('click',function(e){var el=e.target&&e.target.closest?e.target.closest('button,.nav-btn,[role="button"]'):null;if(!el||el.disabled)return;document.querySelectorAll('.option-clicked').forEach(function(x){x.classList.remove('option-clicked');});el.classList.add('option-clicked');});})();
+</script>
+
+<script>
+/* Additive Information Secretary approval flow for OTP-verified member signups. */
+(function(){
+  function currentRole(){ return localStorage.getItem('userRole') || ''; }
+  function db(){ return window.database || (typeof database !== 'undefined' ? database : null); }
+  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function ensurePanel(){
+    if(document.getElementById('signupApprovalDashboard')) return;
+    const card=document.createElement('section'); card.id='signupApprovalDashboard'; card.className='card-3d hidden';
+    card.style.cssText='border:2px dashed #0891b2;background:#ecfeff';
+    card.innerHTML='<h2><i class="fa-solid fa-user-check"></i> নতুন সদস্য সাইনআপ অনুমোদন</h2><p style="margin-bottom:10px;font-size:13px">OTP যাচাই করা নতুন সদস্যদের অনুমোদন দিন। অনুমোদনের পরই সদস্য লগইন করতে পারবে। রিজেক্ট করলে সাইনআপ অ্যাকাউন্ট ও তার নতুন সদস্য রেকর্ড মুছে যাবে।</p><button class="btn-3d" style="background:#0891b2" onclick="loadSignupApprovalRequests()">আবেদন রিফ্রেশ করুন</button><div id="signupApprovalList" style="margin-top:12px">আবেদন লোড করতে রিফ্রেশ করুন।</div>';
+    const info=document.getElementById('infoNoticeDashboard');
+    if(info && info.parentNode) info.parentNode.insertBefore(card, info.nextSibling);
+    else { const home=document.getElementById('homeDashboard'); if(home) home.parentNode.insertBefore(card,home); }
+  }
+  window.loadSignupApprovalRequests=function(){
+    if(currentRole()!=='Information'){ alert('শুধু তথ্য সম্পাদক এই আবেদনগুলো দেখতে পারবেন।'); return; }
+    const d=db(), out=document.getElementById('signupApprovalList'); if(!d||!out){alert('Firebase সংযোগ পাওয়া যায়নি।');return;}
+    out.textContent='আবেদন লোড হচ্ছে...';
+    Promise.all([d.ref('registeredUsers').once('value'),d.ref('members').once('value')]).then(([us,ms])=>{
+      const users=[]; us.forEach(c=>{const u=c.val()||{}; if(u.signupRequest===true && String(u.approvalStatus||u.status||'').toLowerCase()==='pending') users.push({key:c.key,u});});
+      if(!users.length){out.innerHTML='<p style="padding:12px;background:white;border-radius:8px">অনুমোদনের অপেক্ষায় কোনো নতুন সাইনআপ নেই।</p>';return;}
+      out.innerHTML='<div class="table-responsive"><table><thead><tr><th>মোবাইল / আইডি</th><th>সদস্য ID</th><th>আবেদনের তারিখ</th><th>অ্যাকশন</th></tr></thead><tbody>'+users.map(x=>{
+        const u=x.u; const dt=u.createdDate?new Date(Number(u.createdDate)).toLocaleString('bn-BD'):'-';
+        return '<tr><td>'+esc(u.phone||u.mobile||'-')+'</td><td>'+esc(u.memberId||u.id||'-')+'</td><td>'+esc(dt)+'</td><td><button class="btn-edit" onclick="approveSignupRequest(&quot;'+esc(x.key)+'&quot;)">অনুমোদন</button> <button class="btn-delete" onclick="rejectSignupRequest(&quot;'+esc(x.key)+'&quot;)">রিজেক্ট</button></td></tr>';
+      }).join('')+'</tbody></table></div>';
+    }).catch(e=>{console.error(e);out.textContent='আবেদন লোড করা যায়নি। Firebase Rules/ইন্টারনেট পরীক্ষা করুন।';});
+  };
+  window.approveSignupRequest=function(userKey){
+    if(currentRole()!=='Information'){alert('শুধু তথ্য সম্পাদক অনুমোদন দিতে পারবেন।');return;}
+    const d=db(); if(!d)return;
+    d.ref('registeredUsers/'+userKey).once('value').then(snap=>{
+      const u=snap.val(); if(!u || u.signupRequest!==true){alert('সাইনআপ আবেদন পাওয়া যায়নি।');return;}
+      const phone=String(u.phone||u.mobile||'');
+      const updates={status:'Approved',approvalStatus:'Approved',approvedBy:localStorage.getItem('loggedInUser')||'Information',approvedAt:Date.now()};
+      return d.ref('registeredUsers/'+userKey).update(updates).then(()=>d.ref('members').once('value')).then(ms=>{
+        const jobs=[]; ms.forEach(c=>{const m=c.val()||{}; if((m.signupUserKey===userKey)||(phone && String(m.phone||m.mobile||m.mobileNumber||'')===phone && m.signupRequest===true)) jobs.push(d.ref('members/'+c.key).update(updates));});
+        return Promise.all(jobs);
+      }).then(()=>{alert('সাইনআপ অনুমোদিত হয়েছে। এখন সদস্য লগইন করতে পারবেন।');window.loadSignupApprovalRequests();});
+    }).catch(e=>{console.error(e);alert('অনুমোদন করা যায়নি। Firebase Rules পরীক্ষা করুন।');});
+  };
+  window.rejectSignupRequest=function(userKey){
+    if(currentRole()!=='Information'){alert('শুধু তথ্য সম্পাদক রিজেক্ট করতে পারবেন।');return;}
+    if(!confirm('এই সাইনআপ আবেদন রিজেক্ট করে নতুন সাইনআপ অ্যাকাউন্ট মুছে দেবেন?'))return;
+    const d=db(); if(!d)return;
+    d.ref('registeredUsers/'+userKey).once('value').then(snap=>{
+      const u=snap.val(); if(!u || u.signupRequest!==true){alert('সাইনআপ আবেদন পাওয়া যায়নি।');return;}
+      const phone=String(u.phone||u.mobile||'');
+      return d.ref('members').once('value').then(ms=>{
+        const jobs=[d.ref('registeredUsers/'+userKey).remove()];
+        ms.forEach(c=>{const m=c.val()||{}; if(m.signupUserKey===userKey || (m.signupRequest===true && phone && String(m.phone||m.mobile||m.mobileNumber||'')===phone)) jobs.push(d.ref('members/'+c.key).remove());});
+        return Promise.all(jobs);
+      }).then(()=>{alert('সাইনআপ রিজেক্ট করা হয়েছে এবং সংশ্লিষ্ট নতুন সাইনআপ রেকর্ড মুছে দেওয়া হয়েছে।');window.loadSignupApprovalRequests();});
+    }).catch(e=>{console.error(e);alert('রিজেক্ট করা যায়নি। Firebase Rules পরীক্ষা করুন।');});
+  };
+  function updateVisibility(){
+    ensurePanel(); const panel=document.getElementById('signupApprovalDashboard'); if(!panel)return;
+    if(currentRole()==='Information'){panel.classList.remove('hidden');window.loadSignupApprovalRequests();} else panel.classList.add('hidden');
+  }
+  document.addEventListener('DOMContentLoaded',()=>{ensurePanel(); setTimeout(updateVisibility,500);});
+  // Hook role UI without replacing its existing behavior.
+  const wait=setInterval(()=>{ if(typeof window.applyRoleUI==='function' && !window.__signupApprovalRoleHooked){
+    const old=window.applyRoleUI; window.applyRoleUI=function(r){old.apply(this,arguments);ensurePanel();const p=document.getElementById('signupApprovalDashboard');if(p){if(r==='Information'){p.classList.remove('hidden');setTimeout(()=>window.loadSignupApprovalRequests(),100);}else p.classList.add('hidden');}};window.__signupApprovalRoleHooked=true;clearInterval(wait);
+  }},300);
+})();
 </script>
 </body>
 </html>
