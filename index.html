@@ -147,6 +147,25 @@
             gap: 10px;
         }
 
+        /* Mobile UI fix: prevent the native textarea resize grip from overlapping nearby controls. */
+        textarea.input-3d {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            resize: none;
+            overflow-y: auto;
+            -webkit-appearance: none;
+        }
+
+        /* Keep the finance report filters inside the screen on narrow phones. */
+        #financeMonthlyYearlyDashboard > div:first-of-type {
+            min-width: 0;
+        }
+        #financeMonthlyYearlyDashboard .input-3d,
+        #financeMonthlyYearlyDashboard select.input-3d {
+            min-width: 0;
+        }
+
         .input-3d {
             width: 100%;
             padding: 12px 15px;
@@ -602,10 +621,10 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
 <option value="ডিসেম্বর">ডিসেম্বর</option>
 </select>
 <select class="input-3d" id="reportYearSelect" style="flex:1; margin-top:0;">
-<option value="2026">2026</option>
-<option value="2027">2027</option>
+<option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option><option value="2031">2031</option><option value="2032">2032</option><option value="2033">2033</option><option value="2034">2034</option><option value="2035">2035</option>
 </select>
 <input class="input-3d" id="reportProjectSearch" placeholder="প্রকল্পের নাম (খালি = সব প্রকল্প)" style="flex:1; margin-top:0; min-width:150px;"/>
+<input class="input-3d" id="reportDateIdSearch" placeholder="তারিখ / হিসাব ID / সদস্য ID দিয়ে খুঁজুন" style="flex:1; margin-top:0; min-width:180px;"/>
 <button class="btn-3d" onclick="generateMonthlyYearlyReport()" style="margin-top:0; width:150px; background:#16a34a;">রিপোর্ট তৈরি / পুরোনো রিপোর্ট খুঁজুন</button>
 </div>
 <div style="font-size:12px;color:#166534;margin-bottom:8px;">মাস, বছর ও প্রকল্পের নাম দিয়ে আগের অনুমোদিত আয়-ব্যয়ের হিসাব খুঁজুন। আয়/ব্যয় ০ হলেও রিপোর্ট প্রিভিউ ও PDF ডাউনলোড চালু থাকবে।</div>
@@ -1836,6 +1855,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
                 
                 if(infoNoticeDashboard) infoNoticeDashboard.classList.remove('hidden');
                 loadNoticesForInfoSecretary();
+                if(financeMonthlyYearlyDashboard) financeMonthlyYearlyDashboard.classList.remove('hidden');
                 
                 switchDashboard('home', true);
             } else if(role === 'Manager') {
@@ -2107,8 +2127,9 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
         // Read-only lookup: no old account or member record is changed/deleted.
         Promise.all([
             database.ref('registeredUsers').once('value'),
-            database.ref('members').once('value')
-        ]).then(([usersSnap, membersSnap]) => {
+            database.ref('members').once('value'),
+            database.ref('deletedUsers').once('value').catch(() => ({ exists: () => false, forEach: () => {} }))
+        ]).then(([usersSnap, membersSnap, deletedSnap]) => {
             const users = [];
             if (usersSnap.exists()) {
                 usersSnap.forEach(child => {
@@ -2133,6 +2154,23 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
                 'phone', 'userId', 'userID', 'id', 'memberId', 'memberID',
                 'username', 'email', 'loginId', 'loginID'
             ]));
+
+            // If there is no active registered account but this identifier is archived
+            // in deletedUsers, prevent an old members record from bypassing deletion.
+            if (!matchedUser && deletedSnap && deletedSnap.exists && deletedSnap.exists()) {
+                let archivedMatch = false;
+                deletedSnap.forEach(child => {
+                    const archived = child.val() || {};
+                    if (matchesIdentifier(archived, [
+                        'phone','mobile','mobileNumber','userId','userID','id','memberId',
+                        'memberID','uniqueId','uniqueID','pslId','PSL_ID','username','email','loginId'
+                    ])) archivedMatch = true;
+                });
+                if (archivedMatch) {
+                    alert('এই আইডির পুরোনো অ্যাকাউন্ট ডিলিট করা হয়েছে। পুরোনো সদস্য রেকর্ড দিয়ে লগইন করা যাবে না; নতুন করে সাইনআপ করুন।');
+                    return;
+                }
+            }
 
             // If the entered value is an older member/PSL ID, map it to that
             // member's registered phone account.
@@ -2953,8 +2991,8 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
     let financeSecretaryReportReviewed = false;
 
     function reviewFinanceSecretaryReport() {
-        if (localStorage.getItem('userRole') !== 'FinanceSecretary') {
-            alert('শুধু Finance Secretary আইডি থেকে আর্থিক রিপোর্ট যাচাই করা যাবে।');
+        if (!['FinanceSecretary','Information','Admin'].includes(localStorage.getItem('userRole'))) {
+            alert('এই রিপোর্ট যাচাই করার অনুমতি নেই।');
             return;
         }
         const area = document.getElementById('financialReportResultArea');
@@ -2970,52 +3008,62 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
     }
 
     function generateMonthlyYearlyReport() {
-        if (localStorage.getItem('userRole') !== 'FinanceSecretary') {
-            alert('শুধু Finance Secretary আইডি থেকে এই রিপোর্ট তৈরি/সার্চ করা যাবে.');
+        const currentRole = localStorage.getItem('userRole');
+        if (!['FinanceSecretary','Information','Admin'].includes(currentRole)) {
+            alert('এই রিপোর্ট দেখার অনুমতি নেই।');
             return;
         }
         financeSecretaryReportReviewed = false;
         const downloadBtn = document.getElementById('financeReportDownloadBtn');
         if (downloadBtn) downloadBtn.disabled = true;
         const reviewStatus = document.getElementById('financeReportReviewStatus');
-        if (reviewStatus) reviewStatus.textContent = 'রিপোর্ট তৈরি/সার্চ হয়েছে; PDF ডাউনলোডের আগে প্রিভিউ যাচাই করুন।';
-        const month = document.getElementById('reportMonthSelect').value;
-        const year = document.getElementById('reportYearSelect').value;
+        if (reviewStatus) reviewStatus.textContent = 'রিপোর্ট তৈরি হচ্ছে; PDF ডাউনলোডের আগে প্রিভিউ যাচাই করুন।';
+        const month = document.getElementById('reportMonthSelect')?.value || 'all';
+        const year = document.getElementById('reportYearSelect')?.value || String(new Date().getFullYear());
         const projectQuery = (document.getElementById('reportProjectSearch')?.value || '').trim().toLocaleLowerCase('bn-BD');
+        const dateIdQuery = (document.getElementById('reportDateIdSearch')?.value || '').trim().toLocaleLowerCase('bn-BD');
         const monthNames = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
         const reportCode = 'REP-' + Math.floor(100000 + Math.random() * 900000);
-
-        database.ref('transactions').once('value', (snap) => {
+        if (!database) { alert('Firebase ডাটাবেইজ সংযোগ পাওয়া যায়নি।'); return; }
+        database.ref('transactions').once('value').then((snap) => {
             const txs = snap.val() || {};
             let totalInc = 0, totalExp = 0, rows = 0;
-            let reportHtml = `<div><b>${month === 'all' ? 'সকল মাস' : month} ${year} — আয়-ব্যয় রিপোর্ট</b><br><small>রিপোর্ট কোড: ${reportCode} | প্রকল্প: ${projectQuery || 'সকল প্রকল্প'}</small></div><br>`;
-            reportHtml += `<table style="width:100%; border-collapse:collapse; font-size:12px;">`;
-            reportHtml += `<tr style="background:#16a34a; color:white;"><th style="padding:6px;border:1px solid #cbd5e1;">তারিখ</th><th style="padding:6px;border:1px solid #cbd5e1;">প্রকল্প / বিবরণ</th><th style="padding:6px;border:1px solid #cbd5e1;">আয়/ব্যয়</th><th style="padding:6px;border:1px solid #cbd5e1;text-align:right;">পরিমাণ</th></tr>`;
+            let reportHtml = `<div style="color:#111;background:#fff"><div style="text-align:center"><h2>ঐক্য সাফল্যের বিজয় — আয়-ব্যয় রিপোর্ট</h2><b>${month === 'all' ? 'সকল মাস / বাৎসরিক' : month} ${year}</b><br><small>রিপোর্ট কোড: ${reportCode} | প্রকল্প: ${projectQuery || 'সকল প্রকল্প'} | সার্চ: ${dateIdQuery || 'নেই'}</small></div><br>`;
+            reportHtml += `<table style="width:100%;border-collapse:collapse;font-size:12px;">`;
+            reportHtml += `<tr style="background:#16a34a;color:white;"><th style="padding:6px;border:1px solid #cbd5e1;">হিসাব ID / তারিখ</th><th style="padding:6px;border:1px solid #cbd5e1;">প্রকল্প / বিবরণ</th><th style="padding:6px;border:1px solid #cbd5e1;">আয়/ব্যয়</th><th style="padding:6px;border:1px solid #cbd5e1;text-align:right;">পরিমাণ</th></tr>`;
             Object.keys(txs).forEach(k => {
                 const tx = txs[k] || {};
-                if (tx.status !== 'Approved') return;
-                const d = new Date(Number(tx.timestamp || 0));
-                if (!tx.timestamp || String(d.getFullYear()) !== String(year)) return;
+                if (tx.status !== 'Approved' && tx.adminApproval !== 'Approved' && tx.managerApproval !== 'Approved') return;
+                const rawDate = tx.timestamp ? Number(tx.timestamp) : Date.parse(tx.date || '');
+                const d = new Date(rawDate || 0);
+                if (!rawDate || Number.isNaN(d.getTime()) || String(d.getFullYear()) !== String(year)) return;
                 if (month !== 'all' && monthNames[d.getMonth()] !== month) return;
                 const projectName = tx.projectName || tx.project || 'সাধারণ হিসাব';
+                const dateText = tx.date || d.toLocaleDateString('bn-BD');
+                const searchable = [k, tx.id, tx.memberId, tx.memberID, tx.name, tx.category, tx.date, dateText, projectName, tx.submittedBy].filter(Boolean).join(' ').toLocaleLowerCase('bn-BD');
                 if (projectQuery && !String(projectName + ' ' + (tx.category || '') + ' ' + (tx.name || '')).toLocaleLowerCase('bn-BD').includes(projectQuery)) return;
+                if (dateIdQuery && !searchable.includes(dateIdQuery)) return;
                 const amount = Number(tx.amount) || 0;
                 if (tx.type === 'Income') totalInc += amount;
                 if (tx.type === 'Expense') totalExp += amount;
                 rows++;
-                const dateText = tx.date || d.toLocaleDateString('bn-BD');
-                reportHtml += `<tr><td style="padding:6px;border:1px solid #cbd5e1;">${dateText}</td><td style="padding:6px;border:1px solid #cbd5e1;">${projectName} — ${tx.category || ''} (${tx.name || ''})</td><td style="padding:6px;border:1px solid #cbd5e1;">${tx.type === 'Income' ? 'আয়' : 'ব্যয়'}</td><td style="padding:6px;border:1px solid #cbd5e1;text-align:right;">৳ ${amount}</td></tr>`;
+                reportHtml += `<tr><td style="padding:6px;border:1px solid #cbd5e1;">${k}<br>${dateText}</td><td style="padding:6px;border:1px solid #cbd5e1;">${projectName} — ${tx.category || ''} (${tx.name || ''})</td><td style="padding:6px;border:1px solid #cbd5e1;">${tx.type === 'Income' ? 'আয়' : 'ব্যয়'}</td><td style="padding:6px;border:1px solid #cbd5e1;text-align:right;">৳ ${amount}</td></tr>`;
             });
-            if (!rows) reportHtml += `<tr><td colspan="4" style="padding:12px;text-align:center;border:1px solid #cbd5e1;">এই সময়/প্রকল্পে অনুমোদিত হিসাব পাওয়া যায়নি। আয়: ৳ ০ | ব্যয়: ৳ ০ — শূন্য রিপোর্টও ডাউনলোড করা যাবে।</td></tr>`;
-            reportHtml += `</table><br><b>মোট অনুমোদিত হিসাব:</b> ${rows}টি<br>`;
-            reportHtml += `<b>সর্বমোট আয়:</b> ৳ ${totalInc} <br><b>সর্বমোট ব্যয়:</b> ৳ ${totalExp} <br><b>নিট ব্যালেন্স:</b> ৳ ${totalInc - totalExp}`;
-            document.getElementById('financialReportResultArea').innerHTML = reportHtml;
-        }, (error) => alert('রিপোর্ট পড়া যায়নি: ' + (error.message || error)));
+            if (!rows) reportHtml += `<tr><td colspan="4" style="padding:12px;text-align:center;border:1px solid #cbd5e1;">এই সময়/সার্চে অনুমোদিত হিসাব পাওয়া যায়নি। আয়: ৳ ০ | ব্যয়: ৳ ০ — শূন্য রিপোর্টও ডাউনলোড করা যাবে।</td></tr>`;
+            reportHtml += `</table><br><b>মোট অনুমোদিত হিসাব:</b> ${rows}টি<br><b>সর্বমোট আয়:</b> ৳ ${totalInc} <br><b>সর্বমোট ব্যয়:</b> ৳ ${totalExp} <br><b>নিট ব্যালেন্স:</b> ৳ ${totalInc - totalExp}</div>`;
+            const area = document.getElementById('financialReportResultArea');
+            if (area) area.innerHTML = reportHtml;
+            if (reviewStatus) reviewStatus.textContent = 'রিপোর্ট তৈরি হয়েছে। ডাউনলোডের আগে প্রিভিউ / যাচাই করুন।';
+        }).catch(error => {
+            console.error('Financial report error:', error);
+            if (reviewStatus) reviewStatus.textContent = 'রিপোর্ট তৈরি হয়নি। ইন্টারনেট/Firebase অনুমতি পরীক্ষা করুন।';
+            alert('রিপোর্ট পড়া যায়নি: ' + (error.message || error));
+        });
     }
 
-    function downloadFinancialReportA4PDF() {
-        if (localStorage.getItem('userRole') !== 'FinanceSecretary') {
-            alert('শুধু Finance Secretary আইডি থেকে আর্থিক রিপোর্ট PDF ডাউনলোড করা যাবে।');
+    async function downloadFinancialReportA4PDF() {
+        if (!['FinanceSecretary','Information','Admin'].includes(localStorage.getItem('userRole'))) {
+            alert('এই রিপোর্ট PDF ডাউনলোডের অনুমতি নেই।');
             return;
         }
         if (!financeSecretaryReportReviewed) {
@@ -3023,14 +3071,29 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
             return;
         }
         const element = document.getElementById('financialReportResultArea');
-        const opt = {
-          margin:       [5, 8, 8, 8],
-          filename:     'Financial_Income_Expense_Report.pdf',
-          image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, scrollY: 0 },
-          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
+        const btn = document.getElementById('financeReportDownloadBtn');
+        if (!element || !element.textContent.trim()) { alert('আগে রিপোর্ট তৈরি করুন।'); return; }
+        if (!window.html2pdf) {
+            alert('PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ পরীক্ষা করে পেজটি আবার খুলুন। প্রয়োজনে ব্রাউজারের Print > Save as PDF ব্যবহার করুন।');
+            return;
+        }
+        const originalText = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.innerHTML = 'PDF তৈরি হচ্ছে…'; }
+        try {
+            await window.html2pdf().set({
+                margin: [5, 8, 8, 8],
+                filename: 'Financial_Report_' + new Date().toISOString().slice(0,10) + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css','legacy'] }
+            }).from(element).save();
+        } catch (err) {
+            console.error('Financial PDF download failed:', err);
+            alert('PDF তৈরি/ডাউনলোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন। বিস্তারিত: ' + (err.message || err));
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerHTML = originalText || 'যাচাইয়ের পর রিপোর্ট A4 PDF ডাউনলোড'; }
+        }
     }
 
     function submitInfoNotice() {
@@ -4084,49 +4147,48 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
         if(!tbody) return;
         tbody.innerHTML = '';
         const currentRole = localStorage.getItem('userRole');
-
-        Object.keys(data).forEach(key => {
-            const tx = data[key];
-            let actionHtml = '';
-
-            if(currentRole === 'FinanceSecretary') {
-                if(tx.financeApproval === 'Pending') {
-                    actionHtml = `<button onclick="approveTxStep('${key}', 'finance')" class="btn-edit" style="background:#16a34a;">অর্থ সম্পাদক এপ্রুভ</button>`;
-                } else {
-                    actionHtml = `<span class="st-approved">অনুমোদিত (${tx.financeApprovedBy || 'FS'})</span>`;
-                }
-            } else if(currentRole === 'Manager') {
-                if(tx.financeApproval === 'Approved' && tx.managerApproval === 'Pending') {
-                    actionHtml = `<button onclick="approveTxStep('${key}', 'manager')" class="btn-edit" style="background:#16a34a;">ম্যানেজার এপ্রুভ</button>`;
-                } else if(tx.managerApproval === 'Approved') {
-                    actionHtml = `<span class="st-approved">অনুমোদিত (${tx.managerApprovedBy || 'Mgr'})</span>`;
-                } else {
-                    actionHtml = `<span class="st-pending">অর্থ সম্পাদকের এপ্রুভ বাকি</span>`;
-                }
-            } else if(currentRole === 'Admin') {
-                if(tx.managerApproval === 'Approved' && tx.adminApproval === 'Pending') {
-                    actionHtml = `<button onclick="approveTxStep('${key}', 'admin')" class="btn-edit" style="background:#16a34a;">এডমিন এপ্রুভ [চূড়ান্ত]</button>`;
-                } else if(tx.adminApproval === 'Approved') {
-                    actionHtml = `<span class="st-approved">চূড়ান্ত অনুমোদিত</span>`;
-                } else {
-                    actionHtml = `<span class="st-pending">পূর্ববর্তী এপ্রুভ বাকি</span>`;
-                }
-            } else {
-                actionHtml = `<span class="${tx.status === 'Approved' ? 'st-approved' : 'st-pending'}">${tx.status}</span>`;
-            }
-
-            let typeBadge = tx.type === 'Income' ? '<span style="color:green; font-weight:bold;">[আয়]</span>' : '<span style="color:red; font-weight:bold;">[ব্যয়]</span>';
-
-            tbody.innerHTML += `
-                <tr>
-                    <td>${tx.date}</td>
-                    <td><b>${tx.name}</b> (${tx.memberId})<br>${typeBadge} ${tx.category}</td>
-                    <td>${tx.paymentMethod}<span class="account-text">${tx.accountNo}</span></td>
-                    <td><b>৳ ${tx.amount}</b></td>
-                    <td><span class="${tx.status === 'Approved' ? 'st-approved' : 'st-pending'}">${tx.status}</span></td>
-                    <td>${actionHtml}</td>
-                </tr>`;
+        const entries = Object.keys(data || {}).map(key => ({key, tx: data[key] || {}}));
+        const isPending = tx => {
+            const status = String(tx.status || '').toLowerCase();
+            return status === 'pending' || String(tx.financeApproval || '').toLowerCase() === 'pending' ||
+                String(tx.managerApproval || '').toLowerCase() === 'pending' ||
+                String(tx.adminApproval || '').toLowerCase() === 'pending' ||
+                (!status && (tx.financeApproval !== 'Approved' || tx.managerApproval !== 'Approved' || tx.adminApproval !== 'Approved'));
+        };
+        entries.sort((a,b) => {
+            const ap = isPending(a.tx), bp = isPending(b.tx);
+            if (ap !== bp) return ap ? -1 : 1;
+            const at = Number(a.tx.timestamp || Date.parse(a.tx.date || '') || 0);
+            const bt = Number(b.tx.timestamp || Date.parse(b.tx.date || '') || 0);
+            return bt - at;
         });
+        entries.forEach(({key, tx}) => {
+            let actionHtml = '';
+            if(currentRole === 'FinanceSecretary') {
+                if(tx.financeApproval === 'Pending') actionHtml = `<button onclick="approveTxStep('${key}', 'finance')" class="btn-edit" style="background:#16a34a;">অর্থ সম্পাদক এপ্রুভ</button>`;
+                else actionHtml = `<span class="st-approved">অনুমোদিত (${tx.financeApprovedBy || 'FS'})</span>`;
+            } else if(currentRole === 'Manager') {
+                if(tx.financeApproval === 'Approved' && tx.managerApproval === 'Pending') actionHtml = `<button onclick="approveTxStep('${key}', 'manager')" class="btn-edit" style="background:#16a34a;">ম্যানেজার এপ্রুভ</button>`;
+                else if(tx.managerApproval === 'Approved') actionHtml = `<span class="st-approved">অনুমোদিত (${tx.managerApprovedBy || 'Mgr'})</span>`;
+                else actionHtml = `<span class="st-pending">অর্থ সম্পাদকের এপ্রুভ বাকি</span>`;
+            } else if(currentRole === 'Admin') {
+                if(tx.managerApproval === 'Approved' && tx.adminApproval === 'Pending') actionHtml = `<button onclick="approveTxStep('${key}', 'admin')" class="btn-edit" style="background:#16a34a;">এডমিন এপ্রুভ [চূড়ান্ত]</button>`;
+                else if(tx.adminApproval === 'Approved') actionHtml = `<span class="st-approved">চূড়ান্ত অনুমোদিত</span>`;
+                else actionHtml = `<span class="st-pending">পূর্ববর্তী এপ্রুভ বাকি</span>`;
+            } else {
+                actionHtml = `<span class="${tx.status === 'Approved' ? 'st-approved' : 'st-pending'}">${tx.status || 'Pending'}</span>`;
+            }
+            const typeBadge = tx.type === 'Income' ? '<span style="color:green;font-weight:bold;">[আয়]</span>' : '<span style="color:red;font-weight:bold;">[ব্যয়]</span>';
+            tbody.innerHTML += `<tr>
+                <td>${tx.date || '-'}</td>
+                <td><b>${tx.name || '-'}</b> (${tx.memberId || tx.id || '-'})<br>${typeBadge} ${tx.category || '-'}</td>
+                <td>${tx.paymentMethod || '-'}<span class="account-text">${tx.accountNo || ''}</span></td>
+                <td><b>৳ ${tx.amount || 0}</b><small class="account-text">হিসাব ID: ${key}</small></td>
+                <td><span class="${tx.status === 'Approved' ? 'st-approved' : 'st-pending'}">${tx.status || 'Pending'}</span></td>
+                <td>${actionHtml}</td>
+            </tr>`;
+        });
+        if (!entries.length) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">কোনো হিসাব পাওয়া যায়নি।</td></tr>';
     }
 
     function calculateStats(data) {
@@ -4167,16 +4229,16 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
     }
 
     function filterTransactions() {
-        const query = document.getElementById('txSearchInput').value.toLowerCase();
+        const query = (document.getElementById('txSearchInput')?.value || '').trim().toLocaleLowerCase('bn-BD');
         const filtered = {};
-        Object.keys(allTransactions).forEach(key => {
-            const tx = allTransactions[key];
-            if(
-                (tx.name && tx.name.toLowerCase().includes(query)) ||
-                (tx.category && tx.category.toLowerCase().includes(query))
-            ) {
-                filtered[key] = tx;
-            }
+        Object.keys(allTransactions || {}).forEach(key => {
+            const tx = allTransactions[key] || {};
+            const searchable = [
+                key, tx.id, tx.memberId, tx.memberID, tx.name, tx.category, tx.date,
+                tx.projectName, tx.project, tx.paymentMethod, tx.status, tx.type,
+                tx.submittedBy, tx.accountNo, tx.financeApproval, tx.managerApproval, tx.adminApproval
+            ].filter(v => v !== undefined && v !== null).join(' ').toLocaleLowerCase('bn-BD');
+            if (!query || searchable.includes(query)) filtered[key] = tx;
         });
         renderTransactions(filtered);
     }
@@ -4550,7 +4612,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
  function addRolePanel(){
    const host=$('activeUsersDashboard'); if(!host||$('additiveRolePanel'))return;
    const p=document.createElement('div');p.id='additiveRolePanel';p.className='card-3d';
-   p.innerHTML=`<h2>এডমিন: সকল আইডির দায়িত্ব তালিকা</h2><p>শুধু নির্ধারিত এডমিন আইডি থেকে ব্যবহার করুন।</p><input id="roleSearchAdd" class="input-3d" placeholder="নাম / ফোন / PSL ID দিয়ে খুঁজুন"><div class="table-responsive"><table><thead><tr><th>নাম</th><th>আইডি/ফোন</th><th>বর্তমান রোল</th><th>নতুন রোল</th><th>সেভ</th></tr></thead><tbody id="roleRowsAdd"><tr><td colspan="5">লোড করুন...</td></tr></tbody></table></div><button class="btn-3d" id="reloadRolesAdd">রোল তালিকা রিফ্রেশ</button>`;
+   p.innerHTML=`<h2>এডমিন: সকল আইডির রোল পরিবর্তন ও আইডি ডিলিট</h2><p>শুধু মূল এডমিন আইডি থেকে রোল পরিবর্তন বা আইডি ডিলিট করুন। ডিলিটের পর ওই ব্যবহারকারী একই মোবাইল/আইডি দিয়ে নতুন করে সাইনআপ করতে পারবেন।</p><input id="roleSearchAdd" class="input-3d" placeholder="নাম / ফোন / PSL ID দিয়ে খুঁজুন"><div class="table-responsive"><table><thead><tr><th>নাম</th><th>আইডি/ফোন</th><th>বর্তমান রোল</th><th>নতুন রোল</th><th>অ্যাকশন</th></tr></thead><tbody id="roleRowsAdd"><tr><td colspan="5">লোড করুন...</td></tr></tbody></table></div><button class="btn-3d" id="reloadRolesAdd">রোল তালিকা রিফ্রেশ</button>`;
    host.appendChild(p);$('reloadRolesAdd').onclick=loadRoles;$('roleSearchAdd').oninput=renderRoles;
  }
  let roleRecords=[];
@@ -4561,8 +4623,8 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
   }).catch(e=>alert('তালিকা লোড হয়নি: '+e.message));
  }
  function renderRoles(){const tb=$('roleRowsAdd');if(!tb)return;const q=($('roleSearchAdd')?.value||'').toLowerCase();const rows=roleRecords.filter(v=>[v.name,v.fullName,v.phone,v.id,v.memberId,v.pslId,v.role,v.category].join(' ').toLowerCase().includes(q));
-  tb.innerHTML=rows.map((v,i)=>`<tr><td>${esc(v.name||v.fullName||'-')}</td><td>${esc(v.phone||v.id||v.memberId||v._ident)}</td><td>${esc(roles[v.role||v.category]||v.role||v.category||'সদস্য')}</td><td><select class="input-3d" id="addRoleSel${i}">${Object.entries(roles).filter(([k])=>k!=='Member').map(([k,n])=>`<option value="${k}" ${k===(v.role||v.category||'Staff')?'selected':''}>${n}</option>`).join('')}</select></td><td><button class="btn-edit" id="addRoleSave${i}">সেভ</button></td></tr>`).join('')||'<tr><td colspan="5">কোনো আইডি পাওয়া যায়নি।</td></tr>';
-  rows.forEach((v,i)=>{const b=$('addRoleSave'+i);if(b)b.onclick=()=>saveRole(v,$('addRoleSel'+i).value,b);});
+  tb.innerHTML=rows.map((v,i)=>`<tr><td>${esc(v.name||v.fullName||'-')}</td><td>${esc(v.phone||v.id||v.memberId||v._ident)}</td><td>${esc(roles[v.role||v.category]||v.role||v.category||'সদস্য')}</td><td><select class="input-3d" id="addRoleSel${i}">${Object.entries(roles).filter(([k])=>k!=='Member').map(([k,n])=>`<option value="${k}" ${k===(v.role||v.category||'Staff')?'selected':''}>${n}</option>`).join('')}</select></td><td><button class="btn-edit" id="addRoleSave${i}">রোল সেভ</button> <button class="btn-delete" id="addRoleDelete${i}">আইডি ডিলিট</button></td></tr>`).join('')||'<tr><td colspan="5">কোনো আইডি পাওয়া যায়নি।</td></tr>';
+  rows.forEach((v,i)=>{const b=$('addRoleSave'+i);if(b)b.onclick=()=>saveRole(v,$('addRoleSel'+i).value,b);const del=$('addRoleDelete'+i);if(del)del.onclick=()=>deleteRoleAccount(v,del);});
  }
  function saveRole(v,newRole,b){
   if(!isAdmin()){alert('অনুমতি নেই। শুধু নির্ধারিত এডমিন আইডি রোল পরিবর্তন করতে পারবেন।');return;}
@@ -4585,6 +4647,25 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
    .catch(e=>alert('রোল সেভ হয়নি: '+(e&&e.message?e.message:'Firebase সংযোগ/নিয়ম পরীক্ষা করুন।')))
    .finally(()=>b.disabled=false);
  }
+
+ function deleteRoleAccount(v,b){
+  if(!isAdmin()){alert('শুধু নির্ধারিত মূল এডমিন আইডি থেকে ডিলিট করা যাবে।');return;}
+  const d=db();if(!d||!v){alert('ডাটাবেইজ সংযোগ বা আইডি পাওয়া যায়নি।');return;}
+  const ids=[v.phone,v.mobile,v.mobileNumber,v.userId,v.userID,v.id,v.memberId,v.memberID,v.pslId,v.PSL_ID,v.username,v.email,v._ident].filter(Boolean).map(x=>String(x).trim().toLowerCase());
+  if(ids.some(x=>norm(x)===norm(ADMIN_PHONE))){alert('মূল এডমিন আইডি ডিলিট করা যাবে না।');return;}
+  if(!confirm('এই আইডি ডিলিট করবেন? ডিলিটের পর ব্যবহারকারী নতুন করে সাইনআপ করতে পারবেন।'))return;
+  b.disabled=true;
+  Promise.all(['registeredUsers','members'].map(path=>d.ref(path).once('value'))).then(snaps=>{
+   const multi={},archived=[],usersSnap=snaps[0],membersSnap=snaps[1];
+   const match=x=>[x.phone,x.mobile,x.mobileNumber,x.userId,x.userID,x.id,x.memberId,x.memberID,x.pslId,x.PSL_ID,x.username,x.email,x.loginId,x.loginID].filter(Boolean).some(x=>ids.includes(String(x).trim().toLowerCase()));
+   usersSnap.forEach(c=>{const x=c.val()||{};if(match(x)){multi['registeredUsers/'+c.key]=null;archived.push({...x,deletedTimestamp:Date.now(),deletedBy:user()});}});
+   membersSnap.forEach(c=>{const x=c.val()||{};if(match(x)){multi['members/'+c.key+'/accountDeleted']=true;multi['members/'+c.key+'/accountDeletedAt']=Date.now();if(!archived.some(a=>match(a)))archived.push({...x,deletedTimestamp:Date.now(),deletedBy:user()});}});
+   if(!archived.length && v._path==='registeredUsers')archived.push({...v,deletedTimestamp:Date.now(),deletedBy:user()});
+   return Promise.all(archived.map(x=>d.ref('deletedUsers').push(x))).then(()=>d.ref().update(multi));
+  }).then(()=>{alert('আইডি ডিলিট হয়েছে। একই মোবাইল/আইডি দিয়ে নতুন করে সাইনআপ করা যাবে।');loadRoles();})
+   .catch(e=>alert('ডিলিট করা যায়নি: '+(e.message||e))).finally(()=>b.disabled=false);
+ }
+
  function identity(){
   const phone=user();let out={name:phone,psl:phone,designation:roles[role()]||role()};
   return db().ref('members').once('value').then(s=>{s.forEach(c=>{const m=c.val()||{};if([m.phone,m.mobile,m.id,m.memberId,m.userId,m.pslId,m.PSL_ID].some(x=>String(x||'')===phone)){out.name=m.name||m.fullName||phone;out.psl=m.pslId||m.PSL_ID||m.memberId||m.id||phone;out.designation=m.designation||roles[role()]||role();}});return out;});
