@@ -147,25 +147,7 @@
             gap: 10px;
         }
 
-        /* Mobile UI fix: prevent the native textarea resize grip from overlapping nearby controls. */
-        textarea.input-3d {
-            display: block;
-            width: 100%;
-            max-width: 100%;
-            resize: none;
-            overflow-y: auto;
-            -webkit-appearance: none;
-        }
-
-        /* Keep the finance report filters inside the screen on narrow phones. */
-        #financeMonthlyYearlyDashboard > div:first-of-type {
-            min-width: 0;
-        }
-        #financeMonthlyYearlyDashboard .input-3d,
-        #financeMonthlyYearlyDashboard select.input-3d {
-            min-width: 0;
-        }
-
+        #infoNoticeTextInput { resize: none; }
         .input-3d {
             width: 100%;
             padding: 12px 15px;
@@ -3062,7 +3044,8 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
     }
 
     async function downloadFinancialReportA4PDF() {
-        if (!['FinanceSecretary','Information','Admin'].includes(localStorage.getItem('userRole'))) {
+        const currentRole = String(localStorage.getItem('userRole') || '').trim();
+        if (!['FinanceSecretary', 'Information', 'Admin'].includes(currentRole)) {
             alert('এই রিপোর্ট PDF ডাউনলোডের অনুমতি নেই।');
             return;
         }
@@ -3070,29 +3053,95 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
             alert('ডাউনলোডের আগে রিপোর্ট প্রিভিউ / যাচাই করুন।');
             return;
         }
+
         const element = document.getElementById('financialReportResultArea');
         const btn = document.getElementById('financeReportDownloadBtn');
-        if (!element || !element.textContent.trim()) { alert('আগে রিপোর্ট তৈরি করুন।'); return; }
-        if (!window.html2pdf) {
-            alert('PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ পরীক্ষা করে পেজটি আবার খুলুন। প্রয়োজনে ব্রাউজারের Print > Save as PDF ব্যবহার করুন।');
+        if (!element || !element.textContent.trim() ||
+            element.textContent.includes('রিপোর্ট দেখতে উপরের বাটন')) {
+            alert('আগে রিপোর্ট তৈরি করুন।');
             return;
         }
+
         const originalText = btn ? btn.innerHTML : '';
-        if (btn) { btn.disabled = true; btn.innerHTML = 'PDF তৈরি হচ্ছে…'; }
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = 'PDF তৈরি হচ্ছে…';
+        }
+
+        const filename = 'Financial_Report_' +
+            new Date().toISOString().slice(0, 10) + '.pdf';
+
         try {
-            await window.html2pdf().set({
+            if (typeof window.html2pdf !== 'function') {
+                throw new Error('PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ চালু করে পেজটি রিফ্রেশ করুন।');
+            }
+
+            // Clone the report so the generated PDF has a stable white background
+            // and does not change the live preview or other app logic.
+            const reportClone = element.cloneNode(true);
+            reportClone.style.background = '#ffffff';
+            reportClone.style.color = '#111827';
+            reportClone.style.width = '100%';
+            reportClone.style.padding = '8px';
+            reportClone.style.boxSizing = 'border-box';
+            reportClone.querySelectorAll('table').forEach(table => {
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.style.maxWidth = '100%';
+            });
+
+            const worker = window.html2pdf().set({
                 margin: [5, 8, 8, 8],
-                filename: 'Financial_Report_' + new Date().toISOString().slice(0,10) + '.pdf',
+                filename: filename,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false,
+                    backgroundColor: '#ffffff',
+                    scrollY: 0,
+                    logging: false
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css','legacy'] }
-            }).from(element).save();
+                pagebreak: { mode: ['css', 'legacy'] }
+            }).from(reportClone);
+
+            // Blob + download link is more reliable in mobile browsers than
+            // relying only on html2pdf's internal save() click.
+            try {
+                const pdfBlob = await worker.outputPdf('blob');
+                if (!(pdfBlob instanceof Blob) || pdfBlob.size < 100) {
+                    throw new Error('PDF ফাইল তৈরি হয়নি।');
+                }
+                const blobUrl = URL.createObjectURL(pdfBlob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+            } catch (blobError) {
+                console.warn('Blob download fallback:', blobError);
+                // Keep the library's built-in save method as a secondary route.
+                await window.html2pdf().set({
+                    margin: [5, 8, 8, 8],
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'] }
+                }).from(reportClone).save();
+            }
         } catch (err) {
             console.error('Financial PDF download failed:', err);
-            alert('PDF তৈরি/ডাউনলোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন। বিস্তারিত: ' + (err.message || err));
+            alert('PDF তৈরি/ডাউনলোড করা যায়নি। ইন্টারনেট সংযোগ চালু আছে কি না দেখুন, তারপর আবার চেষ্টা করুন। সমস্যা থাকলে ব্রাউজারের মেনু থেকে Print / প্রিন্ট > Save as PDF ব্যবহার করুন।\nবিস্তারিত: ' + (err.message || err));
         } finally {
-            if (btn) { btn.disabled = false; btn.innerHTML = originalText || 'যাচাইয়ের পর রিপোর্ট A4 PDF ডাউনলোড'; }
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalText || '<i class="fa-solid fa-download"></i> যাচাইয়ের পর রিপোর্ট A4 PDF ডাউনলোড';
+            }
         }
     }
 
