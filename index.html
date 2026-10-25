@@ -3106,10 +3106,8 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
                 pagebreak: { mode: ['css', 'legacy'] }
             }).from(reportClone);
 
-            // Android WebView APK workaround:
-            // Let html2pdf/FileSaver perform the download with the explicit filename.
-            // Avoid creating/clicking a second blob: URL, which can make some APK
-            // WebView wrappers show an empty "Save As" filename.
+            // APK/WebView compatibility: pass the filename explicitly to html2pdf save.
+            // Keep the configured filename and avoid a blob URL that can trigger a blank Save As field.
             await worker.save(filename);
         } catch (err) {
             console.error('Financial PDF download failed:', err);
@@ -3243,7 +3241,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
           html2canvas:  { scale: 2, scrollY: 0 },
           jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        html2pdf().set(opt).from(element).save();
+        html2pdf().set(opt).from(element).save(opt.filename);
     }
 
     function requestDeletePermission(noticeKey) {
@@ -3553,7 +3551,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
         if(localStorage.getItem('userRole') !== 'Admin') { alert('এই অপশনটি শুধু এডমিনের জন্য।'); return; }
         const element=document.getElementById('a4ReceiptArea');
         const opt={margin:0,filename:'Money_Receipt_A4.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
-        html2pdf().set(opt).from(element).save();
+        html2pdf().set(opt).from(element).save(opt.filename);
     }
 
     async function downloadA4ReceiptPDF() {
@@ -3863,7 +3861,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
                 html2canvas: { scale: 2, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', scrollY: 0 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['css', 'legacy'] }
-            }).from(content).save();
+            }).from(content).save(fileName);
             // Log the download attempt without making a successful file download depend on logging.
             try {
                 await database.ref('downloadReviews').push({
@@ -4474,7 +4472,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
           html2canvas:  { scale: 2, scrollY: 0 },
           jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        html2pdf().set(opt).from(element).save();
+        html2pdf().set(opt).from(element).save(opt.filename);
     }
 
     function closeProjectPrintModal() {
@@ -4747,14 +4745,14 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
  const role=()=>localStorage.getItem('userRole')||'';
  const who=()=>String(localStorage.getItem('loggedInUser')||'');
  const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const allowed=()=>['Admin','Manager','FinanceSecretary','Information'].includes(role());
+ const allowed=()=>['Admin','Information'].includes(role());
  const normPhone=v=>{let d=String(v||'').replace(/[^\d]/g,''); if(d.startsWith('00880'))d=d.slice(2); if(d.startsWith('880'))return '+'+d; if(d.startsWith('0'))return '+88'+d; if(d.length===10)return '+880'+d; return '+'+d;};
  let otpConfirmation=null, otpVerifier=null, otpPhone='';
  function setupFinancePanel(){
   const home=$('homeDashboard'); if(!home || $('incomeExpenseReportAdd'))return;
   const card=document.createElement('section'); card.id='incomeExpenseReportAdd';card.className='card-3d hidden';
   card.innerHTML=`<h2><i class="fa-solid fa-file-pdf"></i> আয় ও ব্যয় হিসাব — আলাদা PDF রিপোর্ট</h2>
-   <p style="margin-bottom:10px">এডমিন, ম্যানেজার, অর্থ সম্পাদক ও তথ্য সম্পাদক এই রিপোর্ট দেখতে পারবেন। প্রতিটি PDF-তে স্বয়ংক্রিয় রেফারেন্স কোড থাকবে।</p>
+   <p style="margin-bottom:10px">শুধু এডমিন ও তথ্য সম্পাদক এই রিপোর্ট দেখতে পারবেন। প্রতিটি PDF-তে স্বয়ংক্রিয় রেফারেন্স কোড থাকবে।</p>
    <div class="form-group"><label>হিসাবের ধরন</label><select id="ieTypeAdd" class="input-3d"><option value="Income">আয় হিসাব</option><option value="Expense">ব্যয় হিসাব</option></select></div>
    <div class="form-group"><label>সময়কাল</label><select id="iePeriodAdd" class="input-3d"><option value="current">বর্তমান বছর</option><option value="previous">পূর্বের বছর</option><option value="all">সকল সংরক্ষিত হিসাব</option></select></div>
    <div class="form-group"><label>বছর</label><input id="ieYearAdd" type="number" class="input-3d" value="${new Date().getFullYear()}" min="2000" max="2100"></div>
@@ -4774,7 +4772,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
   if(allowed() && card && !$('ieLoadAdd').dataset.bound){$('ieLoadAdd').dataset.bound='1';}
  }
  function loadFinanceRows(){
-  if(!allowed()){alert('এডমিন, ম্যানেজার, অর্থ সম্পাদক ও তথ্য সম্পাদক এই রিপোর্ট দেখতে পারবেন।');return;}
+  if(!allowed()){alert('শুধু এডমিন ও তথ্য সম্পাদক এই রিপোর্ট দেখতে পারবেন।');return;}
   const d=db();if(!d){alert('Firebase Database সংযোগ পাওয়া যায়নি।');return;}
   const type=$('ieTypeAdd').value, period=$('iePeriodAdd').value, year=Number($('ieYearAdd').value)||new Date().getFullYear();
   $('ieRowsAdd').innerHTML='<tr><td colspan="5">ডাটাবেইজ থেকে লোড হচ্ছে...</td></tr>';$('iePdfAdd').disabled=true;
