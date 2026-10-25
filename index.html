@@ -2928,7 +2928,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
         if(!root) throw new Error('PDF প্রিভিউ পাওয়া যায়নি।');
         const imgs=Array.from(root.querySelectorAll('img'));
         await Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve;setTimeout(resolve,5000);})));
-        return html2pdf().set({margin:[5,8,8,8],filename,image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.pdf-keep-together']}}).from(root).save();
+        return html2pdf().set({margin:[5,8,8,8],filename,image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.pdf-keep-together']}}).from(root).save(filename);
     }
     function reviewManagerIdCardPDF() {
         if(localStorage.getItem('userRole')!=='Manager'){alert('শুধু ম্যানেজার আইডি থেকে এই কাজ করা যাবে।');return;}
@@ -3132,7 +3132,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
                     html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                     pagebreak: { mode: ['css', 'legacy'] }
-                }).from(reportClone).save();
+                }).from(reportClone).save(filename);
             }
         } catch (err) {
             console.error('Financial PDF download failed:', err);
@@ -4725,7 +4725,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
   box.innerHTML=`<h2 style="text-align:center">এসো ভবিষ্যৎ গড়ি — ব্যয় হিসাব</h2><hr><p><b>রেফারেন্স:</b> ${esc(key)} &nbsp; <b>তারিখ:</b> ${esc(tx.date||'-')}</p><p><b>প্রকল্প/খাত:</b> ${esc(tx.projectName||tx.category||'-')}</p><p><b>বিবরণ:</b> ${esc(tx.category||'-')}</p><p><b>পরিমাণ:</b> ৳ ${Number(tx.amount)||0}</p><p><b>জমাদানকারী:</b> ${esc(id.name)}</p><p><b>PSL ID:</b> ${esc(id.psl)}</p><p><b>পদবি:</b> ${esc(id.designation)}</p><p><b>লগইন আইডি:</b> ${esc(tx.submittedBy||user())}</p><p><b>স্ট্যাটাস:</b> ${esc(tx.managerApproval==='Approved'?'ম্যানেজার অনুমোদিত':'পর্যালোচনাধীন')}</p><hr><p style="font-size:11px">এই নথি অ্যাপের সংরক্ষিত ব্যয় হিসাব থেকে তৈরি।</p>`;
   if(!download){const w=window.open('','_blank');if(!w){alert('PDF প্রিভিউ খুলতে পপ-আপ অনুমতি দিন।');return;}w.document.write('<html><head><title>ব্যয় PDF প্রিভিউ</title></head><body>'+box.outerHTML+'</body></html>');w.document.close();return;}
   if(!window.html2pdf){alert('PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন।');return;}
-  return html2pdf().set({margin:[5,8,8,8],filename:'Expense_'+key+'.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(box).save().then(()=>db().ref('downloadReviews').push({type:'expense_pdf',transactionKey:key,downloadedBy:user(),downloadedByRole:role(),timestamp:Date.now()}));
+  return html2pdf().set({margin:[5,8,8,8],filename:'Expense_'+key+'.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(box).save('Expense_'+key+'.pdf').then(()=>db().ref('downloadReviews').push({type:'expense_pdf',transactionKey:key,downloadedBy:user(),downloadedByRole:role(),timestamp:Date.now()}));
  });}
  window.reviewExpensePdfAdd=(key)=>{if(!['Admin','Manager','FinanceSecretary','Information'].includes(role()))return alert('অনুমতি নেই');db().ref('transactions/'+key).once('value').then(s=>{const tx=s.val();if(tx&&tx.type==='Expense')return makeExpensePdf(tx,key,false);alert('ব্যয় হিসাব পাওয়া যায়নি');});};
  window.downloadExpensePdfAdd=(key)=>{if(!['Admin','Manager','FinanceSecretary','Information'].includes(role()))return alert('অনুমতি নেই');db().ref('transactions/'+key).once('value').then(s=>{const tx=s.val();if(tx&&tx.type==='Expense')return makeExpensePdf(tx,key,true);alert('ব্যয় হিসাব পাওয়া যায়নি');});};
@@ -4770,14 +4770,14 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
  const role=()=>localStorage.getItem('userRole')||'';
  const who=()=>String(localStorage.getItem('loggedInUser')||'');
  const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const allowed=()=>['Admin','Information'].includes(role());
+ const allowed=()=>['Admin','Manager','FinanceSecretary','Information'].includes(role());
  const normPhone=v=>{let d=String(v||'').replace(/[^\d]/g,''); if(d.startsWith('00880'))d=d.slice(2); if(d.startsWith('880'))return '+'+d; if(d.startsWith('0'))return '+88'+d; if(d.length===10)return '+880'+d; return '+'+d;};
  let otpConfirmation=null, otpVerifier=null, otpPhone='';
  function setupFinancePanel(){
   const home=$('homeDashboard'); if(!home || $('incomeExpenseReportAdd'))return;
   const card=document.createElement('section'); card.id='incomeExpenseReportAdd';card.className='card-3d hidden';
   card.innerHTML=`<h2><i class="fa-solid fa-file-pdf"></i> আয় ও ব্যয় হিসাব — আলাদা PDF রিপোর্ট</h2>
-   <p style="margin-bottom:10px">শুধু এডমিন ও তথ্য সম্পাদক এই রিপোর্ট দেখতে পারবেন। প্রতিটি PDF-তে স্বয়ংক্রিয় রেফারেন্স কোড থাকবে।</p>
+   <p style="margin-bottom:10px">এডমিন, ম্যানেজার, অর্থ সম্পাদক ও তথ্য সম্পাদক এই রিপোর্ট দেখতে পারবেন। প্রতিটি PDF-তে স্বয়ংক্রিয় রেফারেন্স কোড থাকবে।</p>
    <div class="form-group"><label>হিসাবের ধরন</label><select id="ieTypeAdd" class="input-3d"><option value="Income">আয় হিসাব</option><option value="Expense">ব্যয় হিসাব</option></select></div>
    <div class="form-group"><label>সময়কাল</label><select id="iePeriodAdd" class="input-3d"><option value="current">বর্তমান বছর</option><option value="previous">পূর্বের বছর</option><option value="all">সকল সংরক্ষিত হিসাব</option></select></div>
    <div class="form-group"><label>বছর</label><input id="ieYearAdd" type="number" class="input-3d" value="${new Date().getFullYear()}" min="2000" max="2100"></div>
@@ -4797,7 +4797,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
   if(allowed() && card && !$('ieLoadAdd').dataset.bound){$('ieLoadAdd').dataset.bound='1';}
  }
  function loadFinanceRows(){
-  if(!allowed()){alert('শুধু এডমিন ও তথ্য সম্পাদক এই রিপোর্ট দেখতে পারবেন।');return;}
+  if(!allowed()){alert('এডমিন, ম্যানেজার, অর্থ সম্পাদক ও তথ্য সম্পাদক এই রিপোর্ট দেখতে পারবেন।');return;}
   const d=db();if(!d){alert('Firebase Database সংযোগ পাওয়া যায়নি।');return;}
   const type=$('ieTypeAdd').value, period=$('iePeriodAdd').value, year=Number($('ieYearAdd').value)||new Date().getFullYear();
   $('ieRowsAdd').innerHTML='<tr><td colspan="5">ডাটাবেইজ থেকে লোড হচ্ছে...</td></tr>';$('iePdfAdd').disabled=true;
@@ -4831,7 +4831,7 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
   const total=reportRows.reduce((sum,r)=>sum+(Number(r.t.amount)||0),0);
   wrap.innerHTML=`<div style="text-align:center"><h2>এসো ভবিষ্যৎ গড়ি</h2><h3>${isIncome?'আয় হিসাব':'ব্যয় হিসাব'} রিপোর্ট</h3><p>রেফারেন্স কোড: <b>${esc(reportCode)}</b></p><p>সময়কাল: ${esc($('iePeriodAdd').value==='all'?'সকল সংরক্ষিত হিসাব':year+' সাল')}</p><p>তৈরির তারিখ: ${new Date().toLocaleString('bn-BD')}</p></div><hr><p>মোট রেকর্ড: ${reportRows.length} | মোট ${isIncome?'আয়':'ব্যয়'}: ৳ ${total.toLocaleString('en-US')}</p><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="border:1px solid #999;padding:7px">ডাটাবেইজ আইডি</th><th style="border:1px solid #999;padding:7px">তারিখ</th><th style="border:1px solid #999;padding:7px">খাত / বিবরণ</th><th style="border:1px solid #999;padding:7px">পরিমাণ</th><th style="border:1px solid #999;padding:7px">স্ট্যাটাস</th></tr></thead><tbody>${reportRows.map(({key,t,dateText})=>`<tr><td style="border:1px solid #aaa;padding:6px">${esc(key)}</td><td style="border:1px solid #aaa;padding:6px">${esc(dateText||'-')}</td><td style="border:1px solid #aaa;padding:6px">${esc(t.projectName||t.category||t.note||t.description||'-')}</td><td style="border:1px solid #aaa;padding:6px;text-align:right">৳ ${Number(t.amount)||0}</td><td style="border:1px solid #aaa;padding:6px">${esc(t.status||((t.financeApproval==='Approved'||t.managerApproval==='Approved'||t.adminApproval==='Approved')?'অনুমোদিত':'পর্যালোচনাধীন'))}</td></tr>`).join('')||'<tr><td colspan="5" style="padding:12px;text-align:center">কোনো হিসাব নেই</td></tr>'}</tbody></table><hr><p style="font-size:10px">তৈরিকারী লগইন: ${esc(who())} | রোল: ${esc(role())}</p>`;
   const filename=(isIncome?'Income':'Expense')+'_'+String(year)+'_'+reportCode+'.pdf';
-  window.html2pdf().set({margin:[5,8,8,8],filename,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(wrap).save().then(()=>{
+  window.html2pdf().set({margin:[5,8,8,8],filename,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(wrap).save(filename).then(()=>{
    const d=db();if(d)d.ref('downloadReviews').push({type:isIncome?'income_report_pdf':'expense_report_pdf',reportCode,year,recordCount:reportRows.length,total,downloadedBy:who(),downloadedByRole:role(),timestamp:Date.now()}).catch(()=>{});
   }).catch(e=>alert('PDF তৈরি করা যায়নি: '+e.message));
  }
