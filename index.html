@@ -3106,34 +3106,11 @@ button.option-clicked, .nav-btn.option-clicked, [role="button"].option-clicked {
                 pagebreak: { mode: ['css', 'legacy'] }
             }).from(reportClone);
 
-            // Blob + download link is more reliable in mobile browsers than
-            // relying only on html2pdf's internal save() click.
-            try {
-                const pdfBlob = await worker.outputPdf('blob');
-                if (!(pdfBlob instanceof Blob) || pdfBlob.size < 100) {
-                    throw new Error('PDF ফাইল তৈরি হয়নি।');
-                }
-                const blobUrl = URL.createObjectURL(pdfBlob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = filename;
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-            } catch (blobError) {
-                console.warn('Blob download fallback:', blobError);
-                // Keep the library's built-in save method as a secondary route.
-                await window.html2pdf().set({
-                    margin: [5, 8, 8, 8],
-                    filename: filename,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'] }
-                }).from(reportClone).save(filename);
-            }
+            // Android WebView APK workaround:
+            // Let html2pdf/FileSaver perform the download with the explicit filename.
+            // Avoid creating/clicking a second blob: URL, which can make some APK
+            // WebView wrappers show an empty "Save As" filename.
+            await worker.save(filename);
         } catch (err) {
             console.error('Financial PDF download failed:', err);
             alert('PDF তৈরি/ডাউনলোড করা যায়নি। ইন্টারনেট সংযোগ চালু আছে কি না দেখুন, তারপর আবার চেষ্টা করুন। সমস্যা থাকলে ব্রাউজারের মেনু থেকে Print / প্রিন্ট > Save as PDF ব্যবহার করুন।\nবিস্তারিত: ' + (err.message || err));
